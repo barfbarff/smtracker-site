@@ -5,27 +5,38 @@ description: Check that SMTracker groups your movies into the right replicates, 
 
 A *replicate* is an independent measurement of a condition, usually a separate culture imaged on its own day. By default, the analysis computes its error bars and significance tests over replicates, not over movies or tracks, because movies from the same culture aren't independent of each other. That's why it matters that SMTracker groups your movies into the right replicates.
 
-There are three arrangements it recognizes on its own. You don't need to choose: the analysis reads the arrangement from your folders and series numbers, and **Confirm project** shows the replicates it found before anything is computed.
+SMTracker proposes the replicates for you, and **Confirm project** shows them before anything is computed. Check them there: when you open the workspace, they're saved and used from then on.
 
 These rules belong to the analysis. The preparation and outlines windows see each folder that holds movies as a condition of its own.
 
-## 1. From the series numbers (the default)
+## One replicate per imaging day (the default)
 
-If all of a condition's movies sit in one folder, the analysis groups them by *series number*: the first number in the movie's name, such as 1 in `series001`. Each block of ten is one replicate: series 001 to 010 is the first, 011 to 020 the second, and so on.
+The first time you open a condition, SMTracker puts each imaging day's movies into one replicate. It reads the days in one of two ways:
+
+- **By acquisition time**, when every movie records when it was taken, in its raw `.nd2` or `.stk` file in `raw/` or in u-track's movie data. A gap of more than an hour between movies starts a new day, so two sessions on one date are two replicates.
+- **By series number** otherwise: the first number in the movie's name, such as 1 in `series001`. Each block of ten is one day: series 001 to 010 is the first, 011 to 020 the second, and so on.
 
 <ReplicateBlocksDiagram />
 
-Replicates are numbered in the order the blocks occur, and gaps are fine. If you imaged series 001 to 008 and then 021 to 030, you get two replicates.
+The time u-track imported a movie doesn't count, because one import can hold movies imaged months apart. The replicates are numbered by their lowest series number, and gaps are fine: series 001 to 008 and 021 to 030 make two replicates.
 
-### When your series are numbered differently
+### When the proposal is wrong
 
-If you didn't image ten movies per replicate, regroup them when you open the project. On **Confirm project**, click the **Groups** view. On the **Analysis groups** board, click <Ui variant="outline">Regroup…</Ui> to set groups of any number of series at once, with a preview, or drag single series between replicates. See [Opening a project](/docs/analysis/opening-a-project).
+If you didn't image ten movies per replicate, or a replicate spans two sessions, regroup the movies when you open the project. On **Confirm project**, click the *Groups* view (the layers icon beside the condition tabs). On the **Analysis groups** board, click <Ui variant="outline">Regroup…</Ui> to set groups of any number of series at once, with a preview, or drag single series between replicates. See [Opening a project](/docs/analysis/opening-a-project).
 
-When you open the workspace, SMTracker saves each condition's grouping as `day_map.json` in its folder, and uses it from then on. So you only regroup once per condition. Movies you add later are placed automatically, and SMTracker asks you to confirm.
+When you open the workspace, SMTracker saves each condition's grouping as `day_map.json` in its folder, and uses it from then on. So you only regroup once per condition. **Reset to replicates** on the board goes back to the imaging days. Movies you add later are placed by their series block: into that block's replicate, or as a new one. Check the board before you open the workspace again, which saves the new grouping.
 
-## 2. Replicates as sub-folders
+## Replicates in folders
 
-You can also keep each replicate in a folder of its own, inside the condition's folder. The analysis opens them as one condition, with each folder one replicate.
+You can also keep each replicate in a folder of its own. The two arrangements below tell SMTracker that the folders are one condition, not several.
+
+On a first open, the board still proposes one replicate per imaging day, as above, so check that its groups match your folders.
+
+{/* TODO(Huy): with sub-folders that restart at series001 and no acquisition times, the series-number rule puts series001 (GM1), series001 (GM2) … into one day, so the folder replicates merge on the first open. Should the folders be the proposal there? */}
+
+### Replicates as sub-folders
+
+Each replicate sits in a folder of its own, inside the condition's folder. SMTracker reads them as one condition. Check on **Confirm project** that the board's groups match your folders.
 
 <Files>
   <Folder name="CitZ-mNG">
@@ -44,13 +55,13 @@ For this to work, the folders must be named as replicates:
 - a number, after the condition's name if you like: `1`, `GM1`, `M2c`, `day 2`, `replicate 2`; or
 - the full date they were imaged, which orders them by date: `10.03.2025`, `2025-03-10`.
 
-<Callout type="check">If even one folder isn't named as a replicate (say `GM/maltose` beside `GM/GM1`), the analysis can't tell that they belong together, and opens them as separate conditions. Rename the odd one out.</Callout>
+<Callout type="check">If even one folder that holds movies isn't named as a replicate (say `GM/maltose` beside `GM/GM1`), the analysis can't tell that they belong together, and opens them as separate conditions. Rename the odd one out.</Callout>
 
-If you open the folder above the condition (`CitZ-mNG` here), the movies sit two levels down, so the analysis first asks **What do the folders mean?**. That's expected: mark the level as the replicate there.
+If you open the folder above the condition (`CitZ-mNG` here), the movies sit two levels down, so the analysis first asks **What do the folders mean?**. That's expected: mark the level as the replicate there, or click **Load without a design**. The same goes for numbered folders opened from above.
 
-## 3. Replicates in numbered folders
+### Replicates in numbered folders
 
-A third arrangement: each replicate has its own folder under one shared name, but the series numbers continue across the folders instead of starting again.
+Each replicate has its own folder under one shared name, but the series numbers continue across the folders instead of starting again.
 
 <Files>
   <Folder name="LB" note="one condition">
@@ -60,22 +71,22 @@ A third arrangement: each replicate has its own folder under one shared name, bu
   </Folder>
 </Files>
 
-This opens as one condition, as if all the movies sat in one folder, with each folder one replicate. The folder decides, not the series number: `LB-1` is replicate 1, whatever its series numbers say. Longer names work too, such as `GapA-LB-rif-1`, `-2`, `-3`.
+This opens as one condition, as if all the movies sat in one folder. Check on **Confirm project** that the board's groups match your folders; they do when each folder holds one block of ten series. Longer names work too, such as `GapA-LB-rif-1`, `-2`, `-3`.
 
 - Extra folders that only wrap the replicates are fine, for example `Glu Exhaustion/20240618/…-1`, `-2`, `-3`.
-- The numbers must run 1, 2, 3, and so on. If they don't (only `LB-2` and `LB-3`, or `IPTG-10` and `IPTG-100`), the folders aren't read as replicates. Opened from the folder above, `LB` is then one condition with replicates from the series numbers. Opened on its own, each folder becomes a condition of its own.
+- The numbers must run 1, 2, 3, and so on. If they don't (only `LB-2` and `LB-3`, or `IPTG-10` and `IPTG-100`), the folders aren't read as replicates. Opened from the folder above, `LB` is then one condition, with a replicate per imaging day. Opened on its own, each folder becomes a condition of its own.
 
 ## Which arrangement the analysis uses
 
-The series numbers decide it:
+The folder names and series numbers decide how the folders are read:
 
 | Series numbers | Arrangement | Example |
 | --- | --- | --- |
-| Everything in one folder | [from the series numbers](#1-from-the-series-numbers-the-default) | `LB/series001` to `series030` |
-| Start again at `series001` in every folder | [replicates as sub-folders](#2-replicates-as-sub-folders) | `GM/GM1`, `GM/GM2`, `GM/GM3` |
-| Continue across the folders | [replicates in numbered folders](#3-replicates-in-numbered-folders) | `LB/LB-1` (001–010), `LB-2` (011–020) |
+| Everything in one folder | [one replicate per imaging day](#one-replicate-per-imaging-day-the-default) | `LB/series001` to `series030` |
+| Start again at `series001` in every folder | [replicates as sub-folders](#replicates-as-sub-folders) | `GM/GM1`, `GM/GM2`, `GM/GM3` |
+| Continue across the folders | [replicates in numbered folders](#replicates-in-numbered-folders) | `LB/LB-1` (001–010), `LB-2` (011–020) |
 
-If your replicate folders fit none of these, for example dates written as `20240101`, describe your folders on **What do the folders mean?** and mark that level as the replicate. See [Opening a project](/docs/analysis/opening-a-project).
+If your replicate folders fit none of these, for example dates written as `20240101`, open the folder above your conditions, describe your folders on **What do the folders mean?**, and mark that level as the replicate. See [Opening a project](/docs/analysis/opening-a-project).
 
 <Callout type="note">
 Replicates are never matched across conditions by their number: replicate 1 of glucose has nothing to do with replicate 1 of malate. If your replicates of different conditions really belong together (for example one culture split into two media), select **Pair replicates** when you open the project. See [Opening a project](/docs/analysis/opening-a-project).

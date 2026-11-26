@@ -1,31 +1,97 @@
 ---
 title: "Opening a project"
-description: "Choose the folder, say what its folders mean, and confirm what was read."
+description: "Open a folder of tracked conditions in the analysis, say what its folders mean, and check its replicates before the workspace opens."
 ---
 
-Choose **Analysis**, then **Choose folder…** (or drop a folder onto the window). Pick the folder that contains your condition folders. Recent projects are listed for one click; the × beside one removes it from the list and leaves the folder untouched. Up to three pages follow, depending on your data.
+Open a folder of tracked conditions and check what SMTracker read from it, before anything is fitted. You do this each time you start the analysis. A project opened before is read back from its cache, so it opens much faster the second time.
 
-**What do the folders mean?** This page appears when the movies sit two or more folders below the folder you opened, for example `data/ProteinA/glucose/…`. It shows one row per folder level. Mark each level as one of the following.
+Nothing is fitted until the workspace opens, and your movies and tracks are never changed. For the files SMTracker adds, see [What it writes](/docs/analysis#what-it-writes).
 
-- **Factor**: give it a name (protein, medium, strain). A condition is one combination of factor values, such as "ProteinA glucose".
-- **Replicate**: each folder is one replicate (an independent culture) of the condition above it, however it is named, a date included. Allowed only directly below the last factor.
-- **Skip**: a folder that only wraps the next level.
+## Choose the folder
 
-Under the rows you see the conditions the design produces, or why the folders cannot be loaded. **Use this design** saves it with the project; type a name under it to keep it in **your designs** for later projects. **Load without a design** loads the folder with automatic grouping.
+In SMTracker's first window, click the **Analysis** card (or press <Kbd>Return</Kbd>). On **Open a project folder**, click <Ui>Choose folder…</Ui> and choose the folder that holds your condition folders, or one condition folder. You can also drop one folder onto the window.
 
-**Choose the tracker.** This page appears only when a condition holds both u-track and TrackMate tracks, or conditions were tracked with different trackers. Nothing is preselected. On the same movies the two trackers differ by about 1 point in the slow fraction and 10 to 18 % in D, so mixing them also compares trackers.
+**Recent projects** lists the last 10 folders you opened, with their conditions and series as counted last time. Click one to open it again. The × beside it removes it from the list and leaves the folder untouched. A folder that can't be found, for example on an unplugged drive, is grayed out.
 
-**Confirm project.** This page shows what the files recorded for the condition whose tab is open (pixel size, frame interval, PSF width, search radius, localization precision) and, per replicate, the series, imaging date, frames, cells and tracks kept.
+SMTracker then looks through the folder. A page lists each condition as it's found, with a progress bar once it reads the tracks. Click <Ui variant="outline">Cancel</Ui> to go back.
 
-| Control | What it does |
-|---|---|
-| Condition tabs | Drag a tab to reorder the conditions; the order is kept when you press **Open workspace**. |
-| Palette and color menus | Choose the palette (Okabe-Ito, Tol muted, Tol vibrant, Petroff 8, Petroff 10, Kelly 20, Orchid 11) and each condition's color. A palette too short for your conditions cannot be picked; with more conditions than a palette holds, the extra colors are spread as far apart as possible and a line names any hard-to-tell pair. **Custom color…** opens the system picker; **Use the palette's color** undoes it. |
-| **Make a palette…** | Opens the palette maker: start from any palette, add colors (**Add a distinct colour** adds the one farthest from the rest), edit, move or remove them, **Order for the checks**, then **Save**. The checks show whether the first colors stay apart for normal and red-green color vision. **Delete** removes one of your palettes. |
-| **Groups** | Regroups series into replicates. **Hide** folds the board to one line; **Show** brings it back. A series you hold out, or leave in **No group**, stays held out when the project is opened again. |
-| **Pair replicates** (off by default) | Select it when replicates of different conditions belong together, for example one culture split into two media. Each replicate column gets a **Pair** tag (A, B …); replicates of different conditions with the same tag are a pair, and the column shows whether they were imaged on the same date. **Propose from imaging days** tags replicates imaged on the same date alike; check each tag. Unticking forgets the tags. |
-| **Open workspace** | Saves the grouping (`day_map.json`) where it is new or changed and opens the analysis. |
+Up to three pages can follow, depending on your data: **What do the folders mean?**, **Choose the tracker**, and **Confirm project**.
 
-Where another condition was recorded differently, the caption says so ("others 8 px"). Pixel sizes up to 1 % apart are read at one size (each D slightly off, fractions unchanged). Frame intervals up to 10 % apart are put on one interval (set under **Options**, **One frame interval for movies within**); QC says how many movies were rescaled. A different search radius caps the fastest D differently, so each condition's ceiling and crowding checks use its own radius.
+## What do the folders mean?
 
-Only the paired significance test **Paired t (declared pairs)** reads the pair tags. Every other test treats each condition's replicates as an independent sample, and nothing is ever paired by replicate number.
+This page appears when your movies sit two or more folders below the one you opened, for example `data/ProteinA/glucose/…`. It also appears when a saved design no longer fits the folders, or when the movies sit at different depths. It shows one row per folder level, from the top down, with example folder names. Choose a role for each level:
+
+| Role | What it means |
+| --- | --- |
+| *Factor* | Something you compare, such as a protein, a medium, a strain or a treatment. Give it a name. A condition is one combination of factor values, such as "ProteinA glucose". |
+| *Replicate* | Each folder is one replicate (an independent culture) of the condition above it, whatever its name, a date included. You can mark only the level directly below the last factor as *Replicate*. |
+| *Skip* | A folder that only wraps the next level, such as `results`. Its name isn't used. |
+
+SMTracker proposes the roles, or starts from one of your saved designs if it fits. Factor names must differ, and a few names the analysis uses itself, such as *day* or *cell*, are refused. Under the rows, it shows the conditions the design produces, or why it can't load the folders. The factors you name here are the ones you can group charts by in the workspace.
+
+- Click <Ui>Use this design</Ui> to save it with the project, as `smtracker_design.json` in the folder you opened. To reuse it in later projects, type a name in the **Save to my designs as** field first; it then appears under **Saved designs:**.
+- Click <Ui variant="outline">Load without a design</Ui> to load the folder with SMTracker's automatic rules ([Organizing your folders](/docs/folders)). SMTracker doesn't ask again for that folder on this computer.
+
+A saved design always wins over the automatic rules. If it no longer fits, SMTracker asks again. Click **Load without a design** then, and SMTracker renames the file to `smtracker_design (not used).json`.
+
+## Choose the tracker
+
+This page appears when a condition holds tracks from more than one source, for example u-track and TrackMate, or when the conditions come from different sources. For each condition with a choice, choose which tracks to read, then click <Ui>Open</Ui>. SMTracker never picks one for you.
+
+On the same movies, u-track and TrackMate differ by about 1 percentage point in the slow fraction and 10 to 18 % in D. Compare conditions tracked the same way. When the conditions end up read from different trackers, the page says so.
+
+## When something is missing
+
+- **Movies tracked without a pixel size or frame interval** can't be analyzed: every D depends on both. For u-track movies, SMTracker names them and asks; click <Ui>Leave out and open the rest</Ui> to go on without them. Other track tables without them are refused. See [Frame interval and pixel size](/docs/timing-and-pixel-size) to keep them.
+- **Movies without cell outlines** are left out, and a notice names them. If no movie has outlines, the folder is refused. To include them, outline them in [Cell outlines](/docs/cell-outlines) and open the folder again.
+- **When nothing can be opened**, the page says why and what to do. For example, the movies aren't tracked yet, or the track tables don't state their units. See [When something is refused](/docs/when-something-is-refused).
+
+## Confirm project
+
+**Confirm project** shows what SMTracker read, condition by condition, before anything is fitted. Click a condition's tab to see it. Two buttons at the right of the tabs switch every condition between two views: *Record*, what the files recorded, and *Groups*, how the movies are grouped into replicates.
+
+### Record
+
+The top card gives the condition's **Pixel size**, **Frame interval**, **PSF width**, **Search radius** and **Localization precision**, as recorded. A pixel size, frame interval, PSF width or search radius the files didn't record reads "–", never a default. A localization precision that wasn't recorded shows the theoretical value, and its caption says so. When conditions differ, a note under the card says how SMTracker reads them:
+
+- pixel sizes within 1 % load at the first condition's size, and the card gives the shift in D; further apart, the folder is refused;
+- frame intervals up to 10 % apart, within a condition or between conditions, are read at one interval, with the steps rescaled so D stays comparable. Change the limit with **One frame interval for movies within** in [Analysis options](/docs/analysis/options);
+- search radii stay each condition's own, because the radius caps the fastest D a track can show.
+
+The **Replicates** table lists, per replicate, its series, imaging date, frames, cells, and tracks kept out of those found. A **Note** flags a replicate whose movies have an unusual number of frames. An imaging date read from when u-track imported a movie is grayed out, because it isn't the date the movie was taken.
+
+### Groups
+
+The **Analysis groups** board shows how the condition's movies (*series*) are grouped into replicates, as cards in one lane per group. The counts above it give the series, cells and tracks that will go into the fit.
+
+<Callout type="check">
+On a first open, the board proposes one group per imaging day ([How replicates are counted](/docs/replicates#one-replicate-per-imaging-day-the-default)). **Open workspace** saves these groups as the replicates, so check them on the board first.
+</Callout>
+
+
+To change the groups:
+
+- Drag a series card to another lane, or select several and click **Move to…** in the bar that appears.
+- Click <Ui variant="outline">Regroup…</Ui> to cut the series into a number of groups at once, by series number or in groups of a fixed size, with a preview.
+- Clear a series' checkbox to hold it out of the fit. It keeps its group, so selecting it again puts it back.
+- Click <Ui variant="outline">Reset to replicates</Ui> to go back to one group per imaging day.
+
+**Filter** shows only some series, for example those held out, and doesn't change the fit. The **Cards** / **Table** switch changes the view. **Hide** folds the board away, and **Show** brings it back.
+
+### Pair replicates
+
+Select **Pair replicates** when replicates of different conditions belong together, for example one culture split into two media, or one imaging session. Each replicate then gets a **Pair** tag, and replicates of other conditions with the same tag are its partners. Only **Paired t (declared pairs)** reads the tags. Without pairs, every replicate stands alone, and the paired test isn't offered.
+
+<Ui variant="outline">Propose from imaging days</Ui> gives replicates imaged on the same date the same tag. It's a proposal, and it replaces every tag: check each one.
+
+### Colors and order
+
+Each condition keeps one color in every chart. Click a tab's color dot to choose another, or **Custom colour…** for any color. The **Palette** field above the tabs changes the whole set (Okabe-Ito by default), and **Make a palette…** builds your own. Drag a tab to change the conditions' order, which the workspace keeps ([The workspace](/docs/analysis/workspace#the-order-and-colors-of-the-conditions)).
+
+## Open the workspace
+
+The line at the bottom says whether anything needs your attention in the condition on show, such as series not in a group. Click <Ui>Open workspace</Ui>.
+
+SMTracker applies the board and saves each condition's grouping, held-out series and pair tags as `day_map.json` in its folder, where they're new or changed, so the next open starts from them. Click <Ui variant="outline">Cancel</Ui> instead to go back without saving the board; colors you chose are kept.
+
+The [workspace](/docs/analysis/workspace) opens on [QC](/docs/analysis/qc).

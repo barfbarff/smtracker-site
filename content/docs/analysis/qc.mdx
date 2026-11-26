@@ -1,30 +1,131 @@
 ---
-title: "QC: run it before comparing anything"
-description: "Tracks, cells and yield per condition, and whether the comparison is fair, before you compare anything."
+title: "QC"
+description: "Check every condition before you compare them: track counts, yield, whether the comparison is fair, whether the replicates agree, and what was left out."
 ---
 
-**Conditions** lists, per condition, the tracks, localizations and cells, a track-length sparkline, the share of tracks inside a cell, and a status (*clean*, *flagged* or *low yield*). Click a row for that condition's detail page.
+Check your conditions before you compare their fractions. QC lays the conditions side by side on everything that can bias a fraction, and shows each condition's tracks, cells and outliers. Run it first in every project. It runs again on its own when you apply exclusions or a track cap.
 
-**Is the comparison fair?** puts the conditions side by side on the things that can bias a fraction. Hover a heading for its rule. A value that breaks the rule is orange; a mark means "look", not "wrong".
+A mark in QC means "look at this", not "this is wrong". Hover over a mark for its reason, and decide whether it matters for your comparison.
 
-| Column | Marked when |
-|---|---|
-| Tracker | the conditions were tracked with different trackers |
-| Replicates | there are fewer than 3 replicates (shown as replicates / movies) |
-| Interval | some movies were rescaled onto this frame interval (how many, in brackets) |
-| Steps | the longest median track length is 1.25 times the shortest or more (long tracks are slower on average; a difference can also be real) |
-| Yield | the most tracks per cell per 1000 frames are 1.5 times the fewest or more |
-| In cell | the share of tracks inside a cell differs by 15 points or more |
-| Near edge | 10 % or more of a condition's tracks were dropped although they lie within 1 px of an outline, so the outlines are drawn tight. The **Outline tolerance** option (Options) keeps them; compare the fractions with and without it |
-| Outlines | the tracks sit half a pixel or more off their cells' outlines in both x and y: the tracker and the outlines count pixels from different origins, and the cell filter cuts one side of every cell |
-| Crowded | 10 % or more of localizations have another within the search radius the condition was linked at, so linking can join two molecules |
+## Run QC
 
-**Do the replicates differ?** asks, per condition, whether one replicate came out unlike the others by more than its movies differ among themselves. The spread of the replicates' slow fractions is compared with the spread when the movies are dealt out at random into groups of the same sizes. **Spread** is the real value, **By chance** the median and 2.5 to 97.5 % range of the random deals, and **p** the share of deals at least as spread. A p under 0.05 is orange: look at that condition's replicates before averaging them. With twenty conditions, one is marked by chance.
+The workspace opens on QC. Click <Ui>Run analysis</Ui>, or the Compute mark on the right rail; after the first result, run it again with the Compute mark. QC has no settings, so it runs at once on every loaded condition. To stop it, click the Compute mark again ([Run a section](/docs/analysis/workspace#run-a-section)).
 
-**Cell length** shows every condition's outlined cells on one length axis (µm, along the centerline): a bar for the middle half, a tick at the median, whiskers from 5 to 95 %. A condition is marked when the longest median is 1.25 times the shortest or more, because cell length changes how often a free molecule meets the wall. A very long "cell" is usually a chain that segmentation did not split.
+QC reads the tracks the analyses use: after the length filter (at least 5 localizations), the *cell filter* (only tracks inside a cell outline), any track cap and any exclusions. It writes nothing to disk.
 
-**Contributes nothing** lists, per condition, what is in the folders but not in the numbers: movies without tracks or outlines, outlines holding no cell, movies whose tracks all lie outside the outlines, low-yield replicates, and the track cap and exclusions in force.
+The page shows five cards, described below. Click a condition's row in **Conditions** for its [detail page](#a-conditions-detail-page). Three of the tables have a copy button, to paste them into a spreadsheet.
 
-**Exclusions…** on that card leaves a movie, a cell or a track out of every analysis, each with a written reason. QC's flagged movies and cells are offered (**Use**) but never excluded automatically. **Preview with and without** shows each affected condition's tracks and slow fraction both ways. **Apply** rebuilds the workspace; remove an exclusion and Apply again to put it back. **Restore** offers the last set again.
+## Conditions
 
-The **detail page** of a condition shows the track-length histogram (**Max length** caps very long tracks for the whole session; long tracks are mostly slow, so a cap lowers slow fractions), the localizations per frame (crowding), the N per replicate and movie, outliers per cell, movie or replicate (**Inspect**; flagged, never dropped: median ± 3.5 median absolute deviations), and the tracks inside an outline per movie.
+**Conditions** gives one row per condition, so you can see their sizes side by side. Each row shows its tracks, localizations and cells with tracks (cells that hold at least one kept track). It also shows a sparkline of track lengths, the share of tracks inside a cell, the number of flagged cells, and a status.
+
+| Status | Meaning |
+| --- | --- |
+| *clean* | No cell is an outlier, and no replicate has a low yield. |
+| *flagged* | At least one cell is an outlier on its median apparent D (see [Outliers](#outliers)). |
+| *low yield* | No cell is flagged, but a replicate's tracks per cell per 1000 frames lie more than 3.5 median absolute deviations (scaled to match an SD) below the condition's median replicate. Hover over the status to see which. This needs at least 3 replicates. |
+
+The status reflects only outlier cells and low yield. The marks in the other cards don't change it, so read them too.
+
+## Is the comparison fair?
+
+This table puts the conditions side by side on what can bias a fraction. Hover over a heading for its rule. A marked value is orange.
+
+| Column | What it shows | Marked when |
+| --- | --- | --- |
+| **Tracker** | The tracker each condition was read from | The trackers differ; the conditions on the less common tracker are marked. u-track and TrackMate give slightly different fractions and D on the same movies. |
+| **Replicates** | Replicates / movies | Fewer than 3 replicates, where a per-replicate interval or test is very wide. |
+| **Interval** | The frame interval every D uses | Some of the condition's movies were rescaled to it from a slightly different interval (up to 10 % by default, in [Analysis options](/docs/analysis/options)); the number in parentheses is how many. |
+| **Steps** | Median steps per track | The longest median is 1.25 times the shortest or more. Long tracks are slower on average, so step-weighted fractions lean toward the slow state; the difference can also be real. |
+| **Yield** | Tracks per outlined cell per 1000 frames | The highest is 1.5 times the lowest or more. Labeling density changes crowding and linking, and few tracks per cell make per-cell numbers noisy. |
+| **In cell** | The share of found tracks inside a cell outline | The conditions differ by 15 points or more, because the cell filter then removes different molecules. |
+| **Near edge** | The share of found tracks dropped although every point lies within 1 px of an outline | 10 % or more: tight outlines drop free molecules near the membrane and raise the slow fraction. |
+| **Outlines** | The offset of the tracks from their cells' outlines, in px, in x and y | Half a pixel or more in both, in the same direction, and clearly more than chance: the tracker and the outlines count pixels from different origins, so the cell filter cuts one side of every cell. |
+| **Crowded** | The median share of localizations with another inside the search radius in the same frame | 10 % or more, where links can join two molecules. |
+
+For **Steps**, **Yield** and **In cell**, only the highest and the lowest conditions are marked. The other columns are judged per condition. The line under the title gives the pixel size and localization precision every condition uses, and says so when the pixel sizes or search radii differ.
+
+When **Near edge** is marked, try the **Outline tolerance** option in [Analysis options](/docs/analysis/options), which keeps tracks just outside an outline, and compare the fractions with and without it. When **Outlines** is marked, see [Check that tracks and outlines line up](/docs/written#check-that-tracks-and-outlines-line-up).
+
+## Do the replicates differ?
+
+This table asks, per condition, whether one replicate came out unlike the others by more than its movies differ among themselves.
+
+QC fits each condition once, with two populations whose Ds are shared by all its movies, and gives each replicate its slow fraction: the mean over its movies. It then deals the movies out at random, 4,999 times, into groups of the replicates' sizes.
+
+| Column | What it shows |
+| --- | --- |
+| **Replicates** | The replicates and the movies each holds. A movie with fewer than 50 steps is left out. |
+| **Slow share** | Each replicate's slow fraction |
+| **Spread** | The SD of the replicate values, in percentage points |
+| **By chance** | The same SD for the random deals: median, and the 2.5 to 97.5 % range |
+| **p** | The share of random deals at least as spread as the real replicates |
+
+A **p** under 0.05, and its **Spread**, are orange: look at that condition's replicates before averaging them. With twenty conditions, about one is marked by chance. A condition with one replicate, or a replicate with one movie, can't be tested, and its row says why.
+
+## Cell length
+
+This card shows every condition's outlined cells on one length axis, in µm along the centerline. A bar spans the middle half, a tick marks the median, and the whiskers run from 5 to 95 %. Hover over a row for its numbers.
+
+A condition is marked when the longest median is 1.25 times the shortest or more. Cell length changes how often a free molecule meets the wall and how many molecules a cell holds, though the difference can be real. A merged chain of cells reads as one long cell, so check very long cells in [Edit outlines](/docs/cell-outlines/edit-outlines).
+
+## Contributes nothing
+
+This card lists, per condition, what's in the folders but not in the numbers, so you know how much smaller the sample is than the folder suggests:
+
+- movies with no tracks from the tracker, or without outlines;
+- movies whose outlines hold no cell, or whose tracks all lie outside the outlines;
+- replicates with a low track yield;
+- tracks left out by the track cap, or by exclusions you made.
+
+### Exclusions
+
+Click <Ui variant="outline">Exclusions…</Ui> on this card to leave a movie, a cell or a track out of every analysis, each with a written reason. Nothing is deleted: remove an exclusion and click **Apply** again to put it back.
+
+<Steps>
+<Step>
+### Add an exclusion
+
+Choose *Movie*, *Cell* or *Track*, type its key (for example `glucose_series004:3`), and type why. Then click <Ui variant="outline">Add</Ui>.
+
+To start from QC's flags, click **Use** beside one of the up to 8 outlier movies and cells under **Suggested by QC**, from QC's last run: it fills in the kind and key. QC never excludes anything by itself. An exclusion without a reason is refused, because it couldn't be reproduced later.
+</Step>
+<Step>
+### Preview
+
+Click <Ui variant="outline">Preview with and without</Ui> to see, for each affected condition, how many tracks it keeps and how its slow fraction moves. This is a quick two-population fit; a Run measures it again with its own settings.
+</Step>
+<Step>
+### Apply
+
+Click <Ui>Apply</Ui>. The workspace is rebuilt without the excluded data, every section's results are cleared, and QC runs again.
+</Step>
+</Steps>
+
+SMTracker remembers the last set you applied to a project. When nothing is excluded, <Ui variant="outline">Restore</Ui> offers it again.
+
+## A condition's detail page
+
+Click a condition's row in **Conditions** to open its detail page. The breadcrumb at the top lets you switch to another condition. Each card has an export button.
+
+| Card | What it shows |
+| --- | --- |
+| **Track-length distribution** | One bar per track length, on a log scale. Tracks removed by the length filter or the track cap are gray, with a dashed line at each limit. |
+| **Localizations per frame** | One bar per movie: the share of localizations with another inside the search radius in the same frame. The band is the usual range; movies outside it are orange. It's a lower bound, because only localizations that passed tracking and the cell filter are counted. |
+| **N per group** | Tracks, localizations and cells per replicate and movie |
+| **Per-cell outliers** | Each cell's median apparent D, sorted; flagged cells are orange. **Inspect** opens the [Outliers](#outliers) dialog. |
+| **Tracks inside a cell outline, per movie** | Tracks inside and outside the outlines, per movie, with the share inside. A movie unlike its condition has an orange edge. |
+
+{/* TODO(Huy): the "Localizations per frame" card now shows the per-movie share of localizations with a neighbor, not localizations per frame. Should the card's title change? */}
+
+### Track cap
+
+Click <Ui variant="outline">Max length</Ui> on **Track-length distribution** to leave very long tracks out of every analysis, in every condition. Long tracks are often stuck objects, autofluorescent spots or slow molecules, so a cap lowers slow fractions a little.
+
+Type the **Longest track kept**, in steps; there's no cap until you set one. The dialog says how many tracks and localizations it would leave out in all, and how many tracks per condition. Click <Ui>Apply</Ui>. Once a cap is set, <Ui variant="outline">No cap</Ui> puts every track back. The cap lasts until you close the project (a saved session keeps it), and setting it rebuilds the workspace, like an exclusion.
+
+### Outliers
+
+A cell, movie or replicate is flagged when its median apparent D lies beyond the median ± 3.5 median absolute deviations of its condition, scaled to match an SD. Outliers are flagged, never dropped.
+
+Click <Ui variant="outline">Inspect</Ui> on **Per-cell outliers** to see them three ways: *In order* (as recorded), *Sorted*, and *By movie*. Choose the **Outlier unit**: *Cell*, *Movie* or *Day* (a replicate). Nothing in this dialog changes the analysis. To leave an outlier out, use [Exclusions](#exclusions).

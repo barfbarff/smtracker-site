@@ -9,12 +9,12 @@
     "images-and-tracks",
     "sqd",
     "sqd-jump-distances",
+    "msd",
     "apparent-diffusion",
     "hmm",
     "spatial-map",
     "kinetics",
     "clustering",
-    "msd",
     "figures",
     "options"
   ]

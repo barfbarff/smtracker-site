@@ -1,42 +1,170 @@
 ---
 title: "The workspace"
-description: "The sidebar, the tools on the right, subpages, the order of the conditions and the project menu."
+description: "Find your way around the analysis window: run a section, choose how its uncertainty is measured, add pages, order the conditions, and use the project menu."
 ---
 
-The sidebar has three groups: **Data** (**QC** and **Images & tracks**, for looking at the data before any fit), **Analyses** (**SQD** with its pages *Populations*, *Jump distances* and *Signed jumps*, then **MSD**, **Apparent Diffusion**, **HMM**, **Spatial Map**, **Kinetics** and **Clustering**) and **Figures** (the **Composer** button, [Figures](/docs/analysis/figures)). The button beside the page title folds the sidebar to icons.
+The workspace is the analysis window: every section, its Run, and its figures live here. It opens on [QC](/docs/analysis/qc) when you click **Open workspace** on **Confirm project**. Most of what this page describes is shared by every section, so the section pages don't repeat it.
 
-The tools on the right:
+## The layout
+
+The window has three columns: the sidebar, the page, and the right rail.
+
+- **The sidebar**, on the left. Its header gives the project's name and its number of tracks, with the track cap when one is set. Click the name to open the [project menu](#the-project-menu). Below it come three groups:
+  - **Data**: **QC** and **Images & tracks**, for looking at the data before any fit.
+  - **Analyses**: **SQD**, **MSD**, **Apparent Diffusion**, **HMM**, **Spatial Map**, **Kinetics** and **Clustering**.
+  - **Figures**: the **Composer** button ([Figures](/docs/analysis/figures)), at the foot, under **Running**.
+- **The page**, in the middle, under a breadcrumb such as "SQD > Jump distances". Click an earlier crumb to go back to it. On a condition's own page, the last crumb opens a list of the other conditions to switch to.
+- **The right rail**, with the tools for the page on screen ([The tools on the right](#the-tools-on-the-right)).
+
+The button left of the breadcrumb folds the sidebar to icons, and opens it again. Click a section to open it, on the page you last used there.
+
+### A section's pages
+
+A section with several pages shows them as a strip at its top:
+
+| Section | Pages |
+| --- | --- |
+| SQD | *Populations*, *Jump distances* |
+| MSD | *Curves*, *Checks* |
+| Apparent Diffusion | *Populations*, *Distributions*, *Per cell*, *Checks* |
+| HMM | *State diagrams*, *Slow state*, *Jump angles*, *Table* |
+
+QC, Images & tracks, Spatial Map, Kinetics, Clustering and the Composer have one page each.
+
+## Run a section
+
+Nothing is computed until you ask. Before a section's first result, its page shows what the section does and a <Ui>Run analysis</Ui> button. The **Compute** mark at the top of the right rail does the same from any page.
+
+<Steps>
+<Step>
+### Open the settings
+
+Click <Ui>Run analysis</Ui> or the **Compute** mark. Every section except QC opens its settings first, in a dialog such as **Configure SQD**. QC runs at once, because it has no settings.
+</Step>
+<Step>
+### Choose and run
+
+Choose the settings, then click <Ui>Run</Ui>. Click <Ui variant="outline">Cancel</Ui> to close the dialog without running.
+</Step>
+</Steps>
+
+Each setting has a line of help under it. The dialog starts from the last Run's settings, or from the standards in [Analysis options](/docs/analysis/options) the first time. SQD, Apparent Diffusion and HMM have two tabs: **General**, and **Fits**, with one row per condition. A Run computes every loaded condition, except on SQD and HMM, where the **Fits** tab chooses which conditions are fitted.
+
+While a first Run computes, the page says **Computing…** with its progress, and the **Compute** mark spins. A later Run dims the chart in place until the new result is ready. To stop a Run, point at the mark and click its stop square.
+
+### Running
+
+Each section runs on its own, with its own results and messages, so you can start SQD and go on to MSD while it fits. **Running**, at the foot of the sidebar, lists every job with its progress and the conditions done. Click a job to go to its page.
+
+When a job ends, a note says how long it took, or why it couldn't be computed. If you're on another page, **Show** takes you to the job's page. If you run a page again while it's still computing, SMTracker asks first: <Ui>Proceed</Ui> stops the running job and starts the new one.
+
+The work runs on every core but one, below normal priority, so the computer stays usable. On a computer with four or more cores, a quick job such as a preview isn't held up behind a long fit.
+
+### Uncertainty
+
+SQD, Apparent Diffusion, HMM and MSD ask how each condition's spread is measured, under **Uncertainty**. The choice changes the point itself as well as its bar.
+
+| Choice | What each point and bar shows | Use it for |
+| --- | --- | --- |
+| *Replicates* (the default) | Each replicate fitted on its own; the mean ± SD of the replicates. The SD is a spread between replicates, not a confidence interval. | Data with replicates. |
+| *Movies* | The pooled fit, with a 95 % interval from resampling movies. Slow. | One imaging session only. |
+| *Cells* | The pooled fit, with a 95 % interval from resampling cells. Slow. | One imaging session only. |
+| *Chunks* | The movies dealt at random into chunks, each fitted as a replicate; their mean ± SD. | Data without replicates. A condition with replicates is drawn as its pooled fit. |
+| *None* | All replicates pooled into one fit, with no interval. | A quick look. |
+
+With two or more replicates, the *Movies* and *Cells* intervals are withheld, because movies and cells of one replicate aren't independent. MSD offers no *Chunks*.
+
+The number of chunks is 5 by default, from 2 to 20 (**Chunks per condition** on SQD). A condition with fewer than two movies per chunk is dealt by cells instead. Chunks show how precisely these cells were measured, and say nothing about another culture.
+
+## When results are kept
+
+Every result is kept in SMTracker's cache on your computer, so a Run you've done before comes back at once, after a restart too. A result is kept per condition: changing an exclusion, an outline or a replicate of one condition recomputes only that condition. A setting shared by every condition recomputes them all. Shared clusters on Clustering is one result over all its conditions.
+
+A result stays on screen until you run that section again, or until the window is rebuilt: switching the theme, changing QC's track cap, or applying exclusions. After a theme switch, SQD's figure comes back by itself, and running another section again returns its result from the cache. A new track cap or new exclusions change the tracks, so the affected conditions are computed again.
+
+{/* TODO(Huy): the Configure SQD dialog has a note for settings changed since the figure ("… the figures still show the previous fit. Run again to update them."), but nothing shows it, so a figure never says it's out of date with the dialog. Intended? */}
+
+## The tools on the right
+
+The right rail holds the tools that act on the page on screen. From the top:
 
 | Tool | What it does |
-|---|---|
-| **Compute** | Runs the page on screen, opening its settings first where it has any. A click during a Run stops it. |
-| **Visibility** | Chooses what the page draws. |
-| **Significance** | Holds the brackets between conditions on the Populations bubbles of SQD and Apparent Diffusion and on the HMM comparison. |
-| **Conditions** | Colors, order and grouping of the conditions. |
-| **Metadata** | The settings of the result on screen. |
-| **Help**, **Options**, theme | At the bottom. |
+| --- | --- |
+| **Compute** mark | Runs the page on screen, opening its settings first, or stops its Run. Its hover says which, for example *Run SQD…*. Dimmed on a page with nothing to compute. |
+| **Visibility** | Chooses which of the page's figures are drawn. Shown only where there's a choice; a dot marks it while a figure is hidden. |
+| **Significance** | Chooses which conditions are compared, the test, and the brackets on the chart ([Figures](/docs/analysis/figures)). Shown only on SQD's and Apparent Diffusion's *Populations* and on HMM's *Slow state*. |
+| **Conditions** | Their colors and order, in every section ([below](#the-order-and-colors-of-the-conditions)). |
+| **Metadata** | The settings and replicates of the result on screen, with **Copy**. SQD and the Spatial Map print it; the other sections don't yet. |
+| **Help** | Opens SMTracker's built-in manual in your browser, at its Analysis chapter. |
+| **Options** | Opens [Analysis options](/docs/analysis/options). |
+| **Theme** | Switches between light and dark. |
 
-Each section runs on its own, and a result stays until you run that section again. While sections compute, they are listed under **Running** at the foot of the sidebar with their progress; click one to go to it. Results are kept in your user folder for each condition: running again with the same data and settings returns the result at once, and a change to a setting, exclusion, outline or replicate recomputes only the conditions it affects. A Run uses every core but one.
+Each chart has its own **Axes** and export buttons, described in [Figures](/docs/analysis/figures).
 
-**Subpages.** The **+** at the right of an analysis row adds a live copy of the section ("SQD 2") with the same settings and no results, so two settings can be compared side by side.
+## Added pages
 
-- Click a page's row to open it; click the section's own row to return to the original.
-- Double-click a page to rename it, drag it to reorder it, and delete it with the **x** that appears on it (**Undo** is offered for a few seconds).
-- Exported figures carry the page's name. Sessions keep every page.
-- The Spatial Map's "Use the same D as the ... fit" has a drop-down for which page supplies the D.
+An added page is a second copy of a section with its own settings and results, for example to fit the same conditions with three populations and with four.
 
-**The order of the conditions.** In **Conditions**, drag a condition by its grip or use the arrows beside it. A bar then reads *New order, not applied yet*; **Apply order** applies it to every section, table and exported figure, and **Cancel** returns to the order in use. Nothing is fitted again, and the order is remembered for the project. A panel already in the Composer keeps its old order until you add it again.
+Point at an analysis row and click its **+**, or right-click the row and choose **New page**. The new page (for example "SQD 2") starts with the settings of the page you're on and none of its results, and opens at once. Click <Ui>Run analysis</Ui> to compute it. QC, Images & tracks and the Composer have no added pages.
 
-**Grouped by your factors.** A project with a folder design of two or more factors lists its conditions outer factor first. **Conditions → Group by** chooses the nesting: "protein → medium" puts each protein's media side by side under the protein's name; "medium → protein" does the reverse. The bubbles, the Apparent Diffusion per-cell chart, the HMM comparison, the legends and their exports then draw the columns in groups, and each group keeps its own order. Switching the grouping does not refit anything. **Color by** gives every value of a factor one color and each condition a shade of it; **Condition** gives every condition its own color.
+The added pages are listed under their section. One page is on screen at a time: click a row to switch to it, and click the section's own row to go back.
 
-**The project menu.** Click the project's name at the top of the sidebar.
+- **Rename**: double-click the row and type. <Kbd>Return</Kbd> keeps the new name; <Kbd>Escape</Kbd>, or clicking away, keeps the old one.
+- **Reorder**: drag the row up or down, or right-click it and choose **Move up** or **Move down**. The section's own page stays first.
+- **Delete**: the **×** on the row, or right-click. The page's running job stops, and **Undo** brings it back with its settings and results for 8 seconds. Only the last deleted page can be brought back.
+
+Exported figures from an added page carry its name in their file name, and sessions keep every page. On Spatial Map, **Use the same D as the … fit** has a list of which page supplies the D. **Map this fit** on a fit's page makes a new Spatial Map page from it, and opens its settings.
+
+## The order and colors of the conditions
+
+Set the order and colors that every chart, table and exported figure uses. Click **Conditions** on the right rail. The first time, the order is the one you set on **Confirm project**; once you apply an order, it's remembered for the project.
+
+- **Order**: drag a condition by its grip, or use its arrows. A bar then reads "New order, not applied yet": click <Ui>Apply order</Ui> to apply it, or <Ui variant="outline">Cancel</Ui>. Nothing is fitted again. A panel already in the Composer keeps its old order until you add it again.
+- **Colors**: click a condition to choose one of the palette's colors (taking another condition's color swaps the two), or **Custom colour…**. The palette above the list changes the whole set. Okabe-Ito is the default where it has a color for every condition; a palette with too few colors can't be chosen. With more conditions than any palette holds, SMTracker uses the largest, makes the extra colors as distinct as it can, and names any two that are hard to tell apart.
+
+### Grouped by your factors
+
+With a [folder design](/docs/analysis/opening-a-project#what-do-the-folders-mean) of two or more factors, two more fields appear:
+
+- **Group by** chooses the nesting, outer factor first. "protein → medium" puts each protein's media side by side under the protein's name; "medium → protein" does the reverse. The comparison charts, legends and exports then draw the conditions in groups. The arrows move a condition within its group, and at the group's edge they move the whole group.
+- **Colour by** gives every value of one factor its own color, and each condition a shade of it. *Condition* gives every condition its own color.
+
+Neither changes a number.
+
+## The project menu
+
+The project menu holds what acts on the whole project: exports, sessions, and leaving the workspace. Click the project's name at the top of the sidebar to open it.
 
 | Item | What it does |
-|---|---|
-| **Open another folder…** | Returns to the start screen. Results you have not exported or saved are not kept. |
-| **Back to menu** | Returns to the stage menu. |
-| **Save session…** / **Open session…** | Save everything the sections show (results, settings, significance brackets, marked foci) to one `.smtsession` file, and draw it again later without refitting. A session records a fingerprint of the tracks and refuses to open, naming the condition, if they have changed. Open only sessions from people you trust. |
+| --- | --- |
+| **Export tracks for vbSPT…** | Writes `vbSPT<condition>.mat` for each condition, with one track per entry, x and y in nm, and each track's replicate, movie and cell. A track is split wherever it skips a frame. A note gives the time step to enter in vbSPT. |
+| **Export tracks for SMMTrack…** | Writes `SMMTrack_<project>_<condition>.csv` for each condition (x and y in µm, t in s), and a `..._tracks.csv` with each track's replicate, movie and cell. |
+| **Import SMMTrack dwell times…** | Reads one `<condition>.txt` per condition from a folder and draws the trapping-time histogram and its cumulative curve, with each condition's events, mean, median and SD. No test is offered, because the events carry no cell or replicate. |
 | **Per-spot calibration…** | Chooses the calibration that Per spot fits use ([SQD: Populations](/docs/analysis/sqd)). |
-| **Export tracks for vbSPT…** | Writes `vbSPT<condition>.mat` for each condition (one trajectory per cell, positions in nm, each carrying its replicate) with a note giving the time step to enter in vbSPT. |
-| **Export tracks for SMMTrack…** | Writes `SMMTrack_<project>_<condition>.csv` for each condition, plus a `..._tracks.csv` giving each track's replicate, movie and cell. |
-| **Import SMMTrack dwell times…** | Reads one `<condition>.txt` per condition from a folder and draws the trapping-time histogram, the cumulative curve and each condition's number of events, mean, median and SD. No test is shown, because the events carry no replicate. |
+| **Compare with the simulation's truth…** | Only for a simulated set ([below](#a-simulated-set)). |
+| **Save session…**, **Open session…** | Keep the results and settings in one file ([Sessions](#sessions)). |
+| **Report a problem…** | Saves one zip of the error log, the app's version and its settings, to send to the developers. It holds no tracks, images or results. |
+| **Open another folder…** | Closes the workspace and goes back to choosing a folder. |
+| **Back to menu** | Closes the workspace and goes back to SMTracker's first window. |
+
+Both exports write the tracks the analysis uses: filtered, capped, and without the excluded movies, cells and tracks.
+
+**Open another folder…** and **Back to menu** close the workspace at once, without asking, and stop any running job. Every result stays in the cache, so it returns at once when you open the folder and run the section again.
+
+### Sessions
+
+A session keeps what the workspace shows, so you can draw it again later without fitting anything. **Save session…** writes one `.smtsession` file. It holds every section's results and settings, the added pages, the significance choices, the marked foci, typed axis ranges and the page on show. The Composer's panels aren't in it: save a composition from the Composer.
+
+**Open session…** checks the session before drawing it:
+
+- A session of another project closes this one and opens the session's folders, if they're still there.
+- Its track cap and exclusions are applied first.
+- If any condition's tracks differ from the saved ones, it refuses to open, and names the condition.
+
+Then it draws every section it can, and names any it couldn't restore. A session holds only plain data, never code, and SMTracker refuses a file that holds anything else.
+
+### A simulated set
+
+**Compare with the simulation's truth…** works on a data set made by SMTracker's generator: the folder above its condition folders holds `truth/truth.json`. It lists each population as the simulation declared it, beside the fit of the last SQD Run on the SQD page on show, matched slowest to slowest. Nothing is refitted. Where the Run fitted a different number of populations, a note asks you to compare them by hand.
+
+Compare a fitted share with the *counted* share, what the simulated molecules did, rather than the declared one. A fitted D is apparent: a bound population reads the localization precision, and a fast one is shortened by the cell wall and the linking radius.

@@ -1,23 +1,62 @@
 ---
 title: "Overview"
-description: "Load the tracks, check them in QC, compare conditions and put the figures together."
+description: "Open your tracked conditions, check them in QC, compare them with the analyses, and put the figures together."
 ---
 
-The analysis chapter, page by page:
+**Analysis** is where you compare your conditions: it loads the tracks and cell outlines, checks them, fits the populations, and makes the figures. It's the third of SMTracker's three stages (the first window also offers simulated data). You need it for every project, once the movies are tracked and the cells are outlined.
 
-| Page | What it covers |
+## Open it
+
+In SMTracker's first window, click the **Analysis** card, or press <Kbd>Return</Kbd>: it's the default. For choosing the folder and checking what SMTracker read, see [Opening a project](/docs/analysis/opening-a-project).
+
+The analysis needs, for every condition:
+
+- **tracks**, from u-track (`TrackingPackage/tracks/`), TrackMate (`trackmate/*.xml`) or another tool's track tables ([Tracks from other tools](/docs/other-tools));
+- **cell outlines** (`cell_meshes/`), because the analysis keeps only tracks inside a cell. A movie without them is left out ([When something is missing](/docs/analysis/opening-a-project#when-something-is-missing)).
+
+It doesn't need the raw movies, but it reads them where they are: for the camera's frame interval, for the dates that propose the replicates, and for the *Movie* background in [Images & tracks](/docs/analysis/images-and-tracks).
+
+## The order of work
+
+Work through a project in this order. Each step reads what the one before it produced.
+
+1. **Open the project**, check its replicates, and open the workspace.
+2. **Run QC** before you compare anything.
+3. **Run the analyses** you need, SQD first.
+4. **Export the figures**, one chart at a time or together in the Composer.
+
+## The pages
+
+The workspace's sidebar groups its sections into **Data**, **Analyses** and **Figures**. For how the window is laid out, see [The workspace](/docs/analysis/workspace).
+
+| Page | What you do there |
 | --- | --- |
-| [Opening a project](/docs/analysis/opening-a-project) | Choosing the folder, what the folders mean, the tracker, confirming the project |
-| [The workspace](/docs/analysis/workspace) | The sidebar, the tools, subpages, the order of the conditions, the project menu |
-| [QC](/docs/analysis/qc) | Run it before comparing anything |
-| [Images & tracks](/docs/analysis/images-and-tracks) | Sample size, and the movie view |
-| [SQD: Populations](/docs/analysis/sqd) | Fractions and apparent D's from the squared displacements |
+| [Opening a project](/docs/analysis/opening-a-project) | Choose the folder, say what its folders mean, pick the tracker and confirm the replicates |
+| [The workspace](/docs/analysis/workspace) | Find your way around the window, run a section and choose its uncertainty |
+| [QC](/docs/analysis/qc) | Checking every condition before you compare them |
+| [Images & tracks](/docs/analysis/images-and-tracks) | See the sample size, and each movie with its outlines and tracks |
+| [SQD: Populations](/docs/analysis/sqd) | Fractions and apparent D from the squared displacements, the main analysis |
 | [SQD: Jump distances](/docs/analysis/sqd-jump-distances) | The jump-distance distribution |
-| [Apparent Diffusion](/docs/analysis/apparent-diffusion) | One apparent D per track |
-| [HMM](/docs/analysis/hmm) | States, dwell times and switching |
+| [MSD](/docs/analysis/msd) | Mean squared displacement against lag: a cross-check |
+| [Apparent Diffusion](/docs/analysis/apparent-diffusion) | One apparent D per track, and the populations they form |
+| [HMM](/docs/analysis/hmm) | States with memory: state diagrams, the slow state and jump angles |
 | [Spatial Map](/docs/analysis/spatial-map) | Where in the cell each kind of motion happens |
 | [Kinetics](/docs/analysis/kinetics) | Populations over time after a trigger |
 | [Clustering](/docs/analysis/clustering) | Tracks grouped by the shape of their MSD |
-| [MSD](/docs/analysis/msd) | Mean squared displacement against lag |
-| [Figures](/docs/analysis/figures) | Export, significance and the Composer |
-| [Analysis options](/docs/analysis/options) | The standards a session starts from |
+| [Figures](/docs/analysis/figures) | Exporting charts, significance, and the Composer |
+| [Analysis options](/docs/analysis/options) | The standards a new analysis starts from |
+
+{/* TODO(Huy): the HMM and MSD pages will be revised in the next batch; check these one-line summaries then. */}
+
+## What it writes
+
+The analysis never changes your movies, tracks or outlines. It adds:
+
+| Written | Where | When |
+| --- | --- | --- |
+| `day_map.json` | Each condition's folder | **Open workspace**, where the grouping is new or changed |
+| `smtracker_design.json` | The folder you opened | **Use this design** on **What do the folders mean?** |
+| `.smtracker_warm/` | The folder you opened | When the project is read, so it opens faster next time |
+| `kinetics_additions.json` | Each condition's folder | A **Kinetics** run with addition times per sample or per culture |
+
+Section results are kept in SMTracker's own cache on your computer, not beside your data. Figures, tables and exported tracks go where you choose.

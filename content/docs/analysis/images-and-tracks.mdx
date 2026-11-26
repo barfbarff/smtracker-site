@@ -1,23 +1,95 @@
 ---
 title: "Images & tracks"
-description: "Sample size per replicate and movie, and a movie view with its outlines and tracks."
+description: "See how many cells and tracks each condition holds, and look at each movie with its outlines and tracks before you fit anything."
 ---
 
-**Sample size** gives, per replicate or movie: replicates, movies, frames, cells, cells without tracks, tracks, tracks per cell, per 1000 frames and per minute. Save it as CSV or export it as a figure. The movie view plays a movie with its outlines and tracks, colored by apparent D, by track or in one color.
+Look at your data before you fit it: how many cells and tracks each condition holds, and each movie with its outlines and tracks, played back over the recorded frames. Use it to spot a movie that tracked badly, a cell outlined wrongly, or a replicate with few tracks. Nothing on this page changes the analysis.
 
-**Background: Phase | Sum | Movie.** *Movie* plays the recorded frames under the tracks, each molecule's dot on its own frame. The frames come from the stack TrackMate was given, the frames u-track read, or the raw `.nd2` / `.stk` file over the range that was tracked. If a crop range is off by even one frame, the movie is refused with the reason.
+Click **Images & tracks** in the sidebar's **Data** group, beside QC. It needs no Run: it counts the cells as soon as you open it.
 
-**Your own channels.** The **+** beside the Background pills opens *Fluorescence channels*. Give each channel a name (it becomes a pill) and its folder, typed or chosen with **Browse…**. A movie's image is `<movie>.tif` in that folder, and an image of a different size from the movie is refused. Up to four channels are kept for the project, each with its own brightness, contrast and LUT.
+## Sample size
 
-**Display.** Brightness and Contrast sliders and the **LUT** (Grey, Green, Magenta, Cyan, Hot, Inferno) are set separately for each background. They change the display only, and the exported figure says so in its legend. The Movie background works like Fiji's Brightness & Contrast.
+The **Sample size** table gives, per condition, its replicates, movies, frames, cells, cells without tracks, tracks, and tracks per cell: in the median cell, then over all cells per 1000 frames and per minute. These are densities of detected tracks, not concentrations.
+
+Choose *By replicate* or *By movie* to list the condition's replicates or movies under it. A replicate marked *low yield* has unusually few tracks per cell, by the rule in [QC](/docs/analysis/qc#conditions). Click a row to open its first movie in the [movie view](#the-movie-view).
+
+- Click the save button to save the table as a CSV. The file always holds every condition, replicate and movie, whatever the table shows, with a few more columns.
+- Click the export button to export it as a figure, or add it to the Composer.
+
+Cells are all outlined cells, including those with no track, and each track counts once, in its cell. The line under the table names any movies that weren't counted, and why.
+
+## The movie view
+
+The view shows one movie with its cell outlines (yellow) and tracks. Click the movie button to choose another from a gallery of every movie in the condition, or step with the arrows beside it. The breadcrumb at the top switches to another condition.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Background** | The image under the tracks: *Phase*, *Sum*, *Movie*, or one of your own channels. | *Phase* |
+| **Colour by** | *Apparent D*: each track colored by its apparent D, slow blue to fast red, on one scale for the whole condition. *Per track*: every track its own color. *Single*: every track in one color. | *Apparent D* |
+| **Show** | Draws the cell **Outlines** and the **Tracks** over the image. Clear either to hide it. | both selected |
+
+Every background is offered, even where its image is missing; the image then says why.
+
+### Cells and tracks
+
+Click a cell in the image, or in the list beside it, to zoom to it. The arrows in the side card step from cell to cell, and **Whole field** goes back. In a zoomed cell, click a track to highlight it: it's drawn wider, and the list shows its frames, localizations and D. Click its row in the list again, or click away from any track, to clear the highlight. While **Mark foci** is selected, a click places a focus instead.
+
+With a track highlighted, <Ui variant="outline">Play this track</Ui> plays the movie from just before it starts, and <Ui variant="outline">Open in napari</Ui> opens the movie in napari at that track. Other pages open a track here the same way, for example **Show** on Apparent Diffusion.
+
+### Play the movie
+
+Click play, or press <Kbd>Space</Kbd>, to play the tracks in order of time, on any background. Each molecule leaves a trail of its last 20 frames. Choose ¼×, 1× or 4× the acquisition's frame rate, drag the time slider, or click stop to see every track at once again.
+
+## The recorded movie
+
+The *Movie* background plays the recorded frames under the tracks, each molecule's dot on its own frame. SMTracker takes the frames from the stack TrackMate was given, the frames u-track read, or the raw `.nd2` or `.stk` file over the range that was tracked, in that order.
+
+Before it uses a source, SMTracker checks that it has the frames tracked and that the spots are brightest on their own frame. A movie off by a frame is refused, and the image gives the reason for each source it tried. With fewer than 12 spots to check (away from the movie's first and last frames and the image's edge), the movie isn't checked, and the caption says so.
+
+On this background, **Black** and **White** replace brightness and contrast, as in Fiji:
 
 | Control | What it does |
-|---|---|
-| **Black**, **White** | The camera counts shown as black and white. |
+| --- | --- |
+| **Black**, **White** | The camera counts shown black and white. |
 | **Auto** | Leaves 0.35 % of the counts saturated, as Fiji's Auto does. |
 | **Reset** | Spans the lowest to the highest count. |
-| **Filters**: **Auto per frame** | Gives each frame its own range, so a bleaching movie stays visible. |
-| **Filters**: **Smooth at the spot's size** | Smooths over 1 px, as the detector sees the frame. |
-| **Filters**: **Subtract background** | *Running median* removes each pixel's median over 21 frames (haze goes; moving spots stay). *Rolling* removes the background larger than a spot, frame by frame. |
+| **Filters** › **Auto per frame (a bleaching movie stays visible)** | Gives each frame its own range, while Black and White are on Auto. |
+| **Filters** › **Smooth at the spot's size (… px)** | Smooths each frame over the spot's size, as the detector sees it. |
+| **Filters** › **Subtract background** | *Running median* removes each pixel's median over 21 frames: haze goes, moving spots stay. *Rolling* removes the background larger than a spot, frame by frame. *None* by default. |
 
-**Distances to foci.** Zoom to a cell, select **Mark foci** in the side card and click the points of interest (a focus of another protein, a pole); click a focus again to remove it, or press **Clear this cell**. **Distances…** measures every localization of the marked cells to its nearest focus and draws, per condition, the share at each distance (solid) beside chance (dashed): points spread evenly over the same outlines. The table's excess is each cell's median distance minus its chance median, averaged over cells; negative means closer to the foci than chance.
+Changing the smoothing or the background subtraction sets Black and White back to Auto.
+
+## Display and channels
+
+On the other backgrounds, **Brightness** and **Contrast** adjust the image, and the reset button returns to the automatic stretch. **LUT** colors every background, the movie included: *Grey*, *Green*, *Magenta*, *Cyan*, *Hot* or *Inferno*. Each background keeps its own settings. They change the display only, and the exported figure says so in its legend. SMTracker forgets them when you close the workspace.
+
+### Your own channels
+
+Click **+** beside **Background** to open **Fluorescence channels**. Give each channel a name, which becomes a pill, and its folder, typed or chosen with **Browse…**. A movie's image is `<movie>.tif` in that folder. A folder inside a condition's folder is looked up in every condition, as `phase/` and `sum/` are; a folder elsewhere serves every condition. You can add up to four channels, each with its own name.
+
+An image of a different size from the movie's phase image (or its sum image, without a phase image) is refused, because the tracks would be drawn in the wrong place. SMTracker remembers the channels for this project on this computer.
+
+{/* TODO(Huy): the dialog says "Saved with the project", but the channels (and marked foci) are kept in the user's settings on this computer, not in the project folder. Should the app write them into the project, or the dialog say so? */}
+
+## Export
+
+The export button at the top right exports what's shown as a figure: the zoomed cell, the outlines and tracks you show, and, while paused or playing, that frame.
+
+## Distances to foci
+
+Measure how close each condition's molecules come to points you mark, such as a focus of another protein or a pole.
+
+<Steps>
+<Step>
+### Mark the foci
+
+Zoom to a cell, then select **Mark foci (click in the zoomed cell)** in the side card. Click each focus in the cell. To remove one, click it again, or click <Ui variant="outline">Clear this cell</Ui> to remove them all.
+</Step>
+<Step>
+### Measure
+
+Click <Ui variant="outline">Distances…</Ui>. For each condition, SMTracker draws the share of localizations at each distance from their nearest focus (solid), beside chance (dashed): random points spread over the same outlines. Only conditions with marked foci are shown.
+</Step>
+</Steps>
+
+SMTracker remembers the foci for this project. In the table, the excess is each cell's median distance minus its chance median, as the mean ± SD over cells. Negative means closer to the foci than chance. With two or more replicates, **Over replicates** gives the mean and SD of the replicates.

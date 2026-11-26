@@ -8,10 +8,11 @@
 // visitor starts (turning a print over, leafing through the analyses) and the pictures' own life (the
 // recordings and demos play while in view, the stamps float). Under reduced motion everything is simply there.
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { BookOpen, ChartColumn, FileJson } from 'lucide-react';
+import { BookOpen, ChartColumn, FileJson, Route } from 'lucide-react';
 import { motionTokens } from '@/lib/motion-tokens';
 import { links } from '@/lib/shared';
 import { Logo } from '@/components/logo';
@@ -20,11 +21,12 @@ import { HeroCells } from '@/components/landing/hero-cells';
 import { CARD_H, CARD_LAYOUT, CARD_W, SOURCES, TracksPlay } from '@/components/landing/source-cards';
 import { StampFace } from '@/components/landing/stamp';
 import { AnalysisStack, OverviewCards, Polaroid, Recording } from '@/components/landing/chapter-analysis';
-import { OutlinesBack, PlaybackBack } from '@/components/landing/polaroid-back';
+import { OutlinesBack, TrackingBack } from '@/components/landing/polaroid-back';
 import { ANALYSES } from '@/components/landing/analysis-prints';
-// the recordings' first frames, shown before they play and instead of them under reduced motion
-import playbackPoster from '@/components/landing/assets/track-playback-poster.jpg';
+// the recording's first frame, shown before it plays and instead of it under reduced motion
 import outlinesPoster from '@/components/landing/assets/cell-outlines-poster.jpg';
+// the Track page after a TrackMate run on simulated movies (rendered off screen, 26 Nov 2026)
+import trackingApp from '@/components/landing/assets/tracking-app.webp';
 
 const navLinks = [
   { text: 'Docs', href: '/docs' },
@@ -155,7 +157,6 @@ export function Landing() {
   const [heroRef, heroShown] = useShown<HTMLElement>();
   const [stampsRef, stampsShown] = useShown<HTMLDivElement>();
   const [overviewRef, overviewShown] = useShown<HTMLDivElement>();
-  const [playbackRef, playbackShown] = useShown<HTMLDivElement>();
   const [outlinesRef, outlinesShown] = useShown<HTMLDivElement>();
   const [analysisRef, analysisShown] = useShown<HTMLDivElement>();
 
@@ -167,7 +168,7 @@ export function Landing() {
   }, [stampsShown]);
 
   // the two prints: each turns over on its own
-  const [playbackFlipped, setPlaybackFlipped] = useState(false);
+  const [trackingFlipped, setTrackingFlipped] = useState(false);
   const [outlinesFlipped, setOutlinesFlipped] = useState(false);
 
   // "Built-in analysis": which print is on top. While the stack is in view it turns slowly on its own, until someone
@@ -338,8 +339,8 @@ export function Landing() {
           <Reveal className="flex flex-col gap-3">
             <h2 className={h2Class}>From start to finish</h2>
             <p className={`mt-1 ${bodyClass} md:max-w-[60ch]`}>
-              SMTracker has your back for the whole pipeline! From playing your tracks back over the movie, to correcting
-              the cell outlines, to analyzing the result.
+              SMTracker has your back for the whole pipeline! From tracking your movies with TrackMate or u-track, to
+              correcting the cell outlines, to analyzing the result.
             </p>
           </Reveal>
           <div ref={overviewRef}>
@@ -350,39 +351,45 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ---------- Track playback: a print of the real app ---------- */}
+      {/* ---------- Tracking built in: a print of the real preparation window ---------- */}
       <Section
-        id="playback"
+        id="tracking"
         flip
-        pictureRef={playbackRef}
         words={
-          <Words title="Track playback">
-            Watch your tracks play back over the movie they came from, and see at a glance whether each one followed the
-            right spot. Want a closer look? Open the selected tracks or movies in napari, without loading the folder
-            again.
+          <Words
+            title="Tracking built in"
+            link={
+              <Link href="/docs/tracking" className={linkWithIcon}>
+                <Route aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
+                <span className={underline}>How tracking works</span>
+              </Link>
+            }
+          >
+            Crop and calibrate your raw .nd2 or .stk movies, then track them with TrackMate or u-track without leaving
+            SMTracker. One condition at a time, or many folders overnight.
           </Words>
         }
         picture={
           <Polaroid
             place="relative mx-auto"
-            width="w-[min(88%,460px)]"
+            width="w-[min(88%,500px)]"
             reduce={reduce}
             landed
             caption={
               <>
-                Real data<span className="hidden @[17rem]:inline"> · SMTracker 3</span>
-                <span className="hidden @lg:inline"> on macOS</span>
+                Simulated data<span className="hidden @[17rem]:inline"> · a TrackMate run</span>
               </>
             }
-            back={<PlaybackBack />}
-            flipped={playbackFlipped}
-            onFlip={setPlaybackFlipped}
+            back={<TrackingBack />}
+            backLabel="Also in tracking"
+            flipped={trackingFlipped}
+            onFlip={setTrackingFlipped}
           >
-            <Recording
-              src="track-playback.mp4"
-              poster={playbackPoster}
-              label="SMTracker 3 playing tracks back over a real phase-contrast movie: a curved chain of cells with their outlines, where single molecules appear, leave short tracks and disappear, above the playback controls"
-              playing={playbackShown && !reduce && !playbackFlipped}
+            <Image
+              src={trackingApp}
+              alt="SMTracker 3's Track page after a TrackMate run on simulated movies: the tracker switch between TrackMate (Fiji) and u-track (MATLAB), the Fiji it found, two conditions tracked, and the run's summary and log"
+              sizes="(min-width: 768px) 500px, 88vw"
+              className="block h-auto w-full"
             />
           </Polaroid>
         }

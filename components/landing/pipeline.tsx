@@ -59,7 +59,7 @@ export function PlaybackDemo({ playing, scrubber = false }: { playing: boolean; 
   const head = useTransform(t, [0, 0.8], ['0%', '100%'], clamp);
   return (
     <div className="flex size-full flex-col gap-[3%]">
-      <svg viewBox={`0 0 ${FIELD.w} ${FIELD.h}`} className="sm-redraw min-h-0 w-full flex-1" role="img" aria-label="Sample tracks playing back over three cells">
+      <svg viewBox={`0 0 ${FIELD.w} ${FIELD.h}`} className="sm-redraw min-h-0 w-full flex-1" role="img" aria-label="Sample tracks drawn as they are linked in three cells">
         {cells.map((c, i) => (
           <rect
             key={i}

@@ -7,10 +7,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionValue, useSpring, type Transition } from 'motion/react';
 import { motionTokens } from '@/lib/motion-tokens';
-import { FlipButton, OutlinesBack, PlaybackBack } from '@/components/landing/polaroid-back';
-// a real recording of SMTracker 3's track playback (macOS): its first frame, shown before the video plays
-// and instead of it under reduced motion. The video itself is public/media/track-playback.mp4.
-import playbackPoster from '@/components/landing/assets/track-playback-poster.jpg';
+import { FlipButton } from '@/components/landing/polaroid-back';
 // a real recording of SMTracker 3's outline editing (macOS): the tool row, the image and the status line, cut from
 // one screen recording and stacked; its first frame. The video itself is public/media/cell-outlines.mp4.
 import outlinesPoster from '@/components/landing/assets/cell-outlines-poster.jpg';
@@ -21,7 +18,7 @@ import { ANALYSES, PrintBackPicture, PrintPicture, StackControls } from '@/compo
 
 /**
  * A screen recording of SMTracker 3, muted and looping (its last half second dissolves into its first, so the
- * loop has no jump): track playback (10 s) and outline editing (12 s). It loads only when first needed, plays
+ * loop has no jump): outline editing (12 s). It loads only when first needed, plays
  * only while its print is in view, and under reduced motion stays on its first frame.
  */
 export function Recording({
@@ -94,7 +91,7 @@ export function Polaroid({
   onFlip,
   tilt = -2,
   landscape = false,
-  backLabel = 'Also in playback',
+  backLabel = 'Also in the app',
   width,
   place = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
 }: {
@@ -425,8 +422,8 @@ export function AnalysisStack({
 
 const OVERVIEW = [
   {
-    title: 'Track playback',
-    line: 'Play your tracks back over the movie, or open them in napari without loading them again.',
+    title: 'Tracking',
+    line: 'Crop and calibrate your movies, then track them with TrackMate or u-track.',
   },
   {
     title: 'Cell outlines',

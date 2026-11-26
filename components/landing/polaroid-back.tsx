@@ -1,28 +1,28 @@
 'use client';
 
 // The backs of the two prints of the real app (components/landing/chapter-analysis.tsx): turn a print over and
-// it shows the whole window, with four numbered notes on what else it does. Track playback: the playback window.
-// Outlines: the outline editor.
+// it shows the whole window, with four numbered notes on what else it does. Tracking: the preparation window's
+// Detect & link page. Outlines: the outline editor.
 //
 // To remove them: set PRINT_BACKS to false in chapter-analysis.tsx (both prints go back to one side), or delete
-// this file, its screenshots (assets/track-playback-app.webp, assets/edit-outlines-app.webp) and the lines marked
+// this file, its screenshots (assets/detect-link-app.webp, assets/edit-outlines-app.webp) and the lines marked
 // "the back".
 
 import Image from 'next/image';
 import { forwardRef } from 'react';
-// screenshots of SMTracker 3 (macOS, light), both of the Glucose condition: the playback window, one movie; the
-// outline editor, one field
-import playbackApp from '@/components/landing/assets/track-playback-app.webp';
+// screenshots of SMTracker 3 (light): the preparation window's Detect & link page on simulated movies (Windows,
+// rendered off screen, 26 Nov 2026), and the outline editor, one field (macOS)
+import detectApp from '@/components/landing/assets/detect-link-app.webp';
 import editorApp from '@/components/landing/assets/edit-outlines-app.webp';
 
 type Note = { x: number; y: number; title: string; line: string };
 
-/** where each note's pin sits, in % of the screenshot (1904 × 1564): in the space beside its control, never on its words */
-const PLAYBACK_NOTES: Note[] = [
-  { x: 37, y: 7.7, title: 'Movie', line: 'Step through every movie, or pick one from the grid.' },
-  { x: 74.6, y: 7.7, title: 'Background', line: 'Phase contrast, the summed image, or the movie.' },
-  { x: 23.1, y: 16.8, title: 'Colour by', line: 'Apparent\u00a0D, a color per track, or one color.' },
-  { x: 81.9, y: 62.8, title: 'Cells', line: 'Tracks and median\u00a0D per cell; click one to zoom in.' },
+/** where each note's pin sits, in % of the screenshot (2000 × 940): in the space beside its control, never on its words */
+const TRACKING_NOTES: Note[] = [
+  { x: 76, y: 10.1, title: 'Tracker', line: 'TrackMate in Fiji, or u-track in MATLAB, run for you.' },
+  { x: 42.5, y: 30.6, title: 'Threshold', line: 'Measured from each movie\u2019s own noise.' },
+  { x: 62, y: 26.2, title: 'Linking radius', line: 'With the fastest\u00a0D it can still measure.' },
+  { x: 6.25, y: 35, title: 'Batch', line: 'Many folders overnight, with a report.' },
 ];
 
 /** the outline editor's notes, in % of its screenshot (2000 × 1160), each pin just after its control's words */
@@ -85,7 +85,7 @@ export const FlipButton = forwardRef<HTMLButtonElement, { children: React.ReactN
 );
 
 /** a back's content: the screenshot with its numbered pins, and the notes underneath */
-function PrintBack({ image, alt, notes }: { image: typeof playbackApp; alt: string; notes: Note[] }) {
+function PrintBack({ image, alt, notes }: { image: typeof detectApp; alt: string; notes: Note[] }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* never shrunk: the notes take only the room left under it, so the pins stay on their controls */}
@@ -115,13 +115,13 @@ function PrintBack({ image, alt, notes }: { image: typeof playbackApp; alt: stri
   );
 }
 
-/** the back of the playback print */
-export function PlaybackBack() {
+/** the back of the tracking print */
+export function TrackingBack() {
   return (
     <PrintBack
-      image={playbackApp}
-      notes={PLAYBACK_NOTES}
-      alt="SMTracker 3's track playback window: a movie picker, background and color options above the movie with its cell outlines and tracks, and a table of the movie's cells beside it"
+      image={detectApp}
+      notes={TRACKING_NOTES}
+      alt="SMTracker 3's Detect & link page on simulated movies: the tracker switch between TrackMate (Fiji) and u-track (MATLAB), a row per condition with its measured detection threshold, spot radius, linking radius and frame gap, and a chart of how the threshold stands against one movie's noise"
     />
   );
 }

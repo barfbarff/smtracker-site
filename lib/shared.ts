@@ -10,7 +10,7 @@ export const links = {
   source: '#', // [SOURCE URL] e.g. the GitLab repository
   download: '#', // [DOWNLOAD URL]
   cite: '#',
-  lab: '#', // [LAB URL] the AG Graumann page at Synmikro
+  lab: 'https://www.uni-marburg.de/en/fb15/researchgroups/ag-graumann', // the AG Graumann page at Synmikro
 };
 
 const getContentUrl = createGetUrl(docsContentRoute);

@@ -65,4 +65,4 @@ QC checks this for you. Its **Is the comparison fair?** table shows, per conditi
 
 See [QC](/docs/analysis/qc).
 
-{/* TODO(Huy): what should a user do when QC shows an outline offset of half a pixel or more? */}
+If QC shows half a pixel or more, the outline files were made for the other kind of tracker and don't record their origin: typically outlines from Oufti or another MATLAB tool with TrackMate tracks. Outline the cells again in [Cell outlines](/docs/cell-outlines), whose files record their origin, or track the movies with the tracker the outlines were made for. Editing the old files in SMTracker's editor doesn't help, because the editor keeps the origin it read.

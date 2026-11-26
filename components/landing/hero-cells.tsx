@@ -2,9 +2,10 @@
 
 // The title page's drawing: three cells as a camera sees them. A fixed grid of camera pixels (not drawn;
 // the ground stays the page's own), three rod-shaped cells drifting very slightly across it, and in each
-// cell a few molecules drawn as small spots of lit pixels. Slow molecules hover near one place, like the
-// bound population, and one fast molecule per cell roams the cell. Each leaves a short track that fades:
-// a tight knot for the slow ones, an open path for the fast one.
+// cell two molecules drawn as small spots of lit pixels (asked 26 Nov 2026: two per cell, as sparse as a real
+// single-molecule movie). The slow one hovers near one place, like the bound population, and the fast one
+// roams the cell. Each leaves a short track that fades: a tight knot for the slow one, an open path for the
+// fast one.
 // Pixels are the camera data, the smooth outline is the cell SMTracker found, the line is its track.
 //
 // Canvas, drawn only in the browser (the server renders an empty canvas, so nothing can mismatch).
@@ -108,7 +109,7 @@ export function HeroCells({ paused = false }: { paused?: boolean }) {
 
     let colors = palette(canvasRef.current);
     let px = 8; // css pixels per camera pixel
-    const mols: Mol[] = CELLS.flatMap((_, i) => [spawn(i, false), spawn(i, false), spawn(i, false), spawn(i, true)]);
+    const mols: Mol[] = CELLS.flatMap((_, i) => [spawn(i, false), spawn(i, true)]);
     const light = new Float32Array(COLS * ROWS);
     let t = 0; // seconds of movie
 

@@ -90,7 +90,7 @@ Replacing deletes nothing first. If a replacing run stops or fails part way, the
 
 **Movies at once** is the same number on Batch, and SMTracker remembers it. It's never more than the number of movies. Raise it to finish sooner, if the computer has memory to spare. Each u-track session reads its frames from disk, so on a spinning hard disk more sessions don't help. In that case, set a **u-track work folder** on an SSD in Options: u-track then works there and moves each movie's results into its condition when it's done.
 
-{/* TODO(Huy): the docs said each u-track session needs about 1 GB of memory; the code only has "~0.5-1.5 GB" in a comment. Which number should the docs give? */}
+Each u-track session holds its own MATLAB, which takes up to about 1.5 GB of memory.
 
 ## Stop a run
 

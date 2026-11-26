@@ -67,10 +67,11 @@ function startPoint(c: Cell): [number, number] {
 const SIGMA_PX = { slow: 0.32, fast: 1.35 };
 // fast molecules leave the field of focus sooner, so their tracks are shorter
 const STEPS = { slow: 34, fast: 16 };
+// two molecules per cell, one slow and one fast (asked 26 Nov 2026), as in the title's drawing
 const PLAN: boolean[][] = [
-  [true, false, false, true],
-  [false, true, false, false],
-  [true, false, false, false],
+  [true, false],
+  [false, true],
+  [true, false],
 ];
 
 export const tracks: Track[] = PLAN.flatMap((kinds, ci) =>

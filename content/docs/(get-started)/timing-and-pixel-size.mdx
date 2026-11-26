@@ -12,7 +12,7 @@ Two numbers set the scale of every diffusion coefficient:
 
 A 10 % error in the pixel size moves every D by about 21 %. SMTracker never guesses either number.
 
-{/* TODO(Huy): the old page said "the fractions don't change" when the pixel size is wrong. The fits hold a localization error in nm, so is that exactly true, or only nearly? */}
+A wrong pixel size leaves the fractions exactly as they are with the standard settings, because every squared jump is off by the same factor. With **Localisation error** set to *Per spot*, the fractions shift a little too, because the calibration of each spot's error is in nm. A wrong frame interval moves only the D values, with any setting.
 
 ## The frame interval comes from the camera
 

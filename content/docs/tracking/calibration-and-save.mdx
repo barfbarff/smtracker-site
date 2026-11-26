@@ -50,9 +50,7 @@ If every condition was imaged the same way, fill in the first row and click <Ui 
 
 The emission and NA are optional for TrackMate, but without them SMTracker can't work out a spot radius, and you type one on [Detect & link](/docs/tracking/detect-and-link) instead. u-track needs them too, unless you type a **PSF sigma** on its card.
 
-A wrong pixel size or frame interval moves every D, but not the fractions.
-
-{/* TODO(Huy): "moves every D, but not the fractions" is only stated in code comments, and only for the frame interval. Is it right for the pixel size too? */}
+A wrong pixel size or frame interval moves every D, but not the fractions. The one exception is the pixel size with **Localisation error** set to *Per spot*: the fractions then shift a little too, because each spot's error is calibrated in nm.
 
 When you open a folder you've saved before, its rows start from the saved values. A field the save left empty, such as the NA, is then filled from the first movie, so the row may read *unsaved changes* straight away: save again. SMTracker also checks the saved frame interval against the first movie, where the movie records its timing. If they differ by more than 1 %, the note says by how much every D would be off.
 

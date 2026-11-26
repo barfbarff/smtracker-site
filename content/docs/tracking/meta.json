@@ -1,0 +1,13 @@
+{
+  "title": "Image preparation + Tracking",
+  "icon": "Route",
+  "pages": [
+    "index",
+    "movies-and-crop",
+    "calibration-and-save",
+    "detect-and-link",
+    "track",
+    "batch",
+    "options"
+  ]
+}

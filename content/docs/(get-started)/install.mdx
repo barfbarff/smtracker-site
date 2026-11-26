@@ -1,0 +1,155 @@
+---
+title: Install and open SMTracker
+description: Get SMTracker running on Windows or macOS, check that it works, and connect Fiji or MATLAB for tracking.
+---
+
+SMTracker runs on Windows and macOS. It comes as a ready-to-run folder: there's no installer, and you don't need Python. The only extra programs you need are the ones for tracking, Fiji or MATLAB.
+
+<Callout type="note" title="On Linux?">
+There's no packaged version for Linux yet. Run SMTracker from its source code instead: see [Run from source](#run-from-source) at the end of this page.
+</Callout>
+
+## Get SMTracker running
+
+SMTracker comes as a zip with everything inside, so getting it running takes three steps.
+
+{/* TODO(Huy): say where new users get SMTracker. Options to choose from: the Download button on this site
+    (a zip), a lab network drive, or a colleague's USB stick. Add the link or path here, and the size of the zip. */}
+
+<Tabs items={['Windows', 'macOS']}>
+<Tab value="Windows">
+<Steps>
+<Step>
+### Unzip it to a short path
+
+Unzip the SMTracker folder to a short path on your own disk, for example `C:\SMTracker`.
+
+Windows limits a file's full path to 260 characters, and the longest file inside SMTracker already uses about 140 of them. Deep folders such as `C:\Users\you\Downloads\lab\software\…` can push it over the limit, and the app then fails to start.
+</Step>
+<Step>
+### Start it
+
+Open the folder and double-click `smtracker.exe`. A console window opens beside the app and shows what SMTracker is doing. Leave it open: closing it closes SMTracker.
+
+The first time, Windows may show **Windows protected your PC**. SMTracker isn't signed with a paid certificate, so Windows doesn't recognize it yet. Click **More info**, then **Run anyway**. You only need to do this once.
+</Step>
+<Step>
+### Check that it opened
+
+The first window asks **Where would you like to start?** When you see it, SMTracker is running. To go on, follow [Your first project](/docs/first-project).
+</Step>
+</Steps>
+</Tab>
+<Tab value="macOS">
+<Steps>
+<Step>
+### Unzip it
+
+Unzip the SMTracker folder into your home folder, for example `~/SMTracker`.
+</Step>
+<Step>
+### Start it
+
+Open the folder and double-click `smtracker`. A Terminal window opens beside the app and shows what SMTracker is doing. Leave it open: closing it closes SMTracker.
+
+The first time, macOS may say it can't check SMTracker for malicious software, because SMTracker isn't signed with a paid Apple certificate. Click **Done**, open **System Settings**, then **Privacy & Security**, scroll down to the message about `smtracker` and click **Open Anyway**. You only need to do this once.
+
+If macOS still refuses, or asks again for parts of the program, remove the download mark from the whole folder once: open **Terminal**, type `xattr -cr ~/SMTracker` (with your folder's path), press <Kbd>Return</Kbd>, and start SMTracker again.
+</Step>
+<Step>
+### Check that it opened
+
+The first window asks **Where would you like to start?** When you see it, SMTracker is running. To go on, follow [Your first project](/docs/first-project).
+</Step>
+</Steps>
+</Tab>
+</Tabs>
+
+### Where SMTracker keeps its files
+
+Nothing gets installed into the system. SMTracker keeps:
+
+| What | Windows | macOS |
+| --- | --- | --- |
+| Your options, the Fiji, MATLAB and u-track folders it found, saved folder designs, presets, trained segmentation models, and a log | `%APPDATA%\SMTracker` | `~/.config/smtracker` |
+| Caches, so projects reopen quickly, and the list of recent projects | `%LOCALAPPDATA%\smtracker` | `~/Library/Caches/smtracker` |
+| Everything it makes for a project: ranges, projections, tracks, outlines, groupings and caches | In each condition folder, beside your data ([What SMTracker writes](/docs/written)) | The same |
+
+To remove SMTracker, delete its folder. To also remove your settings and caches, delete the two folders in the table. Deleting the caches also clears the list of recent projects.
+
+### If something seems wrong
+
+The first window has <Ui variant="outline">Report a problem…</Ui> at the bottom left. It packs the log, the version and your system details into one zip that you can send to whoever maintains SMTracker in your lab.
+
+You can also run a quick self-test:
+
+<Steps>
+<Step>
+### Open a terminal
+
+On Windows, click **Start**, type `cmd` and press <Kbd>Enter</Kbd>. On a Mac, open **Terminal** from Applications › Utilities.
+</Step>
+<Step>
+### Run the self-test
+
+Go to the SMTracker folder: type `cd C:\SMTracker` on Windows or `cd ~/SMTracker` on a Mac, and press <Kbd>Enter</Kbd>. Then type `smtracker.exe --selftest` on Windows or `./smtracker --selftest` on a Mac, and press <Kbd>Enter</Kbd>. The output ends with `analysis self-test: OK` when all is well.
+</Step>
+</Steps>
+
+## Connect a tracker
+
+You only need this if you track your movies in SMTracker. If you already have tracks, skip to [Automatic cell outlines](#automatic-cell-outlines): the analysis reads u-track and TrackMate output directly, and other trackers' tables as described in [Tracks from other tools](/docs/other-tools).
+
+SMTracker doesn't include a tracker. It runs TrackMate or u-track in the background, and you choose which with **Tracker** on Detect & link, Track or Batch.
+
+<Tabs items={['TrackMate (Fiji)', 'u-track (MATLAB)']}>
+<Tab value="TrackMate (Fiji)">
+TrackMate is free and comes with Fiji.
+
+1. Download Fiji from [the Fiji download page](https://imagej.net/software/fiji/downloads) and unzip it, for example to `C:\Fiji`.
+2. In SMTracker's preparation window, click **Track** in the sidebar. The **Fiji** card at the top says whether SMTracker found Fiji in the usual folders. If it didn't, click <Ui variant="outline">Choose Fiji folder…</Ui> and choose the Fiji folder.
+
+SMTracker remembers the folder. Both the current Fiji (which starts with `fiji-windows-x64.exe`) and older versions (with `ImageJ-win64.exe`) work.
+</Tab>
+<Tab value="u-track (MATLAB)">
+u-track needs MATLAB with its Statistics, Optimization and Image Processing toolboxes, plus the u-track package from the Danuser lab.
+
+1. Install MATLAB with those toolboxes, and download and unzip u-track.
+2. In SMTracker's preparation window, choose *u-track (MATLAB)* in **Tracker**, then click **Track** in the sidebar. SMTracker starts looking for MATLAB and u-track once u-track is the chosen tracker, and the **MATLAB and u-track** card says what it found. If it found nothing, click <Ui variant="outline">Choose matlab.exe…</Ui> and choose `matlab.exe` in a MATLAB release's `bin` folder (on a Mac, the `matlab` program in the MATLAB app's `bin` folder), then <Ui variant="outline">Choose u-track folder…</Ui> and choose the folder that holds `software/@UTrackPackage`.
+
+SMTracker remembers what you choose. The first u-track run starts MATLAB once to check the toolboxes, which takes about 30 seconds.
+</Tab>
+</Tabs>
+
+With **Movies at once**, SMTracker can track up to four movies side by side, with either tracker. With u-track, each one is a MATLAB session of its own, with its own share of memory.
+
+{/* TODO(Huy): the docs said each u-track session needs about 1 GB of memory; the code only has "~0.5-1.5 GB" in a comment. Which number should the docs give? */}
+
+<Callout type="check">
+Track every condition you want to compare with the same tracker. On the same movies, TrackMate and u-track differ by about 1 percentage point in the fractions and by 10 to 18 % in D.
+</Callout>
+
+## Automatic cell outlines
+
+The packaged app can't run the Omnipose models for automatic cell outlines: they need large libraries the packaged app leaves out. The **Segment** page then says "This build cannot run the segmentation models". You can still use the classical segmenter on **Segment**, which is fast but weaker on some data, and draw and correct outlines by hand in **Edit outlines**. To use the Omnipose models, run SMTracker from source with Omnipose installed in the same environment.
+
+{/* TODO(Huy): should this page give the steps for installing Omnipose into a source environment (scripts/setup_segmentation_env.py isn't in the shipped source zip)? */}
+
+A graphics card (GPU) speeds the Omnipose models up a lot. This needs Omnipose with GPU support, so it only applies when you run from source.
+
+## Update SMTracker
+
+Unzip the new version into a new folder, for example `C:\SMTracker-new` or `~/SMTracker-new`, and start it from there. Your settings live outside the program folder (`%APPDATA%\SMTracker` on Windows, `~/.config/smtracker` on a Mac), so the new version finds them. Once it runs well, delete the old folder.
+
+## Run from source
+
+On Linux, or to use the Omnipose models, run SMTracker from its source code. You need Python 3.10 or newer and the SMTracker source: every packaged copy has it as a zip in its `source` folder. Unzip it, open a terminal in the unzipped folder, and run:
+
+```bash title="Terminal (macOS or Linux)"
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[ui,raw]"
+smtracker
+```
+
+On Windows, create the environment with `py -m venv .venv` and activate it with `.venv\Scripts\activate`; the other two commands are the same. The `raw` part adds the readers for `.nd2` and `.stk` movies, and `ui` the rest of the interface.

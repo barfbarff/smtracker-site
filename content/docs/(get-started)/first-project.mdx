@@ -1,0 +1,162 @@
+---
+title: Your first project
+description: One walk through all three stages, from a folder of raw movies to the fractions of each condition. Plan for an afternoon, most of it waiting for tracking.
+---
+
+Take one project from raw movies to fractions, through all three stages, to see how they fit together. Each step links to the chapter that explains it. You don't need those chapters first: the defaults give sensible results on a first run.
+
+## Before you start
+
+You'll need:
+
+- **SMTracker running**, and Fiji or MATLAB connected ([Install and open SMTracker](/docs/install)).
+- **At least two conditions** to compare. A *condition* is one folder of movies (`.nd2` or `.stk`) with their phase-contrast snapshots (`.tif`) inside. [Organizing your folders](/docs/folders) shows the layouts SMTracker recognizes.
+- **Three or more replicates** per condition, if you want error bars you can trust. A *replicate* is an independent culture, and the error bars are computed over replicates. Fewer still work, but QC flags them.
+- **The pixel size** of your camera setup, in nm. SMTracker never reads it from the `.nd2`, because the value stored there can be wrong.
+
+<Files caption="A small project: two conditions, each with movies and snapshots side by side.">
+  <Folder name="PdhA">
+    <Folder name="PdhA_glucose" note="a condition">
+      <File name="series001.nd2" note="a movie" />
+      <File name="series001.tif" note="its phase snapshot" />
+      <File name="…" />
+    </Folder>
+    <Folder name="PdhA_malate" note="a condition">
+      <File name="…" />
+    </Folder>
+  </Folder>
+</Files>
+
+The preparation window never moves, renames or changes your movies. Everything SMTracker creates goes into new files and folders beside them ([What SMTracker writes](/docs/written)).
+
+## Part 1: Prepare and track
+
+First, turn the raw movies into tracks. Work through the pages from top to bottom. Each of the first three ends with a button naming the next page, which lights up when the page's work is done.
+
+<Steps>
+<Step>
+### Open the folder
+
+In the first window, click the **Image preparation + Tracking** card. Click <Ui variant="outline">Open folder…</Ui> and choose the folder above your conditions (`PdhA` in the example). The sidebar lists the pages and, below them, your conditions with their progress.
+</Step>
+<Step>
+### Crop the movies
+
+On **Movies & crop**, wait until the **Reading movies** card finishes, then click <Ui variant="outline">Propose for all conditions</Ui>. Each movie gets a *range*: the frames it keeps for tracking. SMTracker leaves out the early frames, where the field is still bleaching down to single molecules.
+
+Click through a few movies. The kept range should start where the frame mean has flattened out. If one doesn't, drag the range's edges on the chart. Nothing is written yet.
+
+For the start rules and how to fix one movie, see [Movies & crop](/docs/tracking/movies-and-crop).
+</Step>
+<Step>
+### Enter the calibration and save
+
+On **Calibration & save**, each condition has one row. Type the **Pixel size** in nm; the **Frame interval** comes from the movie file. Choose your **Fluorophore** from the list: one from SMTracker's list fills in its emission, which sets the expected spot size. If every condition was imaged the same way, fill in the first row and click <Ui variant="outline">Copy first row to all</Ui>.
+
+Then click <Ui>Save all</Ui>. This writes the ranges, the calibration and a projection of each movie (in `sum/`, used later for the outlines).
+
+<Callout type="check">
+Every D scales with the square of the pixel size, and inversely with the frame interval, so a wrong value moves every D. Tracking always uses what was saved, so save again after any change.
+</Callout>
+
+For each field and the pixel-size helper, see [Calibration & save](/docs/tracking/calibration-and-save).
+</Step>
+<Step>
+### Set up detection and linking
+
+On **Detect & link**, choose *TrackMate (Fiji)* or *u-track (MATLAB)* in **Tracker**. For TrackMate, click <Ui>Measure all thresholds</Ui>: SMTracker measures each movie's noise and sets the detection threshold from it.
+
+The **Linking radius** is the farthest a molecule may move between two frames, in px. It defaults to 5 px and caps the fastest D you can measure; the page shows that D under the table. Leave it, and the other defaults, for a first run.
+
+For what each setting does and when to change it, see [Detect & link](/docs/tracking/detect-and-link).
+</Step>
+<Step>
+### Track
+
+On **Track**, check that the card at the top found Fiji (or MATLAB and u-track). SMTracker looks for them on its own; if it didn't find them, choose them there. Then click <Ui>Track all ready conditions</Ui>.
+
+This is the slow part: TrackMate needs about 30 seconds per movie. To track several movies side by side, choose a higher number in **Movies at once**. You can use other programs meanwhile; SMTracker tells you when the run ends.
+
+For the tracker card, stopping a run and what it writes, see [Track](/docs/tracking/track). To track many folders overnight, see [Batch](/docs/tracking/batch).
+</Step>
+</Steps>
+
+## Part 2: Outline the cells
+
+Next, outline the cells, because the analysis only keeps tracks that lie inside an outline. Click <Ui variant="outline">Back to menu</Ui>, click the **Cell outlines: Segmentation + Mesh editor** card, then click <Ui>Open folder…</Ui> and choose the same folder.
+
+<Steps>
+<Step>
+### Segment
+
+On **Segment**, each condition has a row with a **Model**. In the packaged app, choose *Classical, sum image (no GPU, no training)*: the packaged app can't run the Omnipose models, and the classical segmenter outlines the cells on the sum image saved on Calibration & save ([Install and open SMTracker](/docs/install#automatic-cell-outlines)). If you run SMTracker from source with Omnipose installed, keep the default, *bact_phase_omni*, which reads the phase snapshots and suits most data.
+
+Click <Ui variant="outline">Segment</Ui> on a row, or <Ui>Segment all ready</Ui> to do every condition.
+
+For the models and their settings, see [Segment](/docs/cell-outlines/segment).
+</Step>
+<Step>
+### Check and correct the outlines
+
+Click **Edit outlines** in the sidebar and choose a condition. Step through the *fields*, the imaged positions, with the arrow keys, and fix what the model got wrong: <Kbd>X</Kbd> splits two cells drawn as one, <Kbd>M</Kbd> merges a cell cut in two, <Kbd>D</Kbd> draws a missing one, and <Kbd>Del</Kbd> removes a wrong one. <Kbd>Ctrl+S</Kbd> saves the field on screen; click <Ui variant="outline">Save all</Ui> to save every field you've edited.
+
+<Callout type="check">
+The analysis keeps only tracks that lie inside an outline. Outlines drawn too tight drop the free molecules near the membrane and raise the slow fraction, so correct them before you analyze.
+</Callout>
+
+For every tool and shortcut, see [Edit outlines](/docs/cell-outlines/edit-outlines).
+</Step>
+</Steps>
+
+## Part 3: Analyze
+
+Last, compare the conditions. Click <Ui variant="outline">Back to menu</Ui> and click the **Analysis** card.
+
+<Steps>
+<Step>
+### Open the project
+
+Click <Ui>Choose folder…</Ui> (or drop the folder onto the window) and choose the folder above your conditions again.
+
+If your movies sit two or more folders below the one you opened, **What do the folders mean?** asks you to name each level: a factor (such as protein or medium), a replicate, or a level to skip. **Confirm project** then shows, for each condition, the pixel size, the frame interval, and the movies, cells and tracks kept in each replicate. Check that the replicates are grouped the way you expect, then click <Ui>Open workspace</Ui>.
+
+For each page of opening a project, see [Opening a project](/docs/analysis/opening-a-project) and [How replicates are counted](/docs/replicates).
+</Step>
+<Step>
+### Run QC before anything else
+
+Click **QC** in the sidebar, then <Ui>Run analysis</Ui>. The **Is the comparison fair?** table puts your conditions side by side on what can bias a fraction: the tracker, the replicates, the frame interval, track length, yield, how many tracks lie inside cells and near their edges, how well tracks and outlines line up, and how crowded the movies are.
+
+An orange value means "look at this", not "this is wrong". Hover over the column heading to read the reason, and decide whether it matters for your comparison.
+
+For every column, see [QC](/docs/analysis/qc).
+</Step>
+<Step>
+### Fit the populations
+
+Click **SQD** in the sidebar, then the Compute mark at the top of the right rail (its hover reads *Run SQD…*). The **Configure SQD** dialog opens; leave the defaults and click <Ui>Run</Ui>.
+
+SMTracker fits the distribution of squared displacements and recommends a number of populations for each condition, by BIC. If an extra population isn't plausible, for example one sitting at the localization floor, choose another number on the **Fits** tab of the dialog and run again.
+
+The result is a bubble chart: one bubble per population and condition, at its D, sized by its fraction, with error bars over your replicates.
+
+For the settings and how to read the chart, see [SQD](/docs/analysis/sqd) and [Reading the numbers](/docs/reference/reading-the-numbers).
+</Step>
+<Step>
+### Export a figure
+
+Each chart has an export icon (its hover reads *Export figure*). Click it to save the chart as a publication figure, with its source data beside it. To combine several charts into one figure, use the Composer.
+
+When you share a result, report the fractions, and give the frame interval, the pixel size and the linking radius with any D. Treat each D as a bound, not a precise coefficient ([Reading the numbers](/docs/reference/reading-the-numbers)).
+
+For the export options and the Composer, see [Figures](/docs/analysis/figures).
+</Step>
+</Steps>
+
+## Next
+
+Your first project is done. From here:
+
+- If something was refused or a movie was left out, see [When something is refused](/docs/when-something-is-refused).
+- If your folders look different from the example, see [Organizing your folders](/docs/folders) and [How replicates are counted](/docs/replicates).
+- If you tracked your movies in another program, see [Tracks from other tools](/docs/other-tools).

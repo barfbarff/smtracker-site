@@ -1,0 +1,41 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "components/landing/opening.tsx"
+        ],
+        "createdAt": "2026-11-15T09:07:40.903Z",
+        "reason": "Claude triage: the flagged element is a <kbd> keycap (neutral border-fd-border, thicker bottom edge imitates a physical key), not an accent border on a card"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "app/global.css"
+        ],
+        "createdAt": "2026-11-15T09:07:40.918Z",
+        "reason": "Claude triage: the 3px bar marks the active page in the docs sidebar, as the SMTracker design system specifies (Emission for the active page); it is a nav indicator, not a card accent"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-11-17T17:29:54.546Z",
+        "reason": "user confirmed: chose Inter for body text (tried DM Sans, switched back), approved self-hosting official Inter for ss07/ss08; identity lives in the Allo titles and illustrations"
+      },
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "components/docs.tsx"
+        ],
+        "createdAt": "2026-11-25T10:23:48.631Z",
+        "reason": "Claude triage: Kbd keycap's border-b-2 is the neutral fd-border shading of a keyboard key, not an accent stripe; predates this session"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Analysis",
+  "icon": "ChartScatter",
+  "pages": [
+    "index",
+    "opening-a-project",
+    "workspace",
+    "qc",
+    "images-and-tracks",
+    "sqd",
+    "sqd-jump-distances",
+    "apparent-diffusion",
+    "hmm",
+    "spatial-map",
+    "kinetics",
+    "clustering",
+    "msd",
+    "figures",
+    "options"
+  ]
+}

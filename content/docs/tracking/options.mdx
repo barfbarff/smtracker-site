@@ -1,0 +1,84 @@
+---
+title: "Preparation & tracking options"
+description: "Set the standards new conditions start from: the crop rule, the TrackMate and u-track settings, and when to be told a job has finished."
+---
+
+Choose the values each page starts from in a new condition, so you don't type the same settings into every folder. Each of these values is a *standard*: a value you set on a page always wins over it. Most people never change them. Change one when your microscope or your proteins consistently need a different value.
+
+## Open and save
+
+Click <Ui variant="outline">Options</Ui> in the window's header, with or without a folder open. The **Preparation & tracking options** screen groups the settings under **When a job finishes**, **Crop proposals**, **TrackMate standard** and **u-track standard**, each with a line explaining it.
+
+Click <Ui>Save</Ui> to keep your changes, or <Ui variant="outline">Cancel</Ui> to discard them. <Ui variant="outline">Reset to defaults</Ui> sets every field back to SMTracker's defaults, but writes nothing until you save. If one value isn't accepted, nothing is saved, and a line in red says which. In practice, that's a **u-track work folder** that doesn't exist, or u-track values that don't fit together, such as a smallest search radius above the largest.
+
+Saving applies at once, including in the window that's open. A value still at its old standard moves to the new one, and a value you changed on a page since you opened the window stays. A note in the header names the crop and u-track settings and the thresholds that moved. Untyped linking radii and frame gaps move too, without a mention.
+
+SMTracker stores the options for you on this computer, not in your data folders.
+
+## When a job finishes
+
+Choose when SMTracker tells you a job has finished, so you can work in another program during long runs.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **Pop-up when a job ran at least** | A job that runs at least this long, such as reading movies, saving or tracking, ends with a pop-up saying what it did, and the taskbar flashes. A shorter job ends quietly. Set it to 0 for a pop-up after every job. | 60 s |
+
+This is the same setting as on the **Cell outline options** screen: changing it on either screen changes both.
+
+## Crop proposals
+
+These set how [Movies & crop](/docs/tracking/movies-and-crop) proposes ranges.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **Start rule** | The rule Movies & crop uses each time you open the window: *strictest*, *density*, *amplitude* or *field mean*. A rule you choose on Movies & crop lasts only until you close the window. | *strictest* |
+| **Flat within** | How far the frame mean may vary inside a stretch that still counts as flat. Lower it for a camera with a high dark level and a weak signal. | 2 % |
+
+For what each rule does, see [Start rule](/docs/tracking/movies-and-crop#start-rule) on Movies & crop.
+
+**Flat within** matters less than it seems. Once a condition's movies are read, SMTracker chooses its own value for that condition, and the standard no longer applies to it. The standard is used only where SMTracker can't choose, for example when the movies have no dark frames before the laser.
+
+## TrackMate standard
+
+These set what [Detect & link](/docs/tracking/detect-and-link) starts from with TrackMate. The defaults suit most data.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **Linking radius** | The linking radius each new condition starts with, in px. It caps the fastest D that can be linked: at 50 ms, 5 px covers D up to about 0.34 µm²/s. | 5 px |
+| **Frame gap** | How many frames a molecule may vanish for and still be linked, for each new condition. 0 means no gap closing. | 3 frames |
+| **Fit each spot's precision** | After TrackMate, refits every tracked spot to measure its precision, and saves it beside the track file. The tracks don't change. The analysis needs it for **Localisation error** set to *Per spot*. | on |
+| **Threshold** | The multiplier k for measured thresholds. The **Measure** buttons on Detect & link set each movie's threshold to k times its noise. It isn't a threshold itself. | 7.2 times the noise |
+
+{/* TODO(Huy): the 0.34 µm²/s at 50 ms and 5 px depends on the pixel size and a coverage criterion the app doesn't name. Which pixel size should the docs give? */}
+
+The linking radius and frame gap reach every condition whose value you haven't typed, including the folders a [Batch](/docs/tracking/batch) runs. Values copied with **Copy linking radius and gap to all** count as typed, so they don't follow.
+
+Saving a new **Threshold** updates every threshold you've measured in the open window, using the noise SMTracker already has, so nothing is measured again. Thresholds you typed stay as they are.
+
+The default k was calibrated on one microscope. On another, compare TrackMate's spot count with a u-track run on the same movie, and adjust k until they match.
+
+**Fit each spot's precision** is set only here: no page has a switch for it. It needs the condition's emission, NA and pixel size from Calibration & save. If one is missing, the run's log on Track says the precision wasn't fitted.
+
+{/* TODO(Huy): Fit each spot's precision has no control on any page, against the rule that options are only standards. Should Detect & link get one? */}
+
+## u-track standard
+
+These set what the u-track card on [Detect & link](/docs/tracking/detect-and-link) starts from. The defaults suit most data. Change them to match an earlier u-track analysis you want to compare against.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **u-track work folder** | Where u-track works on its frames before moving each movie's results into its condition. Empty means beside the data. Choose a folder on an SSD if your data is on a spinning hard disk: 40 movies of 2500 frames need about 3 GB. | empty |
+| **Spot significance (alphaLocMax)** | How unlikely a spot must be against its local background. Smaller is stricter. | 0.025 |
+| **Search radius, largest** | The upper limit of u-track's search radius, in px. u-track sets each track's radius from its own steps, within these two limits. | 5 px |
+| **Search radius, smallest** | The lower limit of that search radius, in px. | 0 px |
+| **Radius multiplier** | How many of a track's own step SDs a link may reach. | 3 |
+| **Frames bridged** | How many frames a molecule may vanish for and still be joined. 0 means no gap closing. | 0 |
+| **Shortest segment kept** | A *segment* is a piece of track before gaps are closed. Shorter segments are dropped. 5 is the analysis's own minimum. | 5 localizations |
+
+The work folder applies from the next u-track run. Choose a folder that exists: SMTracker refuses one that doesn't, and the red line says so.
+
+<Callout type="app">
+Once you've edited the u-track card, it remembers its settings between sessions, so a new u-track standard doesn't always reach it. It does when the card still holds the old standard as you save, or when you click <Ui variant="outline">Standard settings</Ui> on the card.
+</Callout>
+
+{/* TODO(Huy): is it intended that a new u-track standard doesn't reach a card that remembers earlier settings, given the screen says "the standards a new session starts from"? */}

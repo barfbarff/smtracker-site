@@ -1,0 +1,32 @@
+---
+title: How SMTracker works
+description: How SMTracker computes its numbers, and how they were checked. For readers who want to know what happens behind each button.
+---
+
+The chapters before this one explain how to use SMTracker. This Reference part explains how it works: the models behind each analysis, the files it reads and writes, and how its results were checked. Read it when you need to describe SMTracker in a methods section, review an analysis, or understand why a number came out the way it did.
+
+<Callout type="note" title="Being written.">Most of these chapters are still to come. The planned contents are listed below.</Callout>
+
+## Principles behind every analysis
+
+These rules run through the whole program, and most design decisions follow from them:
+
+- **The readout is the fraction.** Fitted D values are bounds set by the localization floor and the detection ceiling, not physical coefficients.
+- **The replicate is the independent unit.** Error bars and tests are computed over replicates (or cells), never over tracks or jumps.
+- **The data chooses the number of states.** BIC recommends a model; you can choose another, and the recommendation stays visible next to your choice.
+- **Nothing is guessed.** A missing pixel size, frame interval or unit stops the analysis with a reason, instead of falling back to a default.
+
+## Validation
+
+SMTracker 3 is a new Python implementation of the earlier MATLAB SMTracker, which is kept as a frozen reference. The SQD fit reproduces the reference to three significant figures (fractions 37.59 / 62.41 % against 37.6 / 62.4 %), and a test checks this on every build. Recovery of known diffusive states is also checked on synthetic data with a known answer.
+
+## Planned chapters
+
+- **The methods, one per analysis:** SQD, jump distances, apparent diffusion, HMM, spatial maps, kinetics, clustering and MSD, with their models, assumptions and limits.
+- **File formats:** every file SMTracker reads and writes, field by field (`crops.json`, `day_map.json`, `format.json`, `acquisition.json` and the session files).
+- **Validation in detail:** the reference comparison and the synthetic benchmarks.
+
+## In Reference now
+
+- [Reading the numbers honestly](/docs/reference/reading-the-numbers): what to report, and why D values are bounds.
+- [Docs components](/docs/reference/components): the building blocks of these pages, for whoever writes them.

@@ -1,0 +1,12 @@
+{
+  "title": "Cell outlines",
+  "icon": "Spline",
+  "pages": [
+    "index",
+    "segment",
+    "classical-settings",
+    "edit-outlines",
+    "train-a-model",
+    "batch-and-options"
+  ]
+}

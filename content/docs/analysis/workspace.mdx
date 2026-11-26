@@ -1,0 +1,42 @@
+---
+title: "The workspace"
+description: "The sidebar, the tools on the right, subpages, the order of the conditions and the project menu."
+---
+
+The sidebar has three groups: **Data** (**QC** and **Images & tracks**, for looking at the data before any fit), **Analyses** (**SQD** with its pages *Populations*, *Jump distances* and *Signed jumps*, then **MSD**, **Apparent Diffusion**, **HMM**, **Spatial Map**, **Kinetics** and **Clustering**) and **Figures** (the **Composer** button, [Figures](/docs/analysis/figures)). The button beside the page title folds the sidebar to icons.
+
+The tools on the right:
+
+| Tool | What it does |
+|---|---|
+| **Compute** | Runs the page on screen, opening its settings first where it has any. A click during a Run stops it. |
+| **Visibility** | Chooses what the page draws. |
+| **Significance** | Holds the brackets between conditions on the Populations bubbles of SQD and Apparent Diffusion and on the HMM comparison. |
+| **Conditions** | Colors, order and grouping of the conditions. |
+| **Metadata** | The settings of the result on screen. |
+| **Help**, **Options**, theme | At the bottom. |
+
+Each section runs on its own, and a result stays until you run that section again. While sections compute, they are listed under **Running** at the foot of the sidebar with their progress; click one to go to it. Results are kept in your user folder for each condition: running again with the same data and settings returns the result at once, and a change to a setting, exclusion, outline or replicate recomputes only the conditions it affects. A Run uses every core but one.
+
+**Subpages.** The **+** at the right of an analysis row adds a live copy of the section ("SQD 2") with the same settings and no results, so two settings can be compared side by side.
+
+- Click a page's row to open it; click the section's own row to return to the original.
+- Double-click a page to rename it, drag it to reorder it, and delete it with the **x** that appears on it (**Undo** is offered for a few seconds).
+- Exported figures carry the page's name. Sessions keep every page.
+- The Spatial Map's "Use the same D as the ... fit" has a drop-down for which page supplies the D.
+
+**The order of the conditions.** In **Conditions**, drag a condition by its grip or use the arrows beside it. A bar then reads *New order, not applied yet*; **Apply order** applies it to every section, table and exported figure, and **Cancel** returns to the order in use. Nothing is fitted again, and the order is remembered for the project. A panel already in the Composer keeps its old order until you add it again.
+
+**Grouped by your factors.** A project with a folder design of two or more factors lists its conditions outer factor first. **Conditions → Group by** chooses the nesting: "protein → medium" puts each protein's media side by side under the protein's name; "medium → protein" does the reverse. The bubbles, the Apparent Diffusion per-cell chart, the HMM comparison, the legends and their exports then draw the columns in groups, and each group keeps its own order. Switching the grouping does not refit anything. **Color by** gives every value of a factor one color and each condition a shade of it; **Condition** gives every condition its own color.
+
+**The project menu.** Click the project's name at the top of the sidebar.
+
+| Item | What it does |
+|---|---|
+| **Open another folder…** | Returns to the start screen. Results you have not exported or saved are not kept. |
+| **Back to menu** | Returns to the stage menu. |
+| **Save session…** / **Open session…** | Save everything the sections show (results, settings, significance brackets, marked foci) to one `.smtsession` file, and draw it again later without refitting. A session records a fingerprint of the tracks and refuses to open, naming the condition, if they have changed. Open only sessions from people you trust. |
+| **Per-spot calibration…** | Chooses the calibration that Per spot fits use ([SQD: Populations](/docs/analysis/sqd)). |
+| **Export tracks for vbSPT…** | Writes `vbSPT<condition>.mat` for each condition (one trajectory per cell, positions in nm, each carrying its replicate) with a note giving the time step to enter in vbSPT. |
+| **Export tracks for SMMTrack…** | Writes `SMMTrack_<project>_<condition>.csv` for each condition, plus a `..._tracks.csv` giving each track's replicate, movie and cell. |
+| **Import SMMTrack dwell times…** | Reads one `<condition>.txt` per condition from a folder and draws the trapping-time histogram, the cumulative curve and each condition's number of events, mean, median and SD. No test is shown, because the events carry no replicate. |

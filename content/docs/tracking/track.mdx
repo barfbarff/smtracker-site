@@ -1,0 +1,118 @@
+---
+title: "Track"
+description: "Run TrackMate or u-track on one condition or all of them, and see what each run produced."
+---
+
+Run the tracker on your prepared conditions. Each condition is tracked from the ranges and calibration you saved, and the tracks are written into its folder, where the analysis reads them. You need this page once per folder, after [Detect & link](/docs/tracking/detect-and-link).
+
+To track many folders without opening each one, use [Batch](/docs/tracking/batch) instead.
+
+## Before you track
+
+Track reads the ranges and calibration you saved on [Calibration & save](/docs/tracking/calibration-and-save), never what's only on screen. If you changed a range or the calibration after saving, save again first. The Detect & link settings are used as they stand, and need no saving.
+
+Each row of the conditions table says whether that condition is ready. A condition isn't ready when, for example:
+
+- it was edited since the last save, or has never been saved;
+- a movie has no saved range;
+- with TrackMate, it has no detection threshold, or another setting on Detect & link is empty;
+- with u-track, the pixel size, the frame interval, or the NA and emission (or a typed PSF sigma) weren't saved;
+- with u-track and the **Cell-free background test** on, a movie has no cell outlines;
+- it was tracked before, and the Replace checkbox under [Settings](#settings) is cleared.
+
+The row gives the exact reason. Fix it on the page it names, then come back.
+
+A ready row also shows an estimate of the time: about 30 seconds a movie with TrackMate, or about 0.13 seconds a frame plus 10 seconds to start with u-track, divided by **Movies at once**.
+
+## Find Fiji or MATLAB
+
+The card at the top shows the program the chosen tracker runs in: Fiji for TrackMate, MATLAB with u-track for u-track. SMTracker looks for them on its own, in the usual install folders: for Fiji when the window opens, for MATLAB and u-track once u-track is the chosen tracker. When it finds them, the card says where, and you don't need to do anything.
+
+If it finds nothing, or the wrong install, point it to the right one:
+
+- TrackMate: click <Ui variant="outline">Choose Fiji folder…</Ui> and choose your Fiji folder (on a Mac, `Fiji.app`).
+- u-track: click <Ui variant="outline">Choose matlab.exe…</Ui> and choose MATLAB in a release's `bin` folder (`matlab.exe` on Windows, `matlab` on a Mac). Then click <Ui variant="outline">Choose u-track folder…</Ui> and choose the folder that holds `software/@UTrackPackage`.
+
+SMTracker remembers a choice only when it finds the program in the folder you chose. If it doesn't, the card says so. [Install and open SMTracker](/docs/install) covers getting Fiji and u-track.
+
+A row can read *ready* even when no Fiji or MATLAB was found. In that case, SMTracker refuses when you click **Track**, and the note under the table says why.
+
+## Track your conditions
+
+Track one condition first to see that the settings work, or every ready condition at once.
+
+<Steps>
+<Step>
+### Check the tracker
+
+Check that **Tracker**, at the top, shows the tracker you set up on [Detect & link](/docs/tracking/detect-and-link#choose-the-tracker).
+</Step>
+<Step>
+### Start
+
+Click <Ui variant="outline">Track</Ui> on a condition's row, or <Ui>Track all ready conditions</Ui> to track every ready one. One condition runs at a time. Clicking **Track** while another condition runs puts it in the queue, and its row says *queued*.
+</Step>
+<Step>
+### Follow the run
+
+Watch the running row: it shows how many movies are done, with a progress bar. The log at the bottom adds one line per movie as it finishes, with what it found and how long it took. A card in the window shows the progress over all queued conditions and, after the first movie, the time left.
+</Step>
+</Steps>
+
+When the last condition is done, a banner says what each one produced. Click <Ui>Done</Ui> in it to close the window and go back to the menu, where the analysis is the next step. If the run took a minute or more, a window pops up with the same summary. Change that time with **Pop-up when a job ran at least** in [Options](/docs/tracking/options).
+
+While a condition is tracking, you can't change the tracker or **Movies at once**, open another folder, or go back to the menu.
+
+### The first u-track run
+
+The first time you click **Track** with u-track in a window, SMTracker starts MATLAB to check u-track and the toolboxes it needs (Statistics, Optimization, Image Processing). This takes about 30 seconds, and the run starts when MATLAB answers. Don't close the window meanwhile. If the check fails, or a toolbox is missing, the queue is dropped and the note says why.
+
+SMTracker then writes every movie's frames to disk before MATLAB starts tracking, so the progress bar stays at zero for a while. The bar and the log move as MATLAB finishes each movie. MATLAB runs minimized.
+
+## Settings
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Replace an earlier run in trackmate/** (TrackMate) or **Replace an earlier u-track run in tif/** (u-track) | Selected: a condition tracked before is tracked again. Cleared: it isn't ready, and its row says so. | cleared |
+| **Movies at once** | How many movies of a condition are tracked side by side, from 1 to 4: one Fiji each with TrackMate, or that many MATLAB sessions with u-track. The tracks don't depend on it, only the time. | half this computer's threads, less one |
+
+The Replace checkbox starts cleared each time you open the window, because two runs in one folder can't be told apart afterward. Select it only when you mean to track a condition again.
+
+- With TrackMate, a condition counts as tracked when `trackmate/` holds any track file. A new run writes each movie's track file over the old one of the same name, and other old files stay.
+- With u-track, a condition counts as tracked when even one of its movies already has a u-track run. A new run replaces each movie's frames and tracks.
+
+<Callout type="check">
+Replacing deletes nothing first. If a replacing run stops or fails part way, the folder holds new results for the movies that ran and old ones for the rest. Finish the run before you analyze the condition.
+</Callout>
+
+{/* TODO(Huy): TrackMate Replace deletes nothing, so a stopped replacing run leaves new and old XMLs side by side under one new run.json. With u-track, a movie MATLAB never reached keeps new frames beside its old tracks. Intended? Should SMTracker clear the old results first? */}
+{/* TODO(Huy): the u-track Replace tooltip says a movie with a run "is not tracked again", but the code refuses the whole condition. Which is meant? */}
+
+**Movies at once** is the same number on Batch, and SMTracker remembers it. It's never more than the number of movies. Raise it to finish sooner, if the computer has memory to spare. Each u-track session reads its frames from disk, so on a spinning hard disk more sessions don't help. In that case, set a **u-track work folder** on an SSD in Options: u-track then works there and moves each movie's results into its condition when it's done.
+
+{/* TODO(Huy): the docs said each u-track session needs about 1 GB of memory; the code only has "~0.5-1.5 GB" in a comment. Which number should the docs give? */}
+
+## Stop a run
+
+Click <Ui variant="outline">Stop after this movie</Ui>. The movies being tracked finish, so no track file is left half written, and nothing new starts. Stopping also drops every condition still in the queue.
+
+The condition then reads *done, incomplete*, and the movies that didn't run are counted in its row. Track it again later with the Replace checkbox selected.
+
+Closing the window during a run stops it the same way.
+
+{/* TODO(Huy): does a run still write its run record if the window is closed mid-run? The code stops it after the movie in hand, but whether the process lives long enough isn't settled. */}
+
+## What a run writes
+
+Each condition's tracks go into its own folder:
+
+| Tracker | Where |
+| --- | --- |
+| TrackMate | `trackmate/<movie>.xml`, one per movie, and `trackmate/run.json` with the settings and outcome. With **Fit each spot's precision** on in Options (the default) and the optics saved, a `.spotfit.csv` beside each track file. |
+| u-track | For each movie, `tif/<movie>/` with its frames (in `tif/<movie>/<movie>/`), `movieData.mat` and the tracks in `TrackingPackage/`. Plus `tif/utrack_run.json` with the settings and outcome, and `tif/utrack_job/` with MATLAB's working files and log. |
+
+After each condition, its row says how many *usable* tracks it produced: tracks of at least 5 localizations, the ones the analysis keeps. The log adds a summary, and flags TrackMate movies that look unlike their neighbors (they're flagged, never dropped).
+
+A TrackMate movie that takes more than an hour fails. The other movies go on, and the failure is named in the log.
+
+[What SMTracker writes](/docs/written) lists every file the app creates.

@@ -1,0 +1,33 @@
+---
+title: Changelog
+description: What changed in each version of SMTracker.
+---
+
+## SMTracker 3.0.0
+
+*Release date to follow.*
+
+SMTracker 3 is a new program, written in Python. It no longer needs MATLAB, and it comes as a ready-to-run app for Windows and macOS ([Install and open SMTracker](/docs/install)).
+
+- **From raw movies to tracks.** Crops Nikon `.nd2`, MetaMorph `.stk` and TIFF movies to their usable frames, saves the calibration, and runs TrackMate (Fiji) or u-track (MATLAB) for one condition or many folders overnight ([Image preparation + Tracking](/docs/tracking)).
+- **Cell outlines.** Finds cells with Omnipose models or a classical segmenter, corrects them in an outline editor, and trains your own model ([Cell outlines](/docs/cell-outlines)).
+- **Tracks from other tools.** Reads trackpy, MOSAIC ParticleTracker, TrackIt, Spot-On, evalSPT/SLIMfast and TrackMate CSV tables, or any table whose columns and units you describe ([Tracks from other tools](/docs/other-tools)).
+- **Error bars over replicates.** Every fraction gets its spread over independent replicates, and conditions are compared with Welch's test, corrected with Holm or Benjamini-Hochberg ([How replicates are counted](/docs/replicates)).
+- **The data choose the number of populations**, by BIC, from many random starting points.
+- **Analyses:** jump distances (SQD), apparent diffusion, MSD, a hidden Markov model with switching rates, populations over time after an addition, spatial maps, clustering, and a QC page that checks whether conditions can be compared fairly ([Analysis](/docs/analysis)).
+- **Localization error per spot**, from a calibration measured on immobile molecules.
+- **Simulated data.** Builds data sets with known populations, diffusion and switching, to compare SMTracker's results with the truth.
+- **Figures for print**, each with its source data as `.xlsx` and `.csv` ([Figures](/docs/analysis/figures)).
+- **Fixes to SMTracker 2.0:** fraction error bars assigned to the wrong condition, a crash with one population, a limit of seven conditions, and fits that failed without saying so.
+
+## SMTracker 2.0
+
+*2021*
+
+The MATLAB version, described in Oviedo-Bocanegra et al., *Nucleic Acids Research* 49, e112 (2021), [doi:10.1093/nar/gkab696](https://doi.org/10.1093/nar/gkab696). It needs MATLAB R2014b.
+
+## SMTracker 1.0
+
+*2018*
+
+The first version, described in Rösch et al., *Scientific Reports* (2018).

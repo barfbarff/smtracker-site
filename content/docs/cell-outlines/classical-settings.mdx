@@ -1,0 +1,72 @@
+---
+title: "Classical settings"
+description: "Tune the classical segmenter on one field, with a live preview, before you segment with it."
+---
+
+Tune the classical segmenter on one field at a time, and see the result as you move the sliders. The classical segmenter finds glowing cells in the `sum/` projection by threshold and shape. It needs no GPU and no training, and it's the one to use when SMTracker can't run the Omnipose models ([Segment](/docs/cell-outlines/segment#which-model)). It's fast, but weaker than Omnipose on some data.
+
+The settings only matter for conditions whose **Model** on [Segment](/docs/cell-outlines/segment) is *Classical, sum image (no GPU, no training)*. Skip this page if you segment with an Omnipose model.
+
+## Preview a field
+
+The page shows one field's projection with what the classical segmenter finds in it.
+
+<Steps>
+<Step>
+### Choose a field
+
+Choose the **Condition** and the **Field**. The arrows beside **Field** step to the previous or next field, and wrap around at the ends. The list holds every field with a projection in `sum/`, written by [Calibration & save](/docs/tracking/calibration-and-save).
+
+A condition without projections has no fields, and the preview reads "Open a folder and pick a condition." Save it on Calibration & save first.
+</Step>
+<Step>
+### Move the sliders
+
+Move a slider, and the preview redraws when you pause. Cyan lines are outlines of kept cells, and a red cross marks each candidate SMTracker dropped. The lines under the preview count the cells and list the most common reasons for dropping, for example *Dropped: 15.2 px wide*.
+</Step>
+<Step>
+### Use the settings
+
+Click <Ui>Use these settings</Ui>. Segment and Batch then use them. The note under the button says whether what you see is saved.
+</Step>
+</Steps>
+
+The preview writes nothing, and moving the sliders changes no run until you click **Use these settings**.
+
+## The settings
+
+Each slider changes the preview as you move it. Start with **Cell width**; most people leave the rest near their defaults.
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Cell width** | The width of a cell in this image, in px. Candidates much thinner or wider are dropped (outside 0.55 to 1.45 times this width), and touching cells are split relative to it. *B. subtilis* is about 9 px wide at 106 nm pixels. | 9 px |
+| **Sensitivity** | The threshold, as a multiple of Otsu's automatic level. Lower finds dimmer cells and more background; higher finds only the brightest cells. | 1 x |
+| **Split touching cells** | How deep the waist between two touching cells must be before they're split, as a fraction of half the **Cell width**. Lower splits more readily; higher keeps chains whole. | 0.3 |
+| **Minimum length** | Candidates shorter than this are dropped, in px. Small specks are removed before that, without a cross. | 12 px |
+| **Maximum length** | Candidates longer than this, such as a chain of cells left whole, are dropped, in px. All the way left means no maximum. *B. subtilis* is about 20 to 50 px long at 106 nm pixels. | none |
+| **Grow to the edge** | Grows each kept cell outward by this fraction of the cell width, so the outline reaches the cell's edge. The threshold alone finds only the cell body. | 0.2 x width |
+| **Smoothing** | A blur before the threshold, in px. More joins patchy fluorescence into one body; too much joins neighboring cells. | 1 px |
+
+Set **Cell width** to your cells' width in pixels first, and most of the rest follows. Then adjust **Sensitivity** until dim cells are found but the background isn't. If chains of cells come out whole, lower **Split touching cells** rather than setting a **Maximum length**, because a maximum drops the whole chain instead of splitting it.
+
+Raise **Minimum length** if debris or small fragments are kept as cells. Lower **Grow to the edge** if outlines spill past the cell's edge, and raise it if they sit inside the cell. It grows by whole pixels, so a small value can round to no growth at all: at a 9 px width, 0.05 grows by 0 px. Raise **Smoothing** only for patchy fluorescence that splits one cell in two.
+
+Some rules aren't on the page. Before thresholding, SMTracker flattens the background. Candidates must be solid enough to be one cell, and a candidate that overlaps a bright band along the image's edge is dropped.
+
+## Which runs use them
+
+**Use these settings** saves one set for every classical run, on Segment and in Batch, in every folder and later session. The same set applies to every condition.
+
+A Batch takes the saved set when it starts. On Segment, each condition takes it when its own run starts, so conditions still waiting in the queue pick up a set you save meanwhile.
+
+<Callout type="check">
+**Reset to defaults** sets the sliders back but doesn't save them. The note still reads *Saved* and **Use these settings** turns off, yet runs keep your earlier settings. To save the defaults, move a slider away and click **Use these settings**, then move it back and click **Use these settings** again.
+</Callout>
+
+{/* TODO(Huy): Reset to defaults marks the defaults as saved without saving them (note "Saved.", button off, runs keep the old settings). Intended? */}
+
+## The preview and a run
+
+The preview is close to what a run writes, but not identical. A run also drops very small outlines and small outlines at the image's border, and fits each cell's outline at a fixed width rather than at **Cell width**. So a run can write a few cells fewer than the preview counts, and their outlines can differ slightly.
+
+{/* TODO(Huy): should the preview apply the run's size and border filters, and the run's outline width, or should the run fit outlines at Cell width? */}

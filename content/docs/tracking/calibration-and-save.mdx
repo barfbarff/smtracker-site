@@ -1,0 +1,136 @@
+---
+title: "Calibration & save"
+description: "Enter each condition's pixel size, frame interval and optics, then save the ranges and calibration that tracking will use."
+---
+
+Enter how each condition was imaged: its *calibration*, the pixel size, frame interval and optics. The pixel size and frame interval turn pixels and frames into µm and seconds, so every D depends on them. Saving writes the ranges from [Movies & crop](/docs/tracking/movies-and-crop) and this calibration into the condition's folder. You need this page for every new folder, and again after any change.
+
+Tracking only ever uses what you saved here. It won't start while a condition has unsaved changes, so save again after any change.
+
+## Fill in the calibration
+
+The grid has one row per condition. SMTracker fills the frame interval and NA from the movies. You always enter the pixel size yourself.
+
+<Steps>
+<Step>
+### Enter the pixel size
+
+Type the **Pixel size** in nm: the size of one camera pixel in the sample. SMTracker never reads it from the movie files, because the value stored in a `.nd2` can be wrong. If you don't know it, click <Ui variant="outline">Pixel size from the camera…</Ui> to work it out from the camera and the magnification.
+</Step>
+<Step>
+### Check the frame interval
+
+Check the **Frame interval**, in ms, against your acquisition settings. SMTracker reads it from the first movie of each condition, where the file records it.
+</Step>
+<Step>
+### Choose the fluorophore
+
+Choose the **Fluorophore** from the list, or type its name. A fluorophore from SMTracker's list fills in its **Emission** peak. Then check the **NA**, which SMTracker reads from `.nd2` files.
+</Step>
+<Step>
+### Save
+
+Click <Ui>Save all</Ui>, or <Ui variant="outline">Save</Ui> on one row. Each row's **Status** then reads *saved*, unless some of its movies still have no range.
+</Step>
+</Steps>
+
+If every condition was imaged the same way, fill in the first row and click <Ui variant="outline">Copy first row to all</Ui>. It copies the first row's filled fields to every other condition, replacing their values, including the frame interval and NA read from their own movies.
+
+## The fields
+
+| Field | What it does | Default |
+| --- | --- | --- |
+| **Pixel size** | The size of one camera pixel in the sample, in nm. Every D scales with its square. | empty |
+| **Frame interval** | The time between two frames, in ms. Every D scales inversely with it. | read from the first movie |
+| **Fluorophore** | The fluorophore's name. A name from SMTracker's list fills the emission. Any other name is kept as you typed it and fills nothing. | empty |
+| **Emission** | The emission peak, in nm. With the NA and pixel size, it sets the expected spot size, which Detect & link uses as its spot radius. | from the fluorophore |
+| **NA** | The objective's numerical aperture, also for the spot size. | read from a `.nd2` |
+
+**Save** stays off until a condition has a pixel size and a frame interval. Both must be more than 0. When you type a value outside 30 to 500 nm, or 1 to 500 ms, it's kept but flagged in the note under the grid, so you can check it.
+
+The emission and NA are optional for TrackMate, but without them SMTracker can't work out a spot radius, and you type one on [Detect & link](/docs/tracking/detect-and-link) instead. u-track needs them too, unless you type a **PSF sigma** on its card.
+
+A wrong pixel size or frame interval moves every D, but not the fractions.
+
+{/* TODO(Huy): "moves every D, but not the fractions" is only stated in code comments, and only for the frame interval. Is it right for the pixel size too? */}
+
+When you open a folder you've saved before, its rows start from the saved values. A field the save left empty, such as the NA, is then filled from the first movie, so the row may read *unsaved changes* straight away: save again. SMTracker also checks the saved frame interval against the first movie, where the movie records its timing. If they differ by more than 1 %, the note says by how much every D would be off.
+
+### Fluorophores SMTracker knows
+
+| Fluorophore | Emission |
+| --- | --- |
+| mNeonGreen | 517 nm |
+| GFP / mGFP | 509 nm |
+| mCherry | 610 nm |
+| HaloTag JF549 | 549 nm |
+| HaloTag JF646 | 646 nm |
+| SNAP TMR | 580 nm |
+| PAmCherry (PALM) | 595 nm |
+| mEos3.2 (PALM) | 580 nm |
+
+Capitals don't matter, and a few short names work too: *mng* or *mneon* for mNeonGreen, *gfp* or *mgfp* for GFP / mGFP, *jf549* for HaloTag JF549.
+
+Choosing a fluorophore fills **Emission** only when that field is empty, or was filled by an earlier fluorophore. An emission you typed, or one loaded from an earlier save, stays. If it differs from the fluorophore's peak, the note gives the peak, in case you want to type it.
+
+## Pixel size from the camera
+
+The pixel size in the sample is the camera's pixel divided by the whole magnification, tube lens included. Click <Ui variant="outline">Pixel size from the camera…</Ui> to work it out:
+
+| Field | What to enter |
+| --- | --- |
+| **Camera pixel** | The camera's pixel size, in µm. Filled from a `.nd2` that records it; an Andor DU-897 has 16 µm. |
+| **Objective** | The objective's magnification. Filled from a `.nd2`. |
+| **Tube lens** | Any extra magnification between objective and camera: 1.0 if there's none. |
+
+The dialog shows the arithmetic as you type. In **Apply to**, choose the condition picked last in the sidebar, or *every condition*. Then click <Ui>Apply</Ui>. The pixel size is filled in, rounded to 0.1 nm, but not saved yet.
+
+<Callout type="check">
+A `.nd2` leaves out the tube lens. A 16 µm camera at 100x reads 160 nm, but with a 1.5x tube lens the real pixel is 106.7 nm. Leaving the **Tube lens** at 1.0 when there is one makes the pixel size too large, and every D too large with it. Type your tube lens magnification whenever the microscope has one.
+</Callout>
+
+## What Save writes
+
+Saving a condition writes three things into its folder, in this order:
+
+1. `bleaching/crops.json`: the ranges and the calibration. This is the record tracking reads.
+2. The curves read on Movies & crop, for each movie with a range, in `bleaching/`.
+3. A projection of each movie's range, in `sum/<movie>.tif`, for the cell outlines later.
+
+**Save writes**, beside **Save all**, chooses the projection. *SD projection*, the default, shows where molecules moved over the range. *Sum projection* adds up the frames of the range. *No projection* writes nothing to `sum/`. The folder is called `sum/` whichever you choose, and **Save writes** starts at *SD projection* each time you open the window.
+
+{/* TODO(Huy): when would a user choose Sum or No projection, and what does that mean for the cell outlines? */}
+
+A projection already in `sum/` that another program wrote, such as a Fiji macro, is kept as it is.
+
+**Save** is available once a condition has a pixel size, a frame interval and at least one range. A condition where some movies have no range can be saved, but it can't be tracked until every movie has one. **Save all** saves every condition that can be saved, including ones already saved, and skips the others.
+
+{/* TODO(Huy): if projections fail because a reader package is missing, crops.json is already written but the row keeps saying "unsaved changes". Intended? */}
+
+## Status
+
+Each row's **Status** says where the condition stands:
+
+| Status | Meaning |
+| --- | --- |
+| *needs pixel size*, *needs frame interval* | Fill it in before you can save. |
+| *no ranges yet* | Set ranges on Movies & crop first. |
+| *n movie(s) without a range* | You can save, but tracking needs every movie to have a range. |
+| *unsaved changes* | The ranges or the calibration differ from what's saved, or the condition was never saved. |
+| *saved* | What's on screen is what tracking will use. |
+
+## Go on to Detect & link
+
+<Ui>Next: Detect & link</Ui> lights up once every condition is saved, with nothing changed since and a range on every movie.
+
+## When the movies can't be read
+
+If a movie format needs a reader that isn't installed (`nd2` for `.nd2`, `tifffile` for `.stk`), a card says so and offers <Ui>Install</Ui>. It installs the reader into SMTracker, which can take a few minutes. Then open the folder again, so the movies that failed are read. In a packaged build nothing can be installed, and the card says so: ask whoever gave you the build for one that includes the reader.
+
+## Cropped stacks for u-track
+
+u-track can't read a `.nd2` or `.stk`. If you run u-track outside SMTracker, <Ui>Export stacks</Ui> cuts each movie's saved range into `tif/<movie>.tif`, with the pixel size and frame interval written into the file. It also writes the projection to `sum/` (an SD projection, even with *No projection* chosen) and the curves. SMTracker's own u-track runs and TrackMate don't need this.
+
+Export works only from what's saved, so save first. Each condition has a line saying whether it's ready, and why not. If `tif/` already holds any stacks, the condition isn't ready until you select **Replace stacks already in tif/**. A stack another program wrote is never replaced: move it aside first.
+
+To stop, click <Ui variant="outline">Stop after the movies in hand</Ui> while the export runs. The movies being written finish, and the rest aren't written.

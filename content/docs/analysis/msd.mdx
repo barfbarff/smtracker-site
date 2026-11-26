@@ -1,0 +1,23 @@
+---
+title: "MSD"
+description: "Mean squared displacement against lag: a cross-check."
+---
+
+The MSD page plots the mean squared displacement against lag and fits the early lags only. It is a cross-check, not a population's D. **Run** asks for:
+
+| Setting | Choices | Default |
+|---|---|---|
+| **Lags fitted** | 3 to 6 | 4 |
+| **Curve drawn** | Out to lag 10 or 20 | 10 |
+| **Weighting** | **By pairs**, or **Each track once** | By pairs |
+| **Direction** | **Camera plane**, **Along the cell**, **Across the cell** | Camera plane |
+| **Uncertainty** | **Replicates**, **Movies**, **Cells** (single session) or **None** | Replicates |
+
+Four pages are on the strip at the top, each with one **How to read** line.
+
+- **Curves**: every condition's curve on shared axes (filled points fitted, hollow ones drawn) and a table of tracks, D, spread and intercept. The error bars follow Uncertainty (SD over replicates, a 95 % interval from resampling movies or cells, or, with None, an indicative SEM over tracks). The **eye** hides a condition; click a condition's name to see its replicates. **Save MSD per cell (CSV)…** writes every cell's MSD, one row per cell and lag.
+- **Per condition**: each condition's curve over a sample of its tracks.
+- **Checks**: D against the number of lags fitted, and against track length. A D that falls as the window grows reflects long slow tracks and the cell wall.
+- **v2**: what SMTracker 2 printed for the same data, beside this page's D.
+
+Every card has **Export**. **Axes** sets lag time (x, s) and MSD (y, µm²); a typed range stays through a new Run until **Auto**. The intercept is not σ: motion blur lowers it and the cell wall raises it.

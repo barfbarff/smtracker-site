@@ -1,0 +1,65 @@
+---
+title: Docs components
+description: The MDX pieces the manual needs, styled to sit on Fumadocs' defaults. A reference for whoever writes the chapters.
+---
+
+## Callout
+
+```mdx
+<Callout type="note | app | check | refused">…</Callout>
+```
+
+<Callout type="note">The folders above a condition carry no meaning: rename or move them freely.</Callout>
+<Callout type="app">The moon icon at the bottom of the analysis window switches to dark, and is remembered.</Callout>
+<Callout type="check">On the same movies u-track and TrackMate differ by about 1 point in the slow fraction. Mixing them also compares trackers.</Callout>
+<Callout type="refused">A table whose units are unknown is not read. Add `track_tables/format.json` with its units and open the folder again.</Callout>
+
+## Tabs
+
+<Tabs items={['TrackMate (Fiji)', 'u-track (MATLAB)']}>
+<Tab value="TrackMate (Fiji)">LoG threshold, spot radius, linking radius, frame gap.</Tab>
+<Tab value="u-track (MATLAB)">Alpha, search radius, gap closing.</Tab>
+</Tabs>
+
+## Folder tree
+
+```mdx
+<Files><Folder name="…"><File name="…" note="…" written /></Folder></Files>
+```
+
+<Files caption="Your files in neutral, what SMTracker writes in emission: the reader sees at a glance what was added.">
+  <Folder name="PdhA_LB">
+    <File name="series001.nd2" note="the movie" />
+    <File name="series001.tif" note="its phase snapshot" />
+    <Folder name="bleaching/" note="written by Save" written />
+    <Folder name="trackmate/" note="written by Track" written />
+    <Folder name="cell_meshes/" note="written by Cell outlines" written />
+  </Folder>
+</Files>
+
+## Keys
+
+Press <Kbd>Ctrl</Kbd> <Kbd>S</Kbd> to save this field.
+
+<Keys items={[
+  ["S", "select: drag a cell, a pole or an edge"],
+  ["D", "draw: click one pole, then the other"],
+  ["X", "split a cell where it should be cut"],
+]} />
+
+## Status and UI names
+
+<Status type="clean" /> <Status type="flagged" /> <Status type="low yield" /> <ExampleData />
+
+Press <Ui>Run analysis</Ui>, or open <Ui variant="outline">Options</Ui> first. A button named in the manual looks like the button in the app.
+
+## Illustrated card
+
+<IllustratedCards>
+  <IllustratedCard illustration="outlines" href="/docs/cell-outlines" title="Cell outlines" description="Find the cells, then correct them by hand" />
+  <IllustratedCard illustration="spot" href="/docs/tracking/detect-and-link" title="Detect and link" description="From lit pixels to tracks, in TrackMate or u-track" />
+</IllustratedCards>
+
+## Pipeline
+
+<Pipeline />

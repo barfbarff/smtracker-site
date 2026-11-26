@@ -1,0 +1,23 @@
+---
+title: "Images & tracks"
+description: "Sample size per replicate and movie, and a movie view with its outlines and tracks."
+---
+
+**Sample size** gives, per replicate or movie: replicates, movies, frames, cells, cells without tracks, tracks, tracks per cell, per 1000 frames and per minute. Save it as CSV or export it as a figure. The movie view plays a movie with its outlines and tracks, colored by apparent D, by track or in one color.
+
+**Background: Phase | Sum | Movie.** *Movie* plays the recorded frames under the tracks, each molecule's dot on its own frame. The frames come from the stack TrackMate was given, the frames u-track read, or the raw `.nd2` / `.stk` file over the range that was tracked. If a crop range is off by even one frame, the movie is refused with the reason.
+
+**Your own channels.** The **+** beside the Background pills opens *Fluorescence channels*. Give each channel a name (it becomes a pill) and its folder, typed or chosen with **Browse…**. A movie's image is `<movie>.tif` in that folder, and an image of a different size from the movie is refused. Up to four channels are kept for the project, each with its own brightness, contrast and LUT.
+
+**Display.** Brightness and Contrast sliders and the **LUT** (Grey, Green, Magenta, Cyan, Hot, Inferno) are set separately for each background. They change the display only, and the exported figure says so in its legend. The Movie background works like Fiji's Brightness & Contrast.
+
+| Control | What it does |
+|---|---|
+| **Black**, **White** | The camera counts shown as black and white. |
+| **Auto** | Leaves 0.35 % of the counts saturated, as Fiji's Auto does. |
+| **Reset** | Spans the lowest to the highest count. |
+| **Filters**: **Auto per frame** | Gives each frame its own range, so a bleaching movie stays visible. |
+| **Filters**: **Smooth at the spot's size** | Smooths over 1 px, as the detector sees the frame. |
+| **Filters**: **Subtract background** | *Running median* removes each pixel's median over 21 frames (haze goes; moving spots stay). *Rolling* removes the background larger than a spot, frame by frame. |
+
+**Distances to foci.** Zoom to a cell, select **Mark foci** in the side card and click the points of interest (a focus of another protein, a pole); click a focus again to remove it, or press **Clear this cell**. **Distances…** measures every localization of the marked cells to its nearest focus and draws, per condition, the share at each distance (solid) beside chance (dashed): points spread evenly over the same outlines. The table's excess is each cell's median distance minus its chance median, averaged over cells; negative means closer to the foci than chance.

@@ -1,0 +1,93 @@
+---
+title: "Segment"
+description: "Outline the cells of every field automatically, with an Omnipose model or the classical segmenter."
+---
+
+Draw the cell outlines of every field automatically, condition by condition. You'll need it for every new folder. Then check and correct what the model got wrong in [Edit outlines](/docs/cell-outlines/edit-outlines).
+
+## Open the folder
+
+Open the folder in the **Cell outlines** window, as described in the [Overview](/docs/cell-outlines#open-it). The Segment page lists one row per condition.
+
+## Segment the conditions
+
+<Steps>
+<Step>
+### Check each row's model
+
+Each row has a **Model** and the folder it **Reads**. The default, *bact_phase_omni (reads phase)*, suits most data. Change it on a row if you need to, or set the first row and click <Ui variant="outline">Copy the first row to all</Ui>.
+</Step>
+<Step>
+### Segment
+
+Click <Ui>Segment all ready</Ui> to segment every ready condition, one after another, or <Ui variant="outline">Segment</Ui> on one row. The **Status** column says why a row isn't ready, for example *set the folder it reads (phase)*, or *all 12 field(s) outlined; tick Replace to segment again*.
+</Step>
+<Step>
+### Follow the run
+
+The **Run** card shows the progress, the time left and a log line per field, with its number of cells. The first field also loads the model, so it's the slowest. When the run ends, click the button that names the condition, such as <Ui variant="outline">Open PdhA in the editor</Ui>, to check its outlines.
+</Step>
+</Steps>
+
+To stop, click <Ui variant="outline">Stop after this field</Ui>. The field in hand finishes, so no outline file is left half written, and the conditions still waiting don't run.
+
+## Which model
+
+| Model | What it reads, and when to use it |
+| --- | --- |
+| *bact_phase_omni (reads phase)* | The phase-contrast snapshots. Works for any protein, and the right choice for most data. |
+| *bact_fluor_omni (reads sum)* | The projection in `sum/`, written by Calibration & save. Only for a cytosolic label. |
+| *Phase pipeline: bact_phase_omni, chains split (reads phase)* | The phase model with extra steps that split constrictions and chains of cells. |
+| *Sum-image pipeline: bact_fluor_omni, chains split (reads sum)* | The same for the projection. |
+| *Classical, sum image (no GPU, no training)* | A fast threshold-and-shape segmenter on the projection, weaker on some data. Tune it on [Classical settings](/docs/cell-outlines/classical-settings). |
+| *your model (trained, reads …)* | A model you made on [Train a model](/docs/cell-outlines/train-a-model). It reads the images it was trained on. |
+
+Segmenting the fluorescence of a membrane- or DNA-bound label gives outlines about half the true cell area, so use a phase model for those. After a run, the log warns you if the signal sits at the edge or in the center of the outlines, the sign of such a label.
+
+**Model for a new condition** in [Options](/docs/cell-outlines/batch-and-options#options) sets the model each new condition starts with.
+
+<Callout type="refused">
+The packaged app can't run the Omnipose models or the pipelines. The page then says "This build cannot run the segmentation models", and those rows can't start. Choose *Classical, sum image (no GPU, no training)* instead, or run SMTracker from source ([Install and open SMTracker](/docs/install#automatic-cell-outlines)). Edit outlines works either way.
+</Callout>
+
+## The row's folder
+
+**Reads** shows the folder the model reads, and it follows the model. Phase models read a folder named `phase` (or `brightfield`, `bf`, `trans`, `dic`), and otherwise the snapshots beside the movies. Sum models read a folder named `sum` (or `fluorescence`, `fluo`, `epi`, `signal`, `proj`).
+
+If two folders match and SMTracker can't tell which holds this condition's images, or none matches, the row reads *(set the folder)*. Choose one from the list, or choose *choose another folder…* to pick any folder.
+
+A folder you choose by hand stays until you change the row's model, click **Copy the first row to all**, or save a new default model in Options while the row is on the old one. Each of these sets the folder back to follow the model.
+
+**Copy the first row to all** gives every condition the first row's model, ignored ones included. If you chose the first row's folder by hand, conditions with a folder of that name get it too. Otherwise every other row's hand-chosen folder is cleared.
+
+## Settings
+
+These apply to the runs you start on this page.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Replace existing outlines** | Selected: every field is segmented again, even fields you corrected by hand. Cleared: only fields without an outline file are segmented. | cleared |
+| **Use GPU** | Runs the Omnipose models on an NVIDIA graphics card. Available only when SMTracker finds one; otherwise it reads *Use GPU: unavailable* with the reason, which in the packaged app is *torch is not installed in this application*. The classical segmenter always runs on the CPU. | from **Use the GPU when one is found** in Options (on) |
+| **Ignore** / **Include** | Leaves a condition out of **Segment all ready** and the Batch, and turns its **Segment** button off. SMTracker remembers it. | included |
+
+<Callout type="check">
+**Replace existing outlines** overwrites the outlines you corrected in Edit outlines, with no copy kept. To redo only some fields, delete their files in `cell_meshes/` and run with the box cleared.
+</Callout>
+
+With the box cleared, a stopped run continues where it left off, and the row's button reads **Continue**. **Replace existing outlines** starts cleared each time you open the window. A GPU speeds the Omnipose models up a lot.
+
+{/* TODO(Huy): how long does a field take on the CPU and on a GPU? The docs used to say "about a minute" and "seconds", which the code doesn't settle. */}
+
+## What a run writes
+
+Each field gets one outline file, `cell_meshes/<field>.mat`, in Oufti's format, with one outline per cell. If the condition already has an outlines folder spelled differently, such as `cell meshes`, SMTracker writes there.
+
+A field where no cells are found, or that fails, gets no file and stays on the list to segment. With **Replace existing outlines**, its old outline file stays.
+
+{/* TODO(Huy): a field that yields no cells writes no file; with Replace, the old file stays and still counts as corrected (the .curated.json marker isn't cleared). Should it write an empty file, and clear the marker? */}
+
+## Go on to Edit outlines
+
+<Ui>Next: Edit outlines</Ui> lights up once nothing is running and every condition has as many outline files as fields. Ignored conditions need their outlines too. Fields left without cells keep it off until you draw their outlines by hand.
+
+{/* TODO(Huy): with bact_phase_omni, sum/ is never loaded, so the phase-versus-fluorescence alignment check never runs and the fill check reads the phase image. Intended? */}

@@ -1,0 +1,75 @@
+---
+title: "Overview"
+description: "Outline every cell automatically, correct the outlines by hand, and train your own model."
+---
+
+**Cell outlines** is where you outline every cell, automatically, and correct the outlines by hand. The analysis keeps only tracks that lie inside a cell outline, so every tracked movie needs its outlines. Outlines drawn too tight drop the free molecules near the membrane and raise the slow fraction, so check them in [Edit outlines](/docs/cell-outlines/edit-outlines) before you analyze.
+
+It's the second of SMTracker's three stages, but you don't have to track first. The window works *field* by field: a field is the image of one imaged position, either its phase snapshot or the movie's projection in `sum/`.
+
+## Open it
+
+In SMTracker's first window, click the **Cell outlines: Segmentation + Mesh editor** card. In the window that opens, click <Ui variant="outline">Open folder…</Ui> and choose a condition, or a folder of conditions.
+
+In Cell outlines, a *condition* is still one folder, and it needs images to outline:
+
+- phase snapshots, in a folder named `phase` (or `brightfield`, `bf`, `trans`, `dic`), or lying beside the movies; or
+- a `sum/` folder, written when you save on [Calibration & save](/docs/tracking/calibration-and-save). Despite its name, it holds an SD projection of each movie by default.
+
+Every condition starts on the phase model. A condition with only `sum/` needs a model that reads it: see [Segment](/docs/cell-outlines/segment#which-model).
+
+You can also open a folder one level higher, whose subfolders each hold conditions, for example one folder per protein. Each subfolder opens as a group. If two conditions in different groups share a name, the window can't tell them apart and opens neither group, without a message. Open each group on its own instead ([Organizing your folders](/docs/folders)).
+
+## The window
+
+The sidebar lists the pages under **Cell outlines**, and below them, your conditions. Each condition's line says how many outline files it has, out of its fields, and how many fields you corrected by hand.
+
+| Page | What you do there |
+| --- | --- |
+| [Segment](/docs/cell-outlines/segment) | Outline every field automatically, condition by condition |
+| [Classical settings](/docs/cell-outlines/classical-settings) | Tune the classical segmenter on one field, with a live preview |
+| [Edit outlines](/docs/cell-outlines/edit-outlines) | Correct the outlines by hand, field by field |
+| [Train a model](/docs/cell-outlines/train-a-model) | Fine-tune a model on your corrected outlines |
+| [Batch and Options](/docs/cell-outlines/batch-and-options) | Segment many folders in one run, and set the standards a new session starts from |
+
+Segment ends with **Next: Edit outlines**, and Edit outlines with **Done, back to the menu**, once a folder is open. The other pages have neither. These buttons don't lock anything: you can click any page in the sidebar.
+
+On the right of the header are four buttons:
+
+- <Ui variant="outline">Open folder…</Ui> opens another folder.
+- <Ui variant="outline">Help</Ui> opens SMTracker's built-in manual in your browser, at this chapter.
+- <Ui variant="outline">Options</Ui> opens the standards a new session starts from. See [Batch and Options](/docs/cell-outlines/batch-and-options#options).
+- <Ui variant="outline">Back to menu</Ui> returns to the first window.
+
+## Phase or fluorescence
+
+Use phase contrast unless you have a reason not to: it works for any protein, and the default model, *bact_phase_omni*, reads it. Fluorescence works only for a cytosolic label: a membrane- or DNA-bound label gives outlines about half the true cell area. For every model, see [Segment](/docs/cell-outlines/segment#which-model).
+
+## What you need
+
+SMTracker segments with either the *Omnipose models* (*bact_phase_omni*, *bact_fluor_omni* and the pipelines built on them) or the *classical segmenter*, a fast threshold-and-shape method. The classical segmenter and Edit outlines work everywhere. The Omnipose models need libraries that the packaged app leaves out; to use them, run SMTracker from source ([Install and open SMTracker](/docs/install#automatic-cell-outlines)).
+
+<Callout type="check">
+The classical segmenter reads only the `sum/` projection. So in the packaged app, outlines can only come automatically from fluorescence: a membrane- or DNA-bound label, or a condition without `sum/`, has to be outlined by hand in Edit outlines, or segmented from source.
+</Callout>
+
+{/* TODO(Huy): the packaged app can only segment fluorescence automatically (the classical segmenter reads sum/ only). Should the packaged app carry a phase-capable segmenter? */}
+
+A graphics card speeds the Omnipose models up. SMTracker checks for an NVIDIA GPU each time a folder opens with at least one condition.
+
+## What it writes
+
+Everything goes into each condition's folder, beside your data:
+
+| Written | By | What it is |
+| --- | --- | --- |
+| `cell_meshes/<field>.mat` | Segment, Batch, and saving in Edit outlines | One outline per cell, in Oufti's format. An existing folder spelled differently, such as `cell meshes` or `Cell Meshes`, is used instead. |
+| `cell_masks/<field>.tif` | Saving in Edit outlines | The outlines as a label image |
+| `cell_meshes_auto/<field>.mat` | The first save in Edit outlines | The automatic outlines, kept once before your corrections |
+| `cell_meshes/<field>.mat.curated.json` | Saving in Edit outlines | A marker that you corrected this field by hand |
+
+Trained models go to SMTracker's model store, not into your data: `%APPDATA%\SMTracker\models` on Windows, or `~/.config/smtracker/models` on macOS and Linux.
+
+## Next
+
+To start, outline your first condition on [Segment](/docs/cell-outlines/segment).

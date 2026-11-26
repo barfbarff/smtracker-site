@@ -1,0 +1,31 @@
+---
+title: "Opening a project"
+description: "Choose the folder, say what its folders mean, and confirm what was read."
+---
+
+Choose **Analysis**, then **Choose folder…** (or drop a folder onto the window). Pick the folder that contains your condition folders. Recent projects are listed for one click; the × beside one removes it from the list and leaves the folder untouched. Up to three pages follow, depending on your data.
+
+**What do the folders mean?** This page appears when the movies sit two or more folders below the folder you opened, for example `data/ProteinA/glucose/…`. It shows one row per folder level. Mark each level as one of the following.
+
+- **Factor**: give it a name (protein, medium, strain). A condition is one combination of factor values, such as "ProteinA glucose".
+- **Replicate**: each folder is one replicate (an independent culture) of the condition above it, however it is named, a date included. Allowed only directly below the last factor.
+- **Skip**: a folder that only wraps the next level.
+
+Under the rows you see the conditions the design produces, or why the folders cannot be loaded. **Use this design** saves it with the project; type a name under it to keep it in **your designs** for later projects. **Load without a design** loads the folder with automatic grouping.
+
+**Choose the tracker.** This page appears only when a condition holds both u-track and TrackMate tracks, or conditions were tracked with different trackers. Nothing is preselected. On the same movies the two trackers differ by about 1 point in the slow fraction and 10 to 18 % in D, so mixing them also compares trackers.
+
+**Confirm project.** This page shows what the files recorded for the condition whose tab is open (pixel size, frame interval, PSF width, search radius, localization precision) and, per replicate, the series, imaging date, frames, cells and tracks kept.
+
+| Control | What it does |
+|---|---|
+| Condition tabs | Drag a tab to reorder the conditions; the order is kept when you press **Open workspace**. |
+| Palette and color menus | Choose the palette (Okabe-Ito, Tol muted, Tol vibrant, Petroff 8, Petroff 10, Kelly 20, Orchid 11) and each condition's color. A palette too short for your conditions cannot be picked; with more conditions than a palette holds, the extra colors are spread as far apart as possible and a line names any hard-to-tell pair. **Custom color…** opens the system picker; **Use the palette's color** undoes it. |
+| **Make a palette…** | Opens the palette maker: start from any palette, add colors (**Add a distinct colour** adds the one farthest from the rest), edit, move or remove them, **Order for the checks**, then **Save**. The checks show whether the first colors stay apart for normal and red-green color vision. **Delete** removes one of your palettes. |
+| **Groups** | Regroups series into replicates. **Hide** folds the board to one line; **Show** brings it back. A series you hold out, or leave in **No group**, stays held out when the project is opened again. |
+| **Pair replicates** (off by default) | Select it when replicates of different conditions belong together, for example one culture split into two media. Each replicate column gets a **Pair** tag (A, B …); replicates of different conditions with the same tag are a pair, and the column shows whether they were imaged on the same date. **Propose from imaging days** tags replicates imaged on the same date alike; check each tag. Unticking forgets the tags. |
+| **Open workspace** | Saves the grouping (`day_map.json`) where it is new or changed and opens the analysis. |
+
+Where another condition was recorded differently, the caption says so ("others 8 px"). Pixel sizes up to 1 % apart are read at one size (each D slightly off, fractions unchanged). Frame intervals up to 10 % apart are put on one interval (set under **Options**, **One frame interval for movies within**); QC says how many movies were rescaled. A different search radius caps the fastest D differently, so each condition's ceiling and crowding checks use its own radius.
+
+Only the paired significance test **Paired t (declared pairs)** reads the pair tags. Every other test treats each condition's replicates as an independent sample, and nothing is ever paired by replicate number.

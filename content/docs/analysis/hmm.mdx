@@ -1,0 +1,30 @@
+---
+title: "HMM"
+description: "States with memory: dwell times and switching rates."
+---
+
+A hidden Markov model over every track gives the states, how long molecules stay in each and how often they switch. Unlike SQD it has memory: a molecule's state at one frame depends on its state at the frame before. **Run** has SQD's settings:
+
+| Setting | What it does | Default |
+|---|---|---|
+| **Force same D across** | **Replicates**: the condition's pooled fit gives the states' D, and each replicate's rates and occupancy are fitted at those D. **Don't force anywhere**: each replicate gets its own D. **Conditions** (with a folder design) or **Whole data set**: one set of D from the pooled tracks, so rates compare the same states across conditions. | Replicates |
+| **States** (on the **Fits** page) | **2**, **3**, **4** or **Best (BIC)** per condition; conditions share one count under Conditions or Whole data set. | 2 |
+| **Best (BIC) up to** | The most states Best considers: 3 or 4. | 3 |
+| **Uncertainty** | **Replicates**, **Movies** or **Cells** (a 95 % interval from resampling; one session only), **Chunks** (random pseudo-replicates, withheld from a condition with two or more replicates) or **None**. | Replicates |
+| **σ correction** | **Off (apparent D)**: comparable with SQD. **Tracker's sigma**: a sensitivity check using the tracker's localization sigma. **Per spot**: each step has its own localization error, so a bound molecule's faint, blurred spots no longer read as short visits to a faster state. | Off |
+
+The same Force same D across setting also stands on top of the **Fits** page. A row can set Replicates or Don't force anywhere for itself, and its box leaves that condition out. Under Conditions or Whole data set the shared states are fitted first, and the status line shows progress ("shared states: 7 of 12 fits"). A condition without per-spot precision is fitted without it, and its D reads as apparent. Where the tracker recorded no sigma, the dialog names the theoretical one it would use. A corrected D is labeled σ-corrected, never apparent.
+
+**The page**
+
+- **Comparison across conditions** (on top): the conditions compared on the slow state as occupancy, rate in, rate out and apparent D. Replicates are open circles and the bar is ±1 SD, a spread and not a confidence interval. A **Dwell time** box adds a panel with the slow state's model dwell. The eye beside a condition in the key hides it.
+- **Axes** has a row per panel, since each has its own unit. A typed range stays through a new Run until **Auto**.
+- With paired replicates set on the Groups board, **Join paired replicates** (off) draws a thin gray line through each pair's circles, matched by the tag. The Export dialog's **Pair lines** box prints them. A line is for reading, not testing.
+- Brackets between conditions are set under **Significance** on the right rail, from the replicates' own fits, so run with Uncertainty set to Replicates. They are refused, with the reason, for a pooled fit, for random chunks, for conditions with different state counts, and on the D panel where D was held the same across replicates.
+- **Per condition**: a state diagram beside the rates, and a table of the states. Circle area is occupancy, arrows join neighboring states with their rates beside them, and a wider arrow is a faster rate. Select **± on rates** or **± on occupancy** to add half the 95 % interval or the SD over replicates; the intervals are always in the source data.
+- Dwell times are derived from the model. "NOT IDENTIFIABLE" means the data hold too few switches to estimate a rate. A warning appears when a state holds under 5 % of the steps or two states lie within twofold in D; fit one state fewer.
+- A card's **Export** saves its diagram. **Export all diagrams…** puts several conditions in one figure with one key. In the Export dialog a box beside each name picks the conditions, and **Grid** sets rows × columns (**Auto** fits the width).
+
+Use the HMM when fractions alone cannot tell two conditions apart: the same bound fraction can come from short, frequent binding or long, rare binding, and only the rates show which.
+
+The **Test** button on the right-hand rail shows a second page layout with two pages, listed under **HMM** in the sidebar: **Across conditions** and **Conditions**. Press **W** / **S** (or the arrow keys) with the pointer on the page to move between them, or point at the capsule at the top to see the list and click a page. The **list** button on the rail keeps the list open (**Esc** closes it), and **Space** shows it briefly.

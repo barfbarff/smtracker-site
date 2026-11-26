@@ -1,0 +1,67 @@
+---
+title: "Batch and Options"
+description: "Segment the conditions of many folders in one run, and set the model and GPU that every session starts with."
+---
+
+Segment many folders in one go, without opening each one, and set the standards the Cell outlines window starts from. Use Batch once your conditions have their phase snapshots or projections, when segmenting them one at a time on [Segment](/docs/cell-outlines/segment) would keep you at the computer.
+
+## Batch
+
+**Batch** needs no open folder. It segments every condition it finds under the folders you add, one after another. Unless you select **Replace existing outlines**, it leaves the fields that already have outlines alone.
+
+<Steps>
+<Step>
+### Add the folders
+
+Click <Ui variant="outline">Add parent folder…</Ui> and choose a folder that holds condition folders, or one condition folder. Repeat for each folder. The table lists every condition it finds, with its fields, the fields without an outline, its model and whether it's ready. A folder with nothing to segment is one row, saying why; if it holds whole projects one level down, add each project as its own folder.
+</Step>
+<Step>
+### Check the model and the GPU
+
+To segment with another model, change **Model for a new condition** in [Options](#options) first. The batch uses that model for every condition, and the folder that model reads, not the model or folder set on a Segment row. The line under **Replace existing outlines** names it.
+
+The batch uses a GPU only if **Use GPU** is selected on Segment. SMTracker looks for a GPU when a folder opens with at least one condition, so in a fresh window the batch runs on the CPU. To use the GPU, open a folder first.
+</Step>
+<Step>
+### Run
+
+Click <Ui>Run batch</Ui>. It's available once there's a folder, a model this copy of SMTracker can run, and at least one ready row. SMTracker lists the folders again as it starts, so it runs what's on disk at that moment. Each row's **Status** shows how far that condition has come, and the log lists every field as it's done.
+</Step>
+</Steps>
+
+To stop, click <Ui variant="outline">Stop after the field in hand</Ui>. The field being segmented finishes, and nothing new starts. Conditions that hadn't started read *not run: stopped*. Closing the window stops the batch the same way.
+
+{/* TODO(Huy): a batch in a fresh window (no folder opened) runs on the CPU, because the GPU check only runs after a folder opens. Intended? And is it intended that the batch ignores a condition's Model and Reads set on Segment? */}
+
+### Settings
+
+These apply to every condition in the batch.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Replace existing outlines** | Selected: every field is segmented again, even fields you corrected by hand. Cleared: only fields without an outline are segmented. It's separate from the checkbox of the same name on Segment. | cleared |
+| **Ignore** / **Include** | Leaves a condition out of the batch. SMTracker remembers it by the condition's folder, and the same list applies on Segment. | included |
+
+<Callout type="check">
+With **Replace existing outlines** selected, the batch overwrites every hand-corrected field in every folder you added. Leave it cleared unless you mean to start over.
+</Callout>
+
+A condition's *layout* is how its movies are filed; a line under the table names the conditions not filed in `phase/` and `raw/`. If the model is the classical segmenter, the batch uses the settings saved on [Classical settings](/docs/cell-outlines/classical-settings). The list of parent folders isn't remembered: a new window starts with none.
+
+While a batch runs, you can't segment on the Segment page, open another folder or go back to the menu; and a batch can't start while Segment is running. On Windows, SMTracker keeps the computer from sleeping until the batch ends. Unlike the [tracking Batch](/docs/tracking/batch), this batch writes no report file. The log and the note under the table say what ran, and a pop-up too when the batch ran longer than **Pop-up when a job ran at least**.
+
+{/* TODO(Huy): should the outlines batch write a report CSV like the tracking batch, and remember its parent folders? */}
+
+## Options
+
+Click <Ui variant="outline">Options</Ui> in the header to open **Cell outline options**, the *standards* a new session starts from. Saving new standards changes only the values still at the old standard; a value you set on a page stays.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **Pop-up when a job ran at least** | A job that runs at least this long, in seconds, ends with a pop-up and a taskbar flash. 0 shows a pop-up after every job. It's the same setting as in the [preparation options](/docs/tracking/options). | 60 s |
+| **Model for a new condition** | The model each condition starts with when you open a folder, and the model every condition uses in Batch. You can change it on each condition's row on Segment. | *bact_phase_omni (reads phase)* |
+| **Use the GPU when one is found** | Selected: **Use GPU** on Segment starts selected when a GPU is found. Clear it to run on the CPU while the GPU is busy with something else; that's much slower. | selected |
+
+Saving a new model moves every open condition still on the old standard model to the new one, except the one being segmented. A condition whose model you chose on its row keeps it. A condition that moves loses a folder you chose for it by hand, and the Segment log says so.
+
+Click <Ui>Save</Ui> to keep your changes, or <Ui variant="outline">Cancel</Ui> to discard them. <Ui variant="outline">Reset to defaults</Ui> sets every field back, but writes nothing until you save; saving then also resets the pop-up time for the preparation window.

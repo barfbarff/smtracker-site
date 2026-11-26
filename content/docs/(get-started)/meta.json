@@ -1,0 +1,15 @@
+{
+  "title": "Get started",
+  "icon": "Compass",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "install",
+    "first-project",
+    "folders",
+    "replicates",
+    "other-tools",
+    "timing-and-pixel-size",
+    "written"
+  ]
+}

@@ -1,0 +1,17 @@
+---
+title: "Analysis options"
+description: "The standards a new analysis session starts from."
+---
+
+The **Analysis options** screen (the button at the foot of the analysis rail) sets the standards a new session starts from.
+
+| Option | What it does | Default |
+|---|---|---|
+| **Weighting** | SQD fit: **Step** counts every displacement once; **Track** counts every track once. | Step |
+| **Uncertainty** | SQD fit: **Replicates**, **None**, **Movies**, **Cells** (single session, slow) or **Chunks** (random chunks as pseudo-replicates, for data without replicates). | Replicates |
+| **Chunks per condition** | Chunks each condition is dealt into (2 to 20). | 5 |
+| **ECDF** | **Fast** fits at 2000 points; **Full** uses every point (slower). | Fast |
+| **Optimiser** | **Fast** uses exact derivatives; **Standard** estimates them numerically. | Fast |
+| **Best (BIC) also tries 4 populations** | Adds four populations to Best (BIC)'s 1 to 3 (about 70 s more per condition). | Off |
+| **Outline tolerance** | Keeps a track when every point lies inside its outline widened by this distance (0 to 500 nm). Tight outlines raise the slow fraction. Applies when a project is next opened; QC says how many tracks it added. | 0 nm |
+| **One frame interval for movies within** | Movies whose frame intervals differ by less than this are put on one interval; further apart, a pooled fit refuses them. 0 never rescales. Applies when a project is next opened. | 10 % |

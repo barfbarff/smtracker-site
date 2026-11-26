@@ -1,0 +1,70 @@
+# Checks and publishes the website (landing page and docs) on GitHub Pages.
+#
+# - Every push and pull request: lint, typecheck and a full static build. A failure shows as a red ✗ on GitHub.
+# - Every push to `main`: the built site is published to GitHub Pages.
+#
+# One-time setup in the repository: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Nothing else is needed: no secrets, no accounts outside GitHub.
+
+name: Website
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# a newer push replaces a check or deployment still running for the same branch
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # where GitHub Pages will serve the site (https://<owner>.github.io/<repository>/), so links and
+      # assets carry the right prefix; only needed when publishing
+      - id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run types:check
+
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

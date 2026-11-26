@@ -1,0 +1,113 @@
+---
+title: "Batch"
+description: "Track every prepared condition under several folders in one unattended run, overnight if you like, and get a report of what ran."
+---
+
+Track many folders in one go, for example overnight. You add the folders, SMTracker lists every condition inside them, and it tracks each one that's ready, one after another. Use it once your conditions are prepared and saved, when tracking them one at a time on [Track](/docs/tracking/track) would keep you at the computer.
+
+**Batch** needs no open folder. It works from what's saved on disk, so it can track folders you haven't opened in this session.
+
+## Before you start
+
+A batch never proposes ranges or guesses a calibration. A condition runs only if what it needs was saved before, as tracking always does ([Calibration & save](/docs/tracking/calibration-and-save) explains why). Otherwise it's skipped, and the first thing missing is named in its row.
+
+For every condition, you need:
+
+- **A saved range for every movie.** Set the ranges on [Movies & crop](/docs/tracking/movies-and-crop), then click **Save all** on Calibration & save.
+- **The saved calibration the tracker needs:**
+  - TrackMate: the emission, NA and pixel size, so SMTracker can work out the spot radius.
+  - u-track: the pixel size and frame interval, plus the NA and emission (or a PSF sigma typed on the u-track card on [Detect & link](/docs/tracking/detect-and-link)). With the **Cell-free background test** on, every movie also needs cell outlines.
+- **No unsaved edits.** If the condition is open in the window with edits you haven't saved, the batch skips it and names it, even though an earlier version is saved on disk.
+
+A condition that's open in the window runs with its Detect & link values as they are in the window, typed or measured, saved or not.
+
+TrackMate also needs a detection threshold. A folder you haven't measured in this window doesn't have one, because thresholds aren't saved. The batch can measure it for you: see [Measure a missing threshold](#measure-a-missing-threshold).
+
+## Run a batch
+
+<Steps>
+<Step>
+### Add the folders
+
+Click <Ui variant="outline">Add parent folder…</Ui> and choose a folder that holds condition folders, or one condition folder. Repeat for each folder.
+
+The table lists every condition it finds, one level down: the parent folder, the condition, its *layout* (how its movies are arranged in the folder), its number of movies and whether it's ready. A folder that holds whole projects one level down isn't searched deeper. SMTracker says so: add each project as its own parent folder.
+</Step>
+<Step>
+### Check the table
+
+Read the **Status** column. *ready* rows run, and each shows a time estimate. *skipped* rows say what's missing: fix those conditions on the earlier pages and save, or let the batch skip them. The line under the table sums up how many conditions run and roughly how long they take.
+</Step>
+<Step>
+### Run
+
+Choose the **Tracker** and the other [settings](#settings), then click <Ui>Run batch</Ui>. SMTracker lists the folders again as it starts, so it runs what's on disk at that moment.
+</Step>
+</Steps>
+
+**Run batch** is available once at least one row is ready. It's refused while a condition is tracking on Track or a radius check is running, and when Fiji or MATLAB isn't set up. The note under the table says why.
+
+With u-track, if MATLAB hasn't been checked yet in this window, SMTracker first starts it, which takes about 30 seconds (see [The first u-track run](/docs/tracking/track#the-first-u-track-run)). The batch starts when MATLAB answers.
+
+## Settings
+
+The settings apply to every condition in the batch.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Tracker** | The same choice as on [Detect & link](/docs/tracking/detect-and-link#choose-the-tracker): changing it here changes it there too. u-track uses the u-track card's settings for every condition. | the tracker you used last |
+| **Replace earlier runs** | Selected: conditions tracked before are tracked again. Cleared: they're skipped. | cleared |
+| **Measure a missing threshold inside the saved crops (k = 7.2)** | TrackMate only. Selected: a condition with no detection threshold gets one measured just before its run. Cleared: it's skipped. The k comes from **Threshold** in [Options](/docs/tracking/options). | selected |
+| **Movies at once** | How many movies of a condition are tracked side by side, from 1 to 4. Conditions always run one after another. It's the same number as on [Track](/docs/tracking/track#settings). | the number you used last |
+
+The two checkboxes aren't remembered: each time you open the window, **Replace earlier runs** starts cleared and the threshold checkbox starts selected. The list of parent folders starts empty too.
+
+### Replace earlier runs
+
+With TrackMate, a condition counts as tracked before when its `trackmate/` folder holds any track file. With u-track, it counts when even one of its movies already has a u-track run in `tif/`. With the checkbox cleared, such a condition is skipped. [Track](/docs/tracking/track#settings) explains what a replacing run overwrites, and what it leaves.
+
+### Measure a missing threshold
+
+For each movie, SMTracker takes 8 frames spread over its saved range, measures the noise there, and sets the threshold to k times that noise. Each movie is then tracked at its own threshold, as when you click **Measure** on [Detect & link](/docs/tracking/detect-and-link). A movie whose noise couldn't be measured is tracked at the condition's median threshold.
+
+The measured threshold isn't saved. Running the same folder again measures it again. A condition still needs its spot radius: without saved optics (or a radius typed on Detect & link, for an open condition), it's skipped even with this checkbox selected.
+
+## While it runs
+
+Each row's **Status** shows how far that condition has come, and the log at the bottom lists every movie as it finishes. A card in the window shows the progress over all conditions.
+
+While a batch runs, you can't open another folder, track on Track, change the tracker, or go back to the menu. On Windows, SMTracker keeps the computer from sleeping until the batch ends (the display may still turn off).
+
+To stop, click <Ui variant="outline">Stop after the movie in hand</Ui>. The movies being tracked finish, so no track file is left half written, and nothing new starts. Closing the window stops the batch the same way.
+
+If one condition fails, the batch names it in the log and the report, and goes on with the next.
+
+## The report
+
+The report is a CSV file named `smtracker_batch_<date>-<time>.csv`, written into the first parent folder. It has one row per condition, skipped ones included. SMTracker writes it as the batch starts and again after every condition, so it's up to date even if the batch is stopped.
+
+| Column | What it holds |
+| --- | --- |
+| `parent`, `condition`, `folder`, `layout` | Where the condition is, and how its folder is arranged |
+| `tracker` | `trackmate` or `utrack` |
+| `status` | What happened (below) |
+| `movies`, `movies_tracked`, `movies_failed`, `movies_stopped` | Movie counts |
+| `tracks`, `usable_tracks` | All tracks, and those with at least 5 localizations |
+| `error` | Why a condition was skipped or failed, if it was |
+
+The status of each condition is one of:
+
+| Status | Meaning |
+| --- | --- |
+| *tracked* | Every movie was tracked. |
+| *tracked, with failures* | Some movies failed. |
+| *stopped part way* | You stopped the batch during this condition. |
+| *failed* | No movie was tracked, or the run hit an error, such as a threshold that couldn't be measured. |
+| *not run: stopped* | You stopped the batch before this condition started. |
+| *skipped* | The condition wasn't ready. |
+
+If the report can't be written, for example because it's open in a spreadsheet, the batch goes on. The log says so straight away, and the summary says so at the end. When the batch has run for at least a minute, a window pops up with the summary. You can change that time with **Pop-up when a job ran at least** in [Options](/docs/tracking/options).
+
+{/* TODO(Huy): the note "running; Windows is kept awake until the batch ends" shows on macOS too, where nothing is kept awake. Intended? */}
+{/* TODO(Huy): loose movies beside condition folders are silently left out of a batch, while the main window warns about them. Should Batch say so too? */}
+{/* TODO(Huy): does a batch still write its report if the window is closed mid-run? The code stops it after the movie in hand, but whether the process lives long enough isn't settled. */}

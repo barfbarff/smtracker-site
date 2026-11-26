@@ -1,0 +1,72 @@
+---
+title: Tracks from other tools
+description: "Analyze tracks from another tracker: put their tables in the condition folder and, when their units aren't stated, describe them in a small file."
+---
+
+You don't have to track in SMTracker to use its analysis. Besides tracks from u-track and TrackMate, the analysis reads *track tables*: one file per movie, listing each localization with its track, frame and position. Use this page if you've already tracked your movies with another program.
+
+## Trackers it reads
+
+The analysis recognizes the tables written by:
+
+- trackpy
+- MOSAIC ParticleTracker
+- TrackIt
+- Spot-On
+- evalSPT / SLIMfast
+- TrackMate's CSV export
+
+The format is recognized from the column names (evalSPT tables have none, and are recognized by their four tab-separated columns), so you don't need to rename or convert anything. The analysis also reads any other table, as long as you describe its columns and units in a small file: see [Describing a table of your own](#describing-a-table-of-your-own).
+
+## Where to put the tables
+
+Put the tables in a `track_tables/` folder inside the condition's folder, one file per movie, named after the movie. Tables can be `.csv`, `.tsv` or `.txt`.
+
+<Files caption="One table per movie, named after the movie, in the condition's track_tables/ folder.">
+  <Folder name="PdhA_LB">
+    <File name="series001.nd2" note="the movie (optional)" />
+    <Folder name="track_tables">
+      <File name="series001.csv" />
+      <File name="series002.csv" />
+      <File name="format.json" note="only when the units aren't stated (below)" />
+    </Folder>
+  </Folder>
+</Files>
+
+Use one tracker per condition. If a condition holds track tables and u-track or TrackMate output, the analysis asks which to use.
+
+## When the units aren't stated
+
+SMTracker has to know the units of the positions, and how long a frame is, because every D scales with both. Most formats say so; some don't. Add a `format.json` to the `track_tables/` folder when:
+
+- the format doesn't state its units (evalSPT, or TrackMate's CSV without its units row),
+- the table is one of your own, or
+- SMTracker hasn't saved a calibration for this folder, because you never saved it on [Calibration & save](/docs/tracking/calibration-and-save), for example when the folder holds no movies.
+
+```json title="track_tables/format.json"
+{"units": "um", "pixel_size_nm": 106, "frame_interval_ms": 20}
+```
+
+| Key | What it means |
+| --- | --- |
+| `units` | The units of the positions in the table: exactly `px` (pixels), `nm` or `um` (µm) |
+| `pixel_size_nm` | The size of one camera pixel in the sample, in nm. Needed when SMTracker hasn't saved a calibration for this folder, whatever the table's units |
+| `frame_interval_ms` | The time between two frames, in ms: the camera's frame interval, not the exposure. Needed in the same case |
+
+A calibration saved on Calibration & save wins: when the folder has one, the two numbers in `format.json` are ignored. For why the frame interval and exposure differ, see [Frame interval and pixel size](/docs/timing-and-pixel-size).
+
+### Describing a table of your own
+
+For a format SMTracker doesn't know, also tell it which column holds what:
+
+```json title="track_tables/format.json"
+{"columns": {"track": "TrackID", "frame": "Frame", "x": "X", "y": "Y"}, "units": "nm", "frame_origin": 1}
+```
+
+`columns` maps the track number, frame, x and y to your column names. `frame_origin` is the number of your first frame, 0 or 1. It defaults to 1, so set it to 0 if your frames start at 0: a wrong origin shifts every frame by one.
+
+<Callout type="refused">A table whose units are unknown is refused, not guessed, because a guess would silently shift every D. Add `track_tables/format.json` with its units, and open the folder again. One table that can't be read stops the whole folder from opening, so fix it or move it aside.</Callout>
+
+## Open them in the analysis
+
+Open the folder above your conditions in the analysis, as in [Your first project](/docs/first-project). The analysis keeps only tracks inside a cell outline, so [outline the cells](/docs/cell-outlines) of each movie first: a table whose movie has no outlines is left out, and a folder where no movie has them doesn't open.

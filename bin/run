@@ -1,0 +1,16 @@
+#!/bin/sh
+# Runs a command with this project's own Node (in .toolchain/node) and local CLIs first on PATH.
+# Nothing global is used or changed:  ./bin/run npm install  ·  ./bin/run npm run dev
+here="$(cd "$(dirname "$0")/.." && pwd)"
+if [ ! -x "$here/.toolchain/node/bin/node" ]; then
+  echo "No project Node in .toolchain/node. See README (Set up)." >&2
+  exit 1
+fi
+export PATH="$here/.toolchain/node/bin:$here/node_modules/.bin:$PATH"
+export npm_config_userconfig="$here/.npmrc"
+export npm_config_cache="$here/.toolchain/npm-cache"
+export npm_config_prefix="$here/.toolchain/npm-global"
+export npm_config_update_notifier=false
+export NEXT_TELEMETRY_DISABLED=1
+cd "$here"
+exec "$@"

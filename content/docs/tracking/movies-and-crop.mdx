@@ -1,0 +1,176 @@
+---
+title: "Movies & crop"
+description: "Choose which frames of each movie to track: let SMTracker propose a range, then check and adjust it."
+---
+
+Choose which frames of each movie go into tracking. A movie usually starts too dense to track, while the field bleaches down to single molecules, so its first frames are left out. SMTracker reads every movie and proposes where its usable part begins, and you check each proposal on a chart. You need this page for every new folder.
+
+A movie's *range* is the frames it keeps for tracking, from a start frame to an end frame. Nothing on this page is written to disk: the ranges are saved on the next page, [Calibration & save](/docs/tracking/calibration-and-save).
+
+To get going quickly, skip to [Propose a range for every movie](#propose-a-range-for-every-movie).
+
+## Reading the movies
+
+**Movies & crop** is where you check every movie and decide which frames it keeps. It's the first page you see after opening a folder, and SMTracker starts reading the movies in the background. You can look around while it works.
+
+SMTracker measures the mean of every frame and counts the spots in every 25th frame. Each movie takes a few seconds. A card titled **Reading movies** shows the progress, and each movie in the list shows *reading…* until it's done.
+
+A folder you've saved before opens with its saved ranges, and its movies' curves load from the `bleaching/` folder without being read again. In a new folder, no movie has a range until you propose one, cut, or set it by hand.
+
+## What the page shows
+
+The page has a list of movies on the left and a chart of the selected movie on the right. Together they show where each movie's range sits and whether its kept frames are flat.
+
+The list has one row per movie of the condition on screen. Under each name you see its range, or *no range*, and its number of frames. The dot is green once the movie is read, gray while it's reading, and red if it couldn't be read. *· unsaved* marks a range you haven't saved yet.
+
+Click a movie to show its chart. The chart has three panels:
+
+| Panel | What it shows |
+| --- | --- |
+| **frame mean** | The mean of every frame, with the kept range drawn over the whole curve in orange. |
+| **spots / frame** | The number of spots in every 25th frame, from a quick count made while reading (not from TrackMate). The kept range is in orange here too. |
+| **kept range** | The frame mean of the kept range alone, on its own scale, so you can see whether it's flat. A line above it says how much the mean drops across the range. |
+
+With no range set, or a range that covers the whole movie, the bottom panel is labeled **preview** instead. It previews the range from the floor to the last frame.
+
+On the top two panels, the solid orange lines are the range's edges. The dashed red line is the *floor*: the earliest frame the *strictest* rule would accept. It stays where it is when you choose another rule. The dotted green lines show the last proposal, until you edit the movie by hand.
+
+Under the chart, a line lists the floor each rule finds, then the floor SMTracker settles on. It reads `floors: density … · amplitude … · field mean … · flat … → no earlier than …`.
+
+## Propose a range for every movie
+
+Proposing is the quickest way through the page. Start with the default rule, then check a few movies by eye.
+
+<Steps>
+<Step>
+### Check the start rule
+
+Leave **Start rule** at *strictest* for your first run. The other rules are explained under [Start rule](#start-rule).
+</Step>
+<Step>
+### Propose
+
+Click <Ui>Propose for this condition</Ui>, or <Ui variant="outline">Propose for all conditions</Ui> to do every condition at once. Every movie that's been read gets a range. A note under the chart says how many were proposed, and how many couldn't be, naming the first two with the reason.
+
+Movies still being read are proposed as they arrive, with the rule selected at that moment.
+</Step>
+<Step>
+### Check a few movies
+
+Click through some movies and look at the bottom panel. The kept range should start where the frame mean has flattened out and stay flat to the end. To fix one that doesn't, see [Adjust one movie](#adjust-one-movie).
+</Step>
+</Steps>
+
+<Callout type="check">
+Proposing replaces every range of those movies, including the ones you set by hand. Adjust movies after you propose, not before.
+</Callout>
+
+Changing the **Start rule** doesn't re-propose anything. Click a Propose button again to apply it.
+
+## Adjust one movie
+
+When a proposed start lands too early or too late, fix that movie by hand. Drag an edge of the range on the top two panels, or type the frames in **This movie keeps** … **to** … under the chart. Both change only the movie on screen. To propose this movie again with the current rule, click <Ui variant="outline">Propose</Ui> beside those fields.
+
+A range must start at frame 1 or later and end after it starts. It can't end past the movie's last frame. SMTracker refuses anything else, keeps the old range and says why in the note. A range under 100 frames is kept, and the note names it, because it gives few tracks.
+
+## One start or one length for every movie
+
+When every movie was recorded the same way, you can skip proposing and give them all the same start, end or length. Each cut applies to every movie of every open condition, and to movies read later in the session.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Every movie starts at** + <Ui variant="outline">Cut all starts</Ui> | Every movie starts at this frame and keeps its end. A movie that ends at or before it is left alone, and the note names it. | 500 |
+| **ends at** + <Ui variant="outline">Cut all tails</Ui> | Every movie ends at this frame and keeps its start. A shorter movie ends at its own last frame. A movie that starts after it is left alone. The note names both. | the longest movie of the condition on screen (4000 until one is read) |
+| **or every movie tracks** … **frames from its own start** + <Ui variant="outline">Track N frames</Ui> | Every movie keeps its start and keeps exactly this many frames: a movie starting at 400 with 1000 frames ends at 1399. A shorter movie ends at its last frame, and the note names it. | 1000 |
+
+If a movie has no range yet, SMTracker first proposes one with the **Start rule**, then applies the cut. If the rule finds nothing in it, the movie is cut from frame 1, and the note says so.
+
+**ends at** follows the longest movie of the condition on screen as movies are read. Showing another condition resets it to that condition's longest movie, even after you've typed a value, so check it before you click <Ui variant="outline">Cut all tails</Ui>. **Cut all tails** and **Track N frames** replace each other: the one you click last decides where movies end.
+
+The last thing you do wins. A cut replaces the ranges you adjusted by hand, and a hand edit after a cut replaces the cut for that movie.
+
+Cuts and hand edits don't check for frames where the laser was off. Only proposals leave those out, so look at the chart if your movies have dark stretches.
+
+{/* TODO(Huy): the Track N frames tooltip says each movie "ends this many frames later", but the code keeps exactly N frames (start to start + N - 1). Should the tooltip be fixed? */}
+{/* TODO(Huy): is it intended that showing a condition resets a typed "ends at", while Cut all tails applies to every condition? */}
+
+## Start rule
+
+**Start rule** decides where a proposed range begins. All four rules work from the frame mean and spot count that SMTracker measured, and skip frames where the laser was off.
+
+| Rule | Where the range starts |
+| --- | --- |
+| *strictest* (default) | At the start of the longest flat stretch of the frame mean: at least 200 frames over which the mean stays within **Flat within**. If no stretch is flat, at the latest of the other three floors. |
+| *density* | Where the spot count, after its peak, falls to 10 spots per frame or fewer. |
+| *amplitude* | Where the median spot brightness, after the spot count's peak, comes within 1.3 times its level at the end of the movie. |
+| *field mean* | Where the frame mean, after its brightest frame, falls to the level of the movie's last frames. |
+
+Use *strictest* unless the chart tells you otherwise. If the frame mean never quite flattens but the spots clearly settle, try *density* or *amplitude*. If a rule finds no floor in a movie, SMTracker proposes nothing for it and says so in the note.
+
+The range ends at the movie's last frame. If the laser was off at the end, it ends at the last lit frame instead.
+
+One rule applies to new proposals in the whole session. Its default comes from **Options**.
+
+{/* TODO(Huy): the app describes strictest three ways. The code takes the flat floor first (as above); the Options help says "the latest of the four"; the guide says "the longest flat stretch, or the latest floor if none is flat". Which wording is right, and should the app's texts be aligned? */}
+{/* TODO(Huy): is the density/amplitude advice above right, and when would you pick field mean? */}
+
+## Flat within
+
+**Flat within** sets how much the frame mean may vary inside a stretch that still counts as flat, as a percentage of its level. It defaults to 2 %, but SMTracker chooses a value for each condition once its movies are read, so you rarely type one. It only affects the *strictest* rule.
+
+### How SMTracker chooses it
+
+The *flat band* is the spread of counts that **Flat within** allows around the frame mean. SMTracker tries 2 %, 1 %, 0.75 %, 0.5 % and 0.25 % in turn. It takes the first value whose flat band is at most 15 % of the signal above the camera's dark level, using the median over the condition's movies, and marks it *automatic*. If even 0.25 % gives a wider band, it uses 0.25 % and says so.
+
+To measure the dark level, SMTracker needs a few dark frames before the laser came on. Without them, or if no movie has a flat stretch at any of these values, it keeps the value already in **Flat within**. The note beside the field says which case applies.
+
+### When to change it
+
+The percentage is of the raw counts, dark level included. With a high dark level and a weak signal, 2 % can be a large part of the signal, and the floor lands too early. The line under the chart warns you when the flat band is more than a quarter of the signal. When you see that warning, lower **Flat within** to 0.25 to 0.5 %, or give every movie the same start.
+
+A value you type applies to the condition on screen and is marked *typed*. SMTracker then proposes again every movie whose range is still its proposal, with the rule that made it, and keeps the ones you've changed.
+
+**Flat within** isn't saved with the ranges. When you open the folder again, SMTracker chooses it again, so type your value again if you had changed it. A new default in **Options** only reaches conditions that don't have their own value yet.
+
+## When a movie can't be proposed or read
+
+Most problems show up in the note under the chart, with the movie's name and the reason:
+
+- *No floor.* The rule found nowhere the movie settles. Try another rule, or set the range by hand.
+- *Laser off inside the range.* The proposed range holds frames where the laser was off. Set the start after them by hand, or give every movie one start.
+- *Too short.* A proposed range of fewer than 5 frames can't hold a track, so SMTracker refuses it. Set the range by hand, or try another rule.
+
+A movie that comes in while it's being read and can't be proposed gets no range and no note. Its row shows *no range*.
+
+A movie that couldn't be read turns red, and the chart shows the reason. For example, the file isn't a single-channel time stack, the movie was never lit in the frames SMTracker checked, or it holds no spots at all.
+
+{/* TODO(Huy): what should a user do with an unreadable movie: remove the file and open the folder again? */}
+
+## Go on to Calibration & save
+
+<Ui>Next: Calibration & save</Ui> lights up once every movie of every condition is read and has a range. The note beside it says what's missing. A movie that couldn't be read has no range, unless one was saved before, so it keeps the button off. To go on anyway, click **Calibration & save** in the sidebar.
+
+{/* TODO(Huy): should an unreadable movie keep Next disabled? Is there a way to leave it out other than going on through the sidebar? */}
+
+## Check where to end, from your tracks
+
+Come back to this page once a condition is tracked and its cells are outlined. SMTracker can then measure where background starts to swamp the cells near the end of each movie.
+
+<Steps>
+<Step>
+### Open the guide
+
+Select **Show** on **How these settings work**, then click **Every movie ends at** in its list of settings.
+</Step>
+<Step>
+### Measure
+
+Click <Ui variant="outline">Measure from the tracks here</Ui>.
+</Step>
+</Steps>
+
+For each block of 200 frames, SMTracker compares the rate of localizations outside the cells with the rate inside, and shows how much data each block holds. It changes no ranges.
+
+This needs TrackMate tracks in `trackmate/`, cell outlines, a brightfield snapshot (in `phase/` or beside the movie) and a saved range for each movie. Movies without them are skipped, and the result counts them by reason.
+
+{/* TODO(Huy): Measure from the tracks here reads only trackmate/, not u-track results. Is that intended? */}

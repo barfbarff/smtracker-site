@@ -1,0 +1,107 @@
+---
+title: Organizing your folders
+description: Arrange your movies so SMTracker finds every condition and pairs each movie with its phase snapshot.
+---
+
+Arrange your folders so SMTracker finds every condition. SMTracker doesn't ask you to import or register anything. It reads your data straight from the folders on disk, so the way you arrange them is how SMTracker understands your experiment. The rules are short.
+
+## A condition is a folder
+
+A *condition* is one folder of movies that you compare against the others, for example PdhA in glucose. It's usually one strain under one treatment, but SMTracker only knows it as a folder. The folder holds all of that condition's movies, from every replicate:
+
+<Files caption="One condition: all its movies, from every replicate.">
+  <Folder name="PdhA_LB">
+    <File name="series001.nd2" note="a movie" />
+    <File name="series001.tif" note="its phase snapshot" />
+    <File name="series002.nd2" />
+    <File name="series002.tif" />
+    <File name="…" />
+  </Folder>
+</Files>
+
+When you open a folder in SMTracker, you can choose either:
+
+- one condition folder, to work on that condition alone, or
+- the folder above several conditions, to see all of them at once. This is what you'll usually want, since the analysis compares conditions.
+
+To keep each replicate in its own sub-folder, see [How replicates are counted](/docs/replicates).
+
+## Movies and their phase snapshots
+
+Each movie usually comes with a *phase-contrast snapshot* of the same field, which SMTracker uses to find the cells. SMTracker reads two layouts: movie and snapshot side by side, or movies in `raw/` and snapshots in `phase/`.
+
+<Columns>
+<Files caption="Straight off the microscope: movie and snapshot side by side.">
+  <Folder name="PdhA_LB">
+    <File name="series001.nd2" note="or .stk" />
+    <File name="series001.tif" note="phase snapshot" />
+  </Folder>
+</Files>
+<Files caption="Filed: movies in raw/, snapshots in phase/.">
+  <Folder name="PdhA_LB">
+    <Folder name="raw">
+      <File name="series001.nd2" />
+    </Folder>
+    <Folder name="phase">
+      <File name="series001.tif" />
+    </Folder>
+  </Folder>
+</Files>
+</Columns>
+
+A snapshot is paired with its movie by name, so keep the two names identical apart from the extension: `series001.nd2` goes with `series001.tif`.
+
+<Callout type="check">Don't mix the two layouts in one folder. If some movies sit in `raw/` and newer ones lie loose beside it, the preparation window reads only the loose ones. The condition's line in the sidebar says *half-organised*, and the note on Calibration & save says which movies are read. Move all of the condition's movies into `raw/`, or all of them out of it.</Callout>
+
+The preparation window never moves or renames your files. The older classic tracking window does: when you save ranges there, it files loose movies into `raw/` and snapshots into `phase/`, without keeping copies.
+
+## Grouping conditions
+
+As projects grow, you'll probably group conditions, for example one folder per protein:
+
+<Files>
+  <Folder name="ausgewertet">
+    <Folder name="PdhA">
+      <Folder name="PdhA_LB" note="a condition" />
+      <Folder name="PdhA_glucose" note="a condition" />
+    </Folder>
+    <Folder name="PdhB">
+      <Folder name="…" note="its conditions" />
+    </Folder>
+  </Folder>
+</Files>
+
+SMTracker's three windows don't read groups the same way:
+
+| You open | Preparation | Cell outlines | Analysis |
+| --- | --- | --- | --- |
+| A condition (`PdhA_LB`) | Yes | Yes | Yes |
+| A group of conditions (`PdhA`) | Yes | Yes | Yes |
+| A folder of groups (`ausgewertet`) | No: open each group | Yes, unless two groups hold conditions of the same name | Yes |
+
+So in preparation, open one protein's folder at a time. In the analysis, open the top folder to compare every condition.
+
+<Callout type="check">The analysis treats `PdhA` as a group of conditions only when its conditions reuse the same movie names, each starting again at `series001`. If the series run on from one condition to the next (001 to 030, then 031 to 060), the analysis opens `PdhA` as one condition holding both media. Check the conditions it lists before you go on.</Callout>
+
+When your movies sit two or more folders below the one you open, the analysis asks **What do the folders mean?**: whether each level is a *factor* that describes the condition (such as protein or medium), a *replicate*, or a level to skip. See [Opening a project](/docs/analysis/opening-a-project).
+
+## Two experiments in one folder
+
+Sometimes one folder holds two experiments with the same conditions, for example exponential and stationary phase. The analysis names each condition after its experiment folder, so they don't clash:
+
+| Folder | Opens as condition |
+| --- | --- |
+| `exp/free` | `exp free` |
+| `exp/yloc` | `exp yloc` |
+| `stat/free` | `stat free` |
+| `stat/yloc` | `stat yloc` |
+
+The same goes for groups: `PdhA/LB` and `PdhB/LB` open in the analysis as `PdhA LB` and `PdhB LB`. Renaming a group folder therefore renames its conditions in the analysis.
+
+The Cell outlines window can't tell such conditions apart, and finds nothing to segment. Open each experiment's folder (`exp`, then `stat`) there instead, or give the conditions different names, such as `PdhA_LB` and `PdhB_LB`.
+
+## Next
+
+- To keep each replicate in its own folder, see [How replicates are counted](/docs/replicates).
+- If you tracked your movies with another program, see [Tracks from other tools](/docs/other-tools).
+- To see what SMTracker adds to these folders, see [What SMTracker writes](/docs/written).

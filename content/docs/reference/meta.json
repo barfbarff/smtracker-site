@@ -1,0 +1,9 @@
+{
+  "title": "Reference",
+  "icon": "FileText",
+  "pages": [
+    "technical",
+    "reading-the-numbers",
+    "components"
+  ]
+}

@@ -1,0 +1,30 @@
+---
+title: "QC: run it before comparing anything"
+description: "Tracks, cells and yield per condition, and whether the comparison is fair, before you compare anything."
+---
+
+**Conditions** lists, per condition, the tracks, localizations and cells, a track-length sparkline, the share of tracks inside a cell, and a status (*clean*, *flagged* or *low yield*). Click a row for that condition's detail page.
+
+**Is the comparison fair?** puts the conditions side by side on the things that can bias a fraction. Hover a heading for its rule. A value that breaks the rule is orange; a mark means "look", not "wrong".
+
+| Column | Marked when |
+|---|---|
+| Tracker | the conditions were tracked with different trackers |
+| Replicates | there are fewer than 3 replicates (shown as replicates / movies) |
+| Interval | some movies were rescaled onto this frame interval (how many, in brackets) |
+| Steps | the longest median track length is 1.25 times the shortest or more (long tracks are slower on average; a difference can also be real) |
+| Yield | the most tracks per cell per 1000 frames are 1.5 times the fewest or more |
+| In cell | the share of tracks inside a cell differs by 15 points or more |
+| Near edge | 10 % or more of a condition's tracks were dropped although they lie within 1 px of an outline, so the outlines are drawn tight. The **Outline tolerance** option (Options) keeps them; compare the fractions with and without it |
+| Outlines | the tracks sit half a pixel or more off their cells' outlines in both x and y: the tracker and the outlines count pixels from different origins, and the cell filter cuts one side of every cell |
+| Crowded | 10 % or more of localizations have another within the search radius the condition was linked at, so linking can join two molecules |
+
+**Do the replicates differ?** asks, per condition, whether one replicate came out unlike the others by more than its movies differ among themselves. The spread of the replicates' slow fractions is compared with the spread when the movies are dealt out at random into groups of the same sizes. **Spread** is the real value, **By chance** the median and 2.5 to 97.5 % range of the random deals, and **p** the share of deals at least as spread. A p under 0.05 is orange: look at that condition's replicates before averaging them. With twenty conditions, one is marked by chance.
+
+**Cell length** shows every condition's outlined cells on one length axis (µm, along the centerline): a bar for the middle half, a tick at the median, whiskers from 5 to 95 %. A condition is marked when the longest median is 1.25 times the shortest or more, because cell length changes how often a free molecule meets the wall. A very long "cell" is usually a chain that segmentation did not split.
+
+**Contributes nothing** lists, per condition, what is in the folders but not in the numbers: movies without tracks or outlines, outlines holding no cell, movies whose tracks all lie outside the outlines, low-yield replicates, and the track cap and exclusions in force.
+
+**Exclusions…** on that card leaves a movie, a cell or a track out of every analysis, each with a written reason. QC's flagged movies and cells are offered (**Use**) but never excluded automatically. **Preview with and without** shows each affected condition's tracks and slow fraction both ways. **Apply** rebuilds the workspace; remove an exclusion and Apply again to put it back. **Restore** offers the last set again.
+
+The **detail page** of a condition shows the track-length histogram (**Max length** caps very long tracks for the whole session; long tracks are mostly slow, so a cap lowers slow fractions), the localizations per frame (crowding), the N per replicate and movie, outliers per cell, movie or replicate (**Inspect**; flagged, never dropped: median ± 3.5 median absolute deviations), and the tracks inside an outline per movie.

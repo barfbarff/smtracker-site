@@ -1,0 +1,111 @@
+---
+title: "Edit outlines"
+description: "Check the automatic outlines field by field, and correct them by hand: split, merge, draw, delete, reshape."
+---
+
+**Edit outlines** is where you check the outlines field by field and fix what the model got wrong. An outline that's too tight, or two cells drawn as one, changes which tracks the analysis keeps. Plan to look at every field before you analyze.
+
+<Callout type="check">
+Outlines drawn too tight drop the free molecules near the membrane and raise the slow fraction. Correct them here, then check the **Near edge** column in [QC](/docs/analysis/qc).
+</Callout>
+
+## Correct a condition
+
+Work through one condition at a time: open it, step through its fields, and save.
+
+<Steps>
+<Step>
+### Choose a condition
+
+Click **Edit outlines** in the sidebar, then a condition in the sidebar's list. Its fields appear in the **Fields** list, and its first field opens. A field without an outline file reads *(no outlines yet)*.
+</Step>
+<Step>
+### Step through the fields
+
+Press <Kbd>←</Kbd> or <Kbd>→</Kbd>, or turn the mouse wheel over the image, to go to the previous or next field. Look at each one, and fix what's wrong with the [tools below](#fix-the-outlines).
+</Step>
+<Step>
+### Save
+
+Press <Kbd>Ctrl+S</Kbd>, or click <Ui>Save field</Ui>, to save the field on screen. Click <Ui variant="outline">Save all</Ui> to save every field you've edited, in every condition. On a Mac, <Kbd>Ctrl</Kbd> is probably <Kbd>Cmd</Kbd>.
+</Step>
+</Steps>
+
+Edits stay in memory until you save, even when you move to another field or condition. You can't open another folder or go back to the menu while edits are unsaved, and closing the window asks whether to leave them.
+
+{/* TODO(Huy): which key is "Ctrl" on a Mac for Ctrl+S, Ctrl+Z and Ctrl+Y? Qt's default maps it to Cmd. */}
+
+## Fix the outlines
+
+Each tool has a key and a button in the tool bar above the image. The tool you choose stays on until you choose another, and the **Keys** card under the image lists the shortcuts.
+
+| Key / button | What it does |
+| --- | --- |
+| <Kbd>S</Kbd> **Select** | Click a cell to select it, then drag its body to move it, a round pole handle to lengthen it, a square bend handle to reshape it, or an edge diamond to move that edge alone. |
+| <Kbd>D</Kbd> **Draw** | Draw a cell: click one pole, then the other. The new cell takes the **Width**. <Kbd>Esc</Kbd> cancels after the first click. |
+| <Kbd>X</Kbd> **Split** | Click a cell where it should be cut. Each half must be at least as long as the cell is wide. |
+| <Kbd>M</Kbd> **Merge** | Merge the selected cell with the cell whose nearest pole is closest. The two must touch: poles at most 12 px apart. |
+| <Kbd>Del</Kbd> **Delete** | Delete the selected cell. <Kbd>Backspace</Kbd> works too, and right-clicking a cell deletes it in any tool. |
+| <Kbd>B</Kbd> / <Kbd>N</Kbd> **Add bend** / **Straighten** | Add a bend to the selected cell, or remove one. |
+| <Kbd>Ctrl+Z</Kbd> / <Kbd>Ctrl+Y</Kbd> | Undo / redo. Each field keeps its own history of up to 50 steps; a whole drag is one step. |
+| <Kbd>Esc</Kbd> | Cancel a draw, or deselect and go back to Select. |
+
+When SMTracker refuses an edit, the status line under the image says why, for example that two cells don't touch. A cell you've drawn, split, merged or reshaped is redrawn as a smooth capsule and marked with `*` in the **Cells** list. Moving a whole cell doesn't.
+
+**Width** sets the width of the next cell you draw, from 1 to 60 px (9 px by default). Typing in it while a cell is selected resizes that cell with every keystroke, so typing 12 first makes the cell 1 px wide. Selecting a cell doesn't show its width in the box.
+
+Shortcuts don't work while the cursor is in the **Width** box, and clicking the image doesn't give them back. Click the **Fields** or **Cells** list, or press <Kbd>Tab</Kbd>, to use them again.
+
+{/* TODO(Huy): in the new window the image never takes the keyboard focus, and Width doesn't hand it back (the classic window does both), so shortcuts stay off after typing in Width until a list is clicked. Fix in the app? */}
+
+## See the image better
+
+These change only what you see; nothing is saved.
+
+| Key | What it does |
+| --- | --- |
+| <Kbd>1</Kbd> <Kbd>2</Kbd> <Kbd>3</Kbd> | Switch views: phase, the projection, and an overlay of the two (more with more channels). |
+| <Kbd>C</Kbd> | Cycle the **Stretch**: *imagej* (what ImageJ shows), *septa* (septa stand out), *outline* (outlines stand out). |
+| <Kbd>R</Kbd> | Reset brightness and contrast to 100 %. |
+| <Kbd>[</Kbd> / <Kbd>]</Kbd> | Contrast down or up by 15 %. |
+| <Kbd>+</Kbd> (or <Kbd>=</Kbd>) / <Kbd>-</Kbd>, <Kbd>F</Kbd> | Zoom in or out; fit the field to the window. |
+| <Kbd>F11</Kbd> | Focus mode: the image fills the screen, with a slim bar of tools. |
+
+Drag with the middle mouse button to pan.
+
+{/* TODO(Huy): Ctrl+wheel should zoom, but the editor reads the key from the image, which never gets key events in the new window, so Ctrl+wheel probably steps fields like the plain wheel. Fix (read event.modifiers) and then document it? */}
+
+**Bright** and **Contrast** change the image on screen, and in the overlay only the phase image underneath (both 100 % by default; <Kbd>R</Kbd> or **Reset** sets them back). **Tint** and **Alpha** set the color and strength of the fluorescence in the overlay (**Alpha** 50 % by default).
+
+Click **Channels…** to open **Image channels**, where you choose the folder the outlines are drawn on (*phase* by default) and up to three fluorescence folders shown beside it, such as *sum* or *gfp*. SMTracker remembers them. Choosing another folder to draw on reads every field again, so save your edits first: with unsaved edits, SMTracker refuses the change and closes the dialog.
+
+## Check the alignment
+
+An outline that sits beside its cell's fluorescence makes the analysis keep the wrong localizations, because the analysis keeps only those inside an outline. So when a field opens, SMTracker checks whether the outlines sit where the fluorescence of the first fluorescence folder is, by sliding them up to 8 px each way.
+
+The note under **Shift to fluorescence** gives the result: *aligned*, *cannot tell* (too little signal), *shifted by* a number of pixels, or *alignment not checked*. It stays empty when the field has no fluorescence image or no cells.
+
+If the offset is more than 3 px, the button reads **Shift all by (dx, dy) px**. Click it to move every outline by that offset at once, in one undo step. Otherwise it stays off.
+
+## What saving writes
+
+Saving a field writes:
+
+- `cell_meshes/<field>.mat`, the outlines in Oufti's format, with the cells numbered again in list order;
+- `cell_masks/<field>.tif`, the same outlines as a label image, when SMTracker can read the image's size;
+- `cell_meshes/<field>.mat.curated.json`, a marker that you corrected the field by hand, which the sidebar counts as *corrected*;
+- the first time, if the field had an outline file, a copy of the automatic outlines in `cell_meshes_auto/`.
+
+<Callout type="check">
+<Kbd>Ctrl+S</Kbd> saves the field on screen even if you haven't changed it, and marks it as corrected. On a field with no outlines, or after you delete every cell, it saves an empty outline file, and the analysis then drops that movie's tracks. Save only fields you've checked.
+</Callout>
+
+{/* TODO(Huy): should Ctrl+S on an unedited or "(no outlines yet)" field write a file and mark it corrected? On an empty field it writes an empty outline file, which drops the movie's tracks. */}
+
+Outlines from other tools that store only a contour, without the cross-lines (ribs) of Oufti's format, can't be edited. The status line names them when the field opens. Saving the field leaves them out of the file, but the copy in `cell_meshes_auto/` keeps them.
+
+{/* TODO(Huy): saving drops ribless outlines from the file without asking. Intended? */}
+
+## When you're done
+
+When every field is saved, click **Done, back to the menu**, and open the folder in the analysis. To train a model on your corrections first, see [Train a model](/docs/cell-outlines/train-a-model).

@@ -1,0 +1,66 @@
+---
+title: Frame interval and pixel size
+description: Every D scales with the frame interval and the pixel size. See where SMTracker reads them for tracks made elsewhere, and how to fix a movie that lacks one.
+---
+
+Make sure SMTracker has the right frame interval and pixel size for tracks made outside it, mostly with u-track. For movies you prepare in SMTracker, you set both on [Calibration & save](/docs/tracking/calibration-and-save), and for TrackMate tracks and track tables you can skip this page.
+
+Two numbers set the scale of every diffusion coefficient:
+
+- the *frame interval*, the time between two frames. Every D is proportional to 1 / frame interval.
+- the *pixel size*, the size of one camera pixel in the sample. Every D is proportional to its square.
+
+A 10 % error in the pixel size moves every D by about 21 %. SMTracker never guesses either number.
+
+{/* TODO(Huy): the old page said "the fractions don't change" when the pixel size is wrong. The fits hold a localization error in nm, so is that exactly true, or only nearly? */}
+
+## The frame interval comes from the camera
+
+The frame interval is the time from one frame to the next, which is not the exposure time. A camera exposing for 20 ms may take a frame every 20.47 or 25 ms, because reading out the chip takes time too. u-track is often given the exposure (20 ms), and that would move every D.
+
+<FrameTimingDiagram />
+
+So for u-track movies, SMTracker looks for the movie's *camera file*, the `.nd2` or `.stk` it was recorded as. When the camera file sits in the condition folder, in `raw/` or loose, and records its timing, SMTracker takes the frame interval from it and ignores the number u-track was given. The camera file must have the same name as the movie's folder in `tif/`, such as `raw/series002.nd2` for `tif/series002/`.
+
+This applies to u-track movies tracked in SMTracker too. TrackMate tracks and track tables take the frame interval from what you saved on Calibration & save, or from `format.json`.
+
+## A movie with no pixel size or frame interval
+
+A u-track movie tracked without a pixel size, or without any frame interval, can't be analyzed. When you open the project in the analysis, SMTracker lists such movies. Click <Ui variant="outline">Leave out and open the rest</Ui> to go on without them.
+
+A TrackMate or track-table condition without a pixel size or frame interval doesn't open at all: save them on Calibration & save, or add them to `format.json` ([Tracks from other tools](/docs/other-tools)).
+
+To fix a u-track movie:
+
+| Missing | Fix |
+| --- | --- |
+| Pixel size | Set it in u-track and track again, or add an `acquisition.json`, as described below |
+| Frame interval | Set it in u-track and track again, or put the movie's camera file in the condition's `raw/` folder |
+
+## Keeping a movie: `acquisition.json`
+
+If you know a u-track movie's pixel size, you can keep the movie without tracking it again. Put an `acquisition.json` in the folder that holds `tif/`, and list the movies it applies to:
+
+<Files>
+  <Folder name="PdhA_LB">
+    <File name="acquisition.json" />
+    <Folder name="tif">
+      <Folder name="series002" note="u-track's record is empty" />
+    </Folder>
+  </Folder>
+</Files>
+
+```json title="acquisition.json"
+{"pixel_size_nm": 106.0, "movies": ["series002"], "stated_by": "your name", "why": "u-track's record is empty"}
+```
+
+| Key | What it means |
+| --- | --- |
+| `pixel_size_nm` | The pixel size in nm. Required |
+| `movies` | The movies it applies to, by their folder names in `tif/`. Required |
+| `stated_by`, `stated_on`, `why` | Optional: who stated the value, when and why. SMTracker doesn't read them, but they stay in the file, so someone checking the analysis later knows where the number came from |
+
+Two limits keep this file from hiding mistakes:
+
+- It's used only where u-track's record is empty, never in place of a value u-track recorded.
+- It can state a pixel size only. Any other key, such as a frame interval, makes SMTracker refuse the whole file. For the frame interval, see [A movie with no pixel size or frame interval](#a-movie-with-no-pixel-size-or-frame-interval).

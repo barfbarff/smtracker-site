@@ -1,0 +1,68 @@
+---
+title: What SMTracker writes
+description: See what SMTracker adds to each condition folder and which step adds it, so you know what you can copy, move or delete.
+---
+
+SMTracker keeps its results next to your data. That way a project stays complete when you copy or move its folder, and you can always see what was done to it. It only adds new files and folders beside your own. The preparation window never moves, renames or changes your movies.
+
+The one exception is the older classic tracking window, opened with **Classic window** on Detect & link. When you save ranges there, it files loose movies into `raw/` and snapshots into `phase/`, without keeping copies.
+
+<Files caption="Your own files are plain; what SMTracker writes is highlighted.">
+  <Folder name="PdhA_LB">
+    <File name="series001.nd2" note="your movie" />
+    <File name="series001.tif" note="your phase snapshot" />
+    <Folder name="bleaching" note="crops.json, curves, .png" written />
+    <Folder name="sum" note="series001.tif" written />
+    <Folder name="trackmate" note="series001.xml, run.json" written />
+    <Folder name="tif" note="series001/TrackingPackage/… (u-track)" written />
+    <Folder name="cell_meshes" note="series001.mat" written />
+    <File name="day_map.json" written />
+    <Folder name=".smtracker_warm" note="cache" written />
+  </Folder>
+</Files>
+
+## What each step writes
+
+Each row is one file or folder in the condition folder, the step that writes it, and what's inside.
+
+| Written | By | What it is |
+| --- | --- | --- |
+| `bleaching/crops.json`, with the curves and a `.png` per movie | **Save all** (or a row's **Save**) on Calibration & save | Each movie's range and the calibration. This is the record of what was tracked |
+| `sum/<movie>.tif` | The same save, unless **Save writes** is *No projection* | A projection of the movie, for the cell outlines and for display. One that another program wrote is kept |
+| `tif/<movie>.tif` | **Export stacks** on Calibration & save | The movie cut to its range, for running u-track outside SMTracker |
+| `trackmate_radius_check/` | **Check a wider radius (about 2 min)** on Detect & link | Test tracks, kept apart from the real ones |
+| `trackmate/<movie>.xml`, `run.json` | **Track** with TrackMate | The tracks, and the settings they were tracked with |
+| `trackmate/<movie>.spotfit.csv` | The same run, with **Fit each spot's precision** on | Each spot's measured precision |
+| `tif/<movie>/`, `tif/utrack_run.json` | **Track** with u-track | The movie's frames and tracks in u-track's own layout (`TrackingPackage/`), and the settings |
+| `cell_meshes/<movie>.mat` | **Cell outlines** | One outline per cell, in Oufti's format, so Oufti's own files work too |
+| `cell_masks/<movie>.tif`, `cell_meshes_auto/` | Saving in **Edit outlines** | The outlines as a label image, and the automatic outlines kept before your corrections |
+| `day_map.json` | Opening the workspace in the analysis | Which movie belongs to which [replicate](/docs/replicates), and any held-out movies or paired replicates |
+| `kinetics_additions.json` | A **Kinetics** run in the analysis | When each addition happened |
+| `.smtracker_warm/` | The analysis | A cache, so the project opens much faster the next time |
+
+A [Batch](/docs/tracking/batch) run also writes its report, `smtracker_batch_<date>-<time>.csv`, into the first parent folder. In the folder you open in the analysis, SMTracker writes the main `.smtracker_warm/` cache, and `smtracker_design.json` if you save a folder design.
+
+You can delete `.smtracker_warm/` at any time: SMTracker rebuilds it the next time you open the project, which takes longer. Don't delete the other files unless you want to redo that step.
+
+## The outlines folder
+
+SMTracker also finds outlines in a folder named `cell meshes`, `cellmeshes` or `cell-meshes`, for example from an older project or from Oufti. New outlines are written into whichever of these folders is already there.
+
+## A movie without outlines
+
+The analysis keeps only tracks that lie inside a cell. When you open the project in the analysis, SMTracker leaves out every tracked movie that has no outline file, names them in a window, and opens the rest. If no movie has outlines, the project doesn't open.
+
+To include such a movie, draw its outlines in [Cell outlines](/docs/cell-outlines) and open the folder again.
+
+## Check that tracks and outlines line up
+
+Trackers and segmentation tools don't always count pixels from the same origin: TrackMate and Python tools count from 0, and MATLAB tools such as Oufti and u-track from 1. Outline files that record their origin are shifted onto the tracker's automatically. If an outline file doesn't record it and the origins differ, every track sits a pixel off its cell, and the cell filter cuts tracks along one side of every cell.
+
+QC checks this for you. Its **Is the comparison fair?** table shows, per condition, how far the tracks sit from their outlines (**Outlines**, x and y, in pixels):
+
+- About 0 is right.
+- Half a pixel or more, in both x and y in the same direction, means the tracker and the outlines count pixels from different origins.
+
+See [QC](/docs/analysis/qc).
+
+{/* TODO(Huy): what should a user do when QC shows an outline offset of half a pixel or more? */}

@@ -1,0 +1,124 @@
+---
+title: "Detect & link"
+description: "Set how the tracker finds molecules and joins them into tracks: the detection threshold, spot radius, linking radius and frame gap."
+---
+
+Set how the tracker finds molecules in each frame and joins them into tracks. With TrackMate, that's four settings per condition, and SMTracker measures or derives most of them for you. With u-track, it's one set of settings for every condition. You need this page before [Track](/docs/tracking/track), each time you open a folder.
+
+To get going quickly with TrackMate, skip to [TrackMate](#trackmate).
+
+## Choose the tracker
+
+Choose *TrackMate (Fiji)* or *u-track (MATLAB)* in **Tracker**, at the top of the page. SMTracker remembers the choice, and the same choice appears on Track and Batch. Changing it changes no settings of either tracker. You can't change it while a run or a radius check is running.
+
+The rest of the page shows the chosen tracker's settings. [Install and open SMTracker](/docs/install) explains the difference between the two.
+
+To use the older tracking window on this folder, click <Ui variant="outline">Classic window</Ui>. It opens with the ranges you saved.
+
+## TrackMate
+
+The grid has one row per condition, with its four settings and a status. Most rows only need their threshold measured.
+
+<Steps>
+<Step>
+### Measure the thresholds
+
+Click <Ui>Measure all thresholds</Ui>, or <Ui variant="outline">Measure</Ui> on one row. SMTracker measures each movie's noise and sets its detection threshold from it. This needs a range on every movie, from [Movies & crop](/docs/tracking/movies-and-crop) (saved or not), and a spot radius.
+</Step>
+<Step>
+### Check the other settings
+
+Check the **Spot radius**, **Linking radius** and **Frame gap**. The spot radius comes from the condition's optics, and the other two start from the standards in [Options](/docs/tracking/options). Leave them unless you have a reason to change them, explained under [Linking radius and frame gap](#linking-radius-and-frame-gap).
+</Step>
+<Step>
+### Go on
+
+Click <Ui>Next: Track</Ui>. It lights up once every condition can be tracked: its ranges and calibration saved with nothing changed since, and all four settings set. Usually only the threshold is missing. If it stays off, the note beside it gives the first reason.
+</Step>
+</Steps>
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **LoG threshold (median)** | How bright a spot must be, against its movie's own noise, to count as a molecule. Each movie gets its own threshold; the cell shows the median, rounded. | empty until measured, then 7.2 times each movie's noise |
+| **Spot radius** | How big a molecule looks to the detector, in px. Worked out from the emission, NA and pixel size on [Calibration & save](/docs/tracking/calibration-and-save). | from the optics (2.80 px at 517 nm, NA 1.49, 106 nm pixels) |
+| **Linking radius** | How far a molecule may move between two frames and still be joined into the same track, in px. A longer jump starts a new track. | 5 px |
+| **Frame gap** | How many frames a molecule may vanish for and still be joined back into its track. 0 means no gaps. | 3 frames |
+
+A value you type replaces the measured or derived one for that condition. The **Status** column says what each row still needs, for example *needs a range on every movie first* or *set the spot radius*.
+
+An empty cell isn't accepted, so clearing a typed value brings it back. To change a value, type the one you want. A typed value stays typed, and no longer follows its measured, derived or standard value, until you open the folder again.
+
+{/* TODO(Huy): emptying a number cell never reaches the app (the field's number validator rejects empty text), so a typed value can't be returned to its measured, derived or standard value except by reopening the folder. Intended? */}
+
+### The detection threshold
+
+**Measure** reads up to 8 frames spread over each movie's range, filters them as TrackMate does, and measures the noise. Each movie's threshold is k times its noise, where k is the **Threshold** in Options (7.2). Each movie is then tracked at its own threshold. A movie whose noise couldn't be measured is tracked at the condition's median, and the line under the grid names it.
+
+The line under the grid gives the noise. If the noisiest movie of a condition is more than 1.5 times as noisy as the quietest, SMTracker warns that the condition may hold more than one imaging session, and names any movie far from the median. Nothing is excluded: check those movies yourself.
+
+Keep the measured thresholds for almost every folder. Typing a threshold sets one value for every movie of that condition, instead of one per movie, and measuring again doesn't replace it.
+
+Changing **Threshold** in Options recomputes every measured threshold from the noise already measured, so you don't need to measure again.
+
+<Callout type="check">
+Measure again after you change a movie's range or the spot radius. SMTracker doesn't do it for you and doesn't flag an outdated threshold, so the old one stays in use.
+</Callout>
+
+{/* TODO(Huy): when should a user type a threshold or a spot radius instead of measuring or deriving it? */}
+
+### Spot radius
+
+SMTracker works out the spot radius as 3 PSF sigmas, from the emission, NA and pixel size on screen, saved or not. It's empty until all three are set, and it updates when they change, unless you typed one.
+
+The spot radius isn't the linking radius. It describes how big a molecule looks, while the linking radius describes how far it moves.
+
+### Linking radius and frame gap
+
+Under the grid, SMTracker says what the linking radius means for each condition: the fastest D it measures within 10 %, and its *detection ceiling*, the highest apparent D any population can show at that radius. It also shows the frame gap as a time. Both need the frame interval and pixel size.
+
+Leave the linking radius at 5 px. In a reference analysis of six proteins, 5 px reproduced the results, while 12 px raised the slow fraction by 12.8 points. A wider radius adds wrong links, and they look like slow steps. Widen it only when the detection ceiling is below the D you expect, and check first with [Check a wider radius](#check-the-linking-radius-from-your-tracks).
+
+Leave the gap at 3 too. With no gap closing, TrackMate's tracks break up near the threshold, and a gap of 0 shifted the slow fraction by 6.8 points. The gap counts frames, so at a slower frame rate the same gap allows a longer disappearance.
+
+A new standard in Options reaches every condition whose value you haven't typed. <Ui variant="outline">Copy linking radius and gap to all</Ui> copies the first condition's two values to every other condition, whichever condition is on screen. The copies then count as typed, so they no longer follow Options.
+
+### Check the linking radius from your tracks
+
+Two buttons help you judge the linking radius. Both are in **How these settings work**, under **Linking radius**. If the guide is folded, select its **Show** checkbox first. They act on the condition whose row you last clicked into, so click a cell in that row first.
+
+- <Ui variant="outline">Measure from tracks here</Ui> reads up to 8 movies' tracks you've already made in this condition (u-track's, if it has any). It reports the step lengths and how often a second molecule lies within the radius, and suggests a radius. It needs tracks first, ideally from a pilot run at a generous radius.
+- <Ui variant="outline">Check a wider radius (about 2 min)</Ui> tracks the condition's first two movies at the linking radius and at 1.6 times it, everything else the same. It reports how many steps the narrower radius missed. It needs everything a real run needs, a saved frame interval and pixel size, and Fiji. The results go to `trackmate_radius_check/` in the condition's folder.
+
+Neither button changes a setting. Treat a wider-radius result as information: the fractions were validated at 5 px, so a result here alone is no reason to widen the radius.
+
+### What isn't saved
+
+The TrackMate grid lives only in this window. Typed values and measured thresholds aren't saved, so when you open the folder again, measure the thresholds again. The run itself records the values it used, in `trackmate/run.json`.
+
+{/* TODO(Huy): should the TrackMate grid (typed values, measured thresholds) be saved with the folder? */}
+
+## u-track
+
+u-track uses one set of settings for every condition. SMTracker remembers them between sessions, and the standard settings suit most data.
+
+The card shows nine settings in three groups, **Detection**, **Linking** and **Gaps and length**. Each has a link that explains it.
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Spot significance (alphaLocMax)** | How unlikely a local maximum must be against its background to count as a spot. Smaller is stricter. | 0.025 (u-track's own is 0.05) |
+| **PSF sigma** | The spot's width, in px. Empty: worked out from the optics. | empty |
+| **Cell-free background test** | An alpha that turns on a test against the background outside cells. Needs cell outlines for every movie. | empty: off |
+| **Search radius, largest** | The upper limit of u-track's adaptive search radius, in px: its counterpart of the linking radius. | 5 px |
+| **Search radius, smallest** | The lower limit of the adaptive search radius, in px. | 0 px |
+| **Radius multiplier** | How many of a track's own step SDs a link may reach. | 3 |
+| **Frames bridged** | How many frames a molecule may vanish for and still be joined: u-track's counterpart of the frame gap. | 0 (no gap closing) |
+| **Shortest segment kept** | Shorter track segments are dropped before gap closing. | 5 localizations |
+| **Merges and splits** | Whether u-track may join or split tracks. *None* keeps every track separate. | *None* |
+
+<Ui variant="outline">Show all settings</Ui> adds 16 advanced settings to the same groups. <Ui variant="outline">Standard settings</Ui> puts six of the settings back to your standard in Options, if you've set one, and every other setting back to SMTracker's. The line under the card names every setting that differs from SMTracker's standard, even where it matches yours.
+
+The table under the card has one row per condition: its PSF sigma, its cell outlines and whether it's ready. u-track needs saved ranges, a saved pixel size and frame interval, and the NA and emission saved, unless you type a PSF sigma. With the background test on, every movie also needs cell outlines.
+
+A value u-track wouldn't accept is refused, and the note says why. Number fields don't take letters or minus signs at all.
+
+{/* TODO(Huy): with the background test on, the app says "clear that field (off)", but an empty field isn't sent and 0 is refused; only Standard settings turns it off. Intended? */}

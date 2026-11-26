@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "smtracker-site",
+      "runtimeExecutable": "./bin/run",
+      "runtimeArgs": ["npm", "run", "dev"],
+      "port": 3003
+    }
+  ]
+}

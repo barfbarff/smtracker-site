@@ -1,0 +1,74 @@
+---
+title: Welcome to SMTracker
+description: Find out what SMTracker measures, how its three stages fit together, and which pages to read first.
+---
+
+SMTracker takes you from raw single-molecule movies to diffusive-state fractions for each of your conditions. A *condition* is one folder of movies that you compare against the others, usually one strain under one treatment. You bring the movies; SMTracker helps you crop and calibrate them, track the molecules, outline the cells, and compare the conditions, with error bars over your replicates.
+
+This manual assumes you already know single-particle tracking. It explains how SMTracker does each step, which settings matter, and what to check before you trust a number.
+
+## What SMTracker measures
+
+The main result is a *fraction*: the share of molecules in each diffusive state, such as a slow, bound-like population and a faster, freely diffusing one. SMTracker shows how these fractions shift between your conditions, for example between two carbon sources or a wild type and a mutant.
+
+Each fitted state also has a diffusion coefficient (D). Treat it as a bound rather than a physical value:
+
+- The slow state sits near the *localization floor*: the apparent D that an immobile molecule shows from the uncertainty in its position alone.
+- The fast state sits near the *detection ceiling*: molecules that move farther than the tracker's linking radius in one frame are lost, so the fastest D you can measure is capped.
+
+<Callout type="check" title="What to report.">
+Report the fractions. If you quote a D, give the frame interval, the pixel size and the linking radius with it, and don't present it as a precise coefficient.
+</Callout>
+
+## Three stages, each in its own window
+
+When SMTracker opens, it asks **Where would you like to start?** Click a card to open that stage in its own window. You'll usually go through the three stages in order, but you can start at any of them.
+
+<Pipeline />
+
+| Stage | What it does | What it needs |
+| --- | --- | --- |
+| [Image preparation + Tracking](/docs/tracking) | Crops each movie to the frames where single molecules are visible, saves the calibration, then detects and links spots into tracks | Fiji with TrackMate, or MATLAB with u-track |
+| [Cell outlines](/docs/cell-outlines) | Finds the cells automatically, then lets you correct the outlines by hand | Nothing else for the classical segmenter and the editor. The Omnipose models need SMTracker run from source ([Install and open SMTracker](/docs/install#automatic-cell-outlines)). |
+| [Analysis](/docs/analysis) | Loads the tracks, checks them for bias, fits the populations and makes figures | Tracks and cell outlines for every movie |
+
+The analysis keeps only tracks that lie inside a cell outline. That's how SMTracker knows which molecules belong to which cell. So even if your movies are already tracked, outline the cells before you open the analysis: a movie without outlines is left out.
+
+The first window has a fourth card, **Simulated data**. It builds a data set with known populations, diffusion and switching, either as tracks for the analysis or as movies to track, so you can compare SMTracker's results with the truth. Use it to try SMTracker before you have movies of your own.
+
+{/* TODO(Huy): Simulated data is new (25 Nov 2026) and has no page yet. Should it get its own chapter? */}
+
+## Controls you'll see in every stage
+
+The three stage windows share the same three controls. The first window, where you only pick a stage, doesn't have them, and neither does Simulated data, apart from **Back to menu**.
+
+| Control | What it does |
+| --- | --- |
+| <Ui variant="outline">Help</Ui> | Opens SMTracker's built-in manual in your browser, at the chapter for the stage you're in |
+| <Ui variant="outline">Options</Ui> | Sets the *standards*: the values a new condition starts from |
+| <Ui variant="outline">Back to menu</Ui> | Returns to the first window |
+
+A value you change on a page always wins over its standard. When you save new options, SMTracker updates only the values you haven't changed by hand.
+
+<Callout type="app">
+In the preparation and outlines windows, and on the analysis's start screen, these sit in the header. Once a project is open in the analysis, **Help** is the info icon at the bottom of the right-hand rail, and **Back to menu** is in the project menu at the top of the sidebar.
+</Callout>
+
+The app starts in the light theme. To switch, click the moon icon at the bottom of the analysis window; SMTracker remembers your choice.
+
+## Where to go next
+
+If this is your first time, read these two pages in order:
+
+1. [Install and open SMTracker](/docs/install): get the app running, and connect Fiji or MATLAB for tracking.
+2. [Your first project](/docs/first-project): one folder from raw movies to fractions, step by step.
+
+To prepare your data, read [Organizing your folders](/docs/folders) and [How replicates are counted](/docs/replicates). If your tracks come from another program, see [Tracks from other tools](/docs/other-tools) and [Frame interval and pixel size](/docs/timing-and-pixel-size).
+
+Each stage has its own chapter:
+
+<IllustratedCards>
+  <IllustratedCard illustration="tracking" href="/docs/tracking" title="Image preparation + Tracking" description="Crop, calibrate, then detect and link in TrackMate or u-track" />
+  <IllustratedCard illustration="outlines" href="/docs/cell-outlines" title="Cell outlines" description="Find the cells, then correct them by hand" />
+  <IllustratedCard illustration="analysis" href="/docs/analysis" title="Analysis" description="QC, fractions and figures from the same tracks" />
+</IllustratedCards>

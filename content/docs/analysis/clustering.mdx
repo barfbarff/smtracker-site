@@ -1,0 +1,26 @@
+---
+title: "Clustering"
+description: "Groups tracks by the shape of their MSD."
+---
+
+Clustering groups each track's MSD curve with k-means. Because k-means always finds clusters, each grouping is also made on tracks that contain none, and the card says whether the data beat that chance. A cluster is a curve shape, not a diffusive state; read it beside the SQD fractions.
+
+**Run** opens the settings.
+
+| Setting | What it does | Default |
+|---|---|---|
+| **Lags** | Lags per curve (3, 4, 6 or 8); a track needs all of them. | 4 |
+| **Feature scale** | **MSD**, or **log MSD**, which damps the noisy tail. | MSD |
+| **Clusters** | **Each condition alone**, or **Shared clusters**. | Each condition alone |
+| **Number of clusters (k)** | **Data chooses**, or a k you set (shared clusters only). | Data chooses |
+| **Largest k the data may choose** | 3, 4 or 5. | 4 |
+| **Chance** | **The SQD mixture** draws chance tracks from the condition's fitted SQD populations; **One free population** draws tracks of a single D and only asks whether the curves hold more than one D. | The SQD mixture |
+| **Localisation error** | For the SQD mixture: **Per spot**, **The acquisition's**, or **Set** in nm. | Per spot |
+| **SQD populations** | **Best (BIC)**, 1, 2 or 3. | Best (BIC) |
+| **Chance draws** | 20, 50 or 100. | 20 |
+
+**Cancel** ends the Run's workers.
+
+Each card opens with **Cluster structure beyond the SQD mixture at k = 3**, or **No cluster structure beyond the SQD mixture**, meaning the grouping beats chance by more than two standard deviations of the chance draws. When it does not, the clusters wait behind **Show the clusters anyway**; they are then the best partition of noise. Each cluster, slowest first, shows its share of tracks, MSD curve, D, alpha and share per replicate. Real long tracks are slower on average, so a length effect alone can read as structure beyond the mixture.
+
+**Shared clusters** fits the clusters once on all conditions' pooled tracks, so cluster 1 is the slowest curve shape everywhere. One card shows each condition's share per cluster, a dot per replicate with mean and SD, and a table. **Test conditions** (off) adds Welch's test on the replicates' shares for each pair and cluster, Holm-adjusted; replicates are independent samples, never matched by number. A share is a fraction of tracks, not of steps, and is not an SQD fraction.

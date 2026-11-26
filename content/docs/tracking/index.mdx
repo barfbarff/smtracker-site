@@ -1,0 +1,58 @@
+---
+title: "Overview"
+description: "Turn a folder of raw movies into tracks: choose the frames to keep, calibrate, set detection and linking, then track with TrackMate or u-track."
+---
+
+**Image preparation + Tracking** turns a folder of raw `.nd2` or `.stk` movies into tracks. You choose the frames of each movie to keep, enter how it was imaged, set how molecules are detected and linked, then run the tracker. It's the first of SMTracker's three stages. To try it on movies with a known answer, the **Simulated data** card in the first window can build test movies to track here. Skip it if your tracks come from another program, because the analysis reads them directly: see [Tracks from other tools](/docs/other-tools).
+
+## Open it
+
+In SMTracker's first window, click the **Image preparation + Tracking** card. Click the card itself: pressing Return opens the analysis instead. In the window that opens, click <Ui variant="outline">Open folder…</Ui> and choose a condition folder, or a folder that holds several conditions. For the layouts SMTracker recognizes, see [Organizing your folders](/docs/folders).
+
+SMTracker starts reading the movies right away and opens on [Movies & crop](/docs/tracking/movies-and-crop).
+
+## The window
+
+The sidebar on the left lists the pages under **Preparation**, top to bottom in the order you work through them. Below them, **Conditions** lists your conditions. Each has a progress bar and a line that says how many movies are read, how many have ranges, and whether they're saved. Click a condition to work on it.
+
+| Page | What you do there |
+| --- | --- |
+| [Movies & crop](/docs/tracking/movies-and-crop) | Check every movie and choose the frames it keeps for tracking |
+| [Calibration & save](/docs/tracking/calibration-and-save) | Enter the pixel size, frame interval and optics, then save |
+| [Detect & link](/docs/tracking/detect-and-link) | Choose the tracker and set how it detects and links molecules |
+| [Track](/docs/tracking/track) | Run the tracker on one condition or all of them |
+| [Batch](/docs/tracking/batch) | Track many folders in one run, without opening them |
+
+The first three pages end with a button naming the next page, such as **Next: Calibration & save**. It lights up when the page's work is done, and the note beside it says what's still missing. Track ends with **Done, back to the menu** instead, and Batch has neither: it works without an open folder. These buttons don't lock anything. Once a folder is open, you can click any page in the sidebar at any time.
+
+On the right of the header are four buttons:
+
+- <Ui variant="outline">Open folder…</Ui> opens another folder.
+- <Ui variant="outline">Help</Ui> opens SMTracker's built-in manual in your browser, at this stage's chapter.
+- <Ui variant="outline">Options</Ui> opens the values every new condition starts from. See [Preparation & tracking options](/docs/tracking/options).
+- <Ui variant="outline">Back to menu</Ui> closes this window and returns to the first window, where you open cell outlines or the analysis.
+
+While a job runs (tracking, a batch, a check of a wider radius, or exporting stacks), you can't open another folder or go back to the menu. Stop the job first, on the page that started it. Closing the window quits SMTracker. A job in progress finishes the movie it's on, then stops.
+
+## What you need
+
+You don't need anything outside SMTracker until you track: reading movies, choosing ranges, calibrating and measuring thresholds all happen inside it. To track, you need one of:
+
+- **Fiji with TrackMate**, for TrackMate.
+- **MATLAB with u-track**, plus MATLAB's Statistics, Optimization and Image Processing toolboxes, for u-track.
+
+SMTracker doesn't include either. It looks for them in the usual install folders on its own, and the Track page says what it found. For where to get them, see [Install and open SMTracker](/docs/install).
+
+## What it writes
+
+SMTracker never moves, renames or changes your movies. Everything it creates goes into each condition's folder:
+
+| Page | Writes |
+| --- | --- |
+| Movies & crop | Nothing |
+| Calibration & save | `bleaching/crops.json` (the ranges and calibration), the curves in `bleaching/`, and a projection of each movie in `sum/`. **Export stacks** also writes `tif/<movie>.tif`. |
+| Detect & link | Nothing, except **Check a wider radius (about 2 min)**, which writes `trackmate_radius_check/` |
+| Track | TrackMate: `trackmate/<movie>.xml`, `trackmate/run.json`, and a `.spotfit.csv` beside each track file. u-track: `tif/<movie>/` and `tif/utrack_run.json`. |
+| Batch | As Track, plus a report, `smtracker_batch_<date>-<time>.csv`, in the first parent folder you added |
+
+For what each file holds, see [What SMTracker writes](/docs/written).

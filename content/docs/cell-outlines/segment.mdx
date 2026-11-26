@@ -39,6 +39,7 @@ To stop, click <Ui variant="outline">Stop after this field</Ui>. The field in ha
 | *bact_fluor_omni (reads sum)* | The projection in `sum/`, written by Calibration & save. Only for a cytosolic label. |
 | *Phase pipeline: bact_phase_omni, chains split (reads phase)* | The phase model with extra steps that split constrictions and chains of cells. |
 | *Sum-image pipeline: bact_fluor_omni, chains split (reads sum)* | The same for the projection. |
+| *Cellpose-SAM (generalist; downloads 1.2 GB at first use)* | The phase-contrast snapshots. A general model, not trained on bacteria in particular. Needs the [segmentation pack](/docs/install#automatic-cell-outlines). |
 | *Classical, sum image (no GPU, no training)* | A fast threshold-and-shape segmenter on the projection, weaker on some data. Tune it on [Classical settings](/docs/cell-outlines/classical-settings). |
 | *your model (trained, reads …)* | A model you made on [Train a model](/docs/cell-outlines/train-a-model). It reads the images it was trained on. |
 
@@ -47,7 +48,7 @@ Segmenting the fluorescence of a membrane- or DNA-bound label gives outlines abo
 **Model for a new condition** in [Options](/docs/cell-outlines/batch-and-options#options) sets the model each new condition starts with.
 
 <Callout type="refused">
-The packaged app can't run the Omnipose models or the pipelines. The page then says "This build cannot run the segmentation models", and those rows can't start. Choose *Classical, sum image (no GPU, no training)* instead, or run SMTracker from source ([Install and open SMTracker](/docs/install#automatic-cell-outlines)). Edit outlines works either way.
+Cellpose-SAM needs the segmentation pack, PyTorch and Cellpose, which SMTracker downloads on request ([Install and open SMTracker](/docs/install#automatic-cell-outlines)). Until then the page offers <Ui variant="outline">Get segmentation models…</Ui>. The Omnipose models and the two pipelines run only from source, with Omnipose installed. The classical segmenter and Edit outlines work either way.
 </Callout>
 
 ## The row's folder

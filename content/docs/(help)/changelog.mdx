@@ -10,7 +10,7 @@ description: What changed in each version of SMTracker.
 SMTracker 3 is a new program, written in Python. It no longer needs MATLAB, and it comes as a ready-to-run app for Windows and macOS ([Install and open SMTracker](/docs/install)).
 
 - **From raw movies to tracks.** Crops Nikon `.nd2`, MetaMorph `.stk` and TIFF movies to their usable frames, saves the calibration, and runs TrackMate (Fiji) or u-track (MATLAB) for one condition or many folders overnight ([Image preparation + Tracking](/docs/tracking)).
-- **Cell outlines.** Finds cells with Omnipose models or a classical segmenter, corrects them in an outline editor, and trains your own model ([Cell outlines](/docs/cell-outlines)).
+- **Cell outlines.** Finds cells with a classical segmenter or, after an optional download of PyTorch and Cellpose, with Cellpose-SAM; corrects them in an outline editor; and trains your own model ([Cell outlines](/docs/cell-outlines)).
 - **Tracks from other tools.** Reads trackpy, MOSAIC ParticleTracker, TrackIt, Spot-On, evalSPT/SLIMfast and TrackMate CSV tables, or any table whose columns and units you describe ([Tracks from other tools](/docs/other-tools)).
 - **Error bars over replicates.** Every fraction gets its spread over independent replicates, and conditions are compared with Welch's test, corrected with Holm or Benjamini-Hochberg ([How replicates are counted](/docs/replicates)).
 - **The data choose the number of populations**, by BIC, from many random starting points.
@@ -18,6 +18,7 @@ SMTracker 3 is a new program, written in Python. It no longer needs MATLAB, and 
 - **Localization error per spot**, from a calibration measured on immobile molecules.
 - **Simulated data.** Builds data sets with known populations, diffusion and switching, to compare SMTracker's results with the truth.
 - **Figures for print**, each with its source data as `.xlsx` and `.csv` ([Figures](/docs/analysis/figures)).
+- **SMTracker 2.0 view.** SMTracker 2.0's eight tabs, computed its way, on the conditions you have loaded ([SMTracker 2.0 view](/docs/analysis/smtracker-2-view)).
 - **Fixes to SMTracker 2.0:** fraction error bars assigned to the wrong condition, a crash with one population, a limit of seven conditions, and fits that failed without saying so.
 
 ## SMTracker 2.0

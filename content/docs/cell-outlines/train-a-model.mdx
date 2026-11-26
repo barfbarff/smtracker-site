@@ -3,7 +3,7 @@ title: "Train a model"
 description: "Fine-tune a segmentation model on your outlines, on this computer or on a GPU machine elsewhere, and add it to Segment's model list."
 ---
 
-Train a segmentation model on outlines you've corrected, so the next folders need fewer corrections. You fine-tune one of the pretrained Omnipose models on your own data, here if this computer can train, or on another machine such as Google Colab. Skip this page while the pretrained models or the classical segmenter outline your cells well enough.
+Train a segmentation model on outlines you've corrected, so the next folders need fewer corrections. You fine-tune Cellpose-SAM (or, run from source, an Omnipose model) on your own data, here if this computer can train, or on another machine such as Google Colab. Skip this page while the pretrained models or the classical segmenter outline your cells well enough.
 
 Training happens in a separate window, **SMTracker · model trainer**. Click **Train a model** in the outlines window's sidebar, then <Ui variant="outline">Open the trainer</Ui>.
 
@@ -12,7 +12,7 @@ Training happens in a separate window, **SMTracker · model trainer**. Click **T
 Training needs two things: outlines worth learning from, and a computer that can train.
 
 - **Outlines to learn from.** The trainer uses every outline file in a condition's `cell_meshes/` folder that has a matching image, whether you corrected it or not, and its list calls them all *corrected*. So correct the fields in [Edit outlines](/docs/cell-outlines/edit-outlines) first, and remove the outline files of fields you haven't checked. Fields whose files hold no outlines are skipped.
-- **To train here:** SMTracker run from source with Omnipose, a CUDA build of torch, and an NVIDIA GPU. In the packaged app, build a training set and export it to a machine that can train ([Install and open SMTracker](/docs/install#automatic-cell-outlines)).
+- **To train here:** the [segmentation pack](/docs/install#automatic-cell-outlines) with GPU support and an NVIDIA graphics card with about 6 GB of memory or more. Cellpose-SAM is a large network: a 4 GB card runs out of memory, and SMTracker says so before it starts. Otherwise, build a training set and export it to a machine that can train, such as Google Colab. Fine-tuning an Omnipose model needs SMTracker run from source with Omnipose.
 
 A note under the trainer's buttons says whether this computer can train, and if not, why. No minimum number of fields is established for this data; the build's summary says how many cells you're training on.
 

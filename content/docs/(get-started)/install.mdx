@@ -9,6 +9,20 @@ SMTracker runs on Windows and macOS. It comes as a ready-to-run folder: there's 
 There's no packaged version for Linux yet. Run SMTracker from its source code instead: see [Run from source](#run-from-source) at the end of this page.
 </Callout>
 
+## What your computer needs
+
+| | Needed | Better |
+| --- | --- | --- |
+| System | Windows 10 or 11 (64-bit), or macOS | |
+| Processor | 2 cores | 4 or more: the analyses use every core but one |
+| Memory | 8 GB | 16 GB |
+| Disk | 1 GB for the program, plus room for each project's cache | |
+| Screen | 1366 × 768 | 1920 × 1080 |
+| Tracking | Fiji for TrackMate, or MATLAB with u-track (each u-track session takes up to about 1.5 GB of memory) | |
+| Model segmentation (optional) | The [segmentation pack](#automatic-cell-outlines): 2.5 GB to download and 4.1 GB on disk with GPU support, 0.2 GB and 0.7 GB without | An NVIDIA graphics card. Training Cellpose-SAM needs one with about 6 GB of memory or more |
+
+{/* TODO(Patrik): the memory figures are recommendations, not yet measured on a large project. */}
+
 ## Get SMTracker running
 
 SMTracker comes as a zip with everything inside, so getting it running takes three steps.
@@ -131,11 +145,17 @@ Track every condition you want to compare with the same tracker. On the same mov
 
 ## Automatic cell outlines
 
-The packaged app can't run the Omnipose models for automatic cell outlines: they need large libraries the packaged app leaves out. The **Segment** page then says "This build cannot run the segmentation models". You can still use the classical segmenter on **Segment**, which is fast but weaker on some data, and draw and correct outlines by hand in **Edit outlines**. To use the Omnipose models, run SMTracker from source with Omnipose installed in the same environment.
+SMTracker comes with the classical segmenter, which is fast but weaker on some data, and with **Edit outlines** to draw and correct outlines by hand. Segmenting with the Cellpose-SAM model, and training your own, need PyTorch and Cellpose. They're not part of the program, so most people never download them; SMTracker downloads them for you the first time you want them.
+
+1. In the **Cell outlines** window, click <Ui variant="outline">Get segmentation models…</Ui> on **Segment**, or **Segmentation pack** in the header.
+2. Choose *With GPU support (CUDA)* for an NVIDIA graphics card (2.5 GB to download, 4.1 GB on disk), or *CPU only* (0.2 GB and 0.7 GB). SMTracker picks the one that fits this computer and says why.
+3. Pick a folder, then click **Download**. If the program's drive is too small, SMTracker proposes the next drive with room. Click **No** to go on without them.
+
+The files come from pytorch.org and pypi.org, and each one is checked against a fixed checksum before it's used. Cellpose-SAM's own model (1.2 GB) downloads the first time you segment with it. On a GeForce GTX 1650, Cellpose-SAM outlined a field in 1.5 s; on a laptop's processor alone, in about 3.5 minutes.
+
+The Omnipose models run only when you run SMTracker from source with Omnipose installed: Omnipose's license doesn't allow it to be shipped with SMTracker.
 
 {/* TODO(Huy): should this page give the steps for installing Omnipose into a source environment (scripts/setup_segmentation_env.py isn't in the shipped source zip)? */}
-
-A graphics card (GPU) speeds the Omnipose models up a lot. This needs Omnipose with GPU support, so it only applies when you run from source.
 
 ## Update SMTracker
 

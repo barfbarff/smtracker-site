@@ -1,7 +1,7 @@
 'use client';
 
 // The pieces of the landing page's pictures (components/landing/landing.tsx): a print of the real app (Polaroid),
-// the screen recordings on it (Recording), the stack of four analysis prints with its arrows (AnalysisStack), and
+// the screen recordings on it (Recording), the stack of five analysis prints with its arrows (AnalysisStack), and
 // the three cards of "From start to finish" (OverviewCards), each with a live demo from pipeline.tsx.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -231,6 +231,7 @@ const STACK_POSE = [
   { x: 4, y: -6, rotate: 3, scale: 0.95 },
   { x: -4, y: -10, rotate: -3, scale: 0.9 },
   { x: 5, y: -13, rotate: 4, scale: 0.85 },
+  { x: -5, y: -18, rotate: -4.5, scale: 0.8 },
 ];
 /**
  * Leafing through the stack, one way each time, so a print never crosses the pile half seen. Next: the top print
@@ -255,7 +256,7 @@ const LEAF = {
 };
 
 /**
- * The four analysis prints (ANALYSES), stacked on the page, with previous and next under them. The one on top is
+ * The five analysis prints (ANALYSES), stacked on the page, with previous and next under them. The one on top is
  * whole: its caption, its tilt to the pointer and its back. Next: the top print slides out to the side and tucks
  * in at the back while the others move up a place. Previous: the print at the back slides out from behind and
  * lands on top. On touch screens a sideways swipe on the stack does the same (a tap still turns a print over).

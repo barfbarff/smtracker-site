@@ -60,7 +60,7 @@ function Colophon() {
             </Link>
             {/* the line the title page opens with, so the page ends where it began */}
             <p className="mt-3 max-w-[30ch] text-[17px] leading-7 text-neutral-300">
-              From a folder of microscope movies to every analysis.
+              Single-molecule tracking, from raw movies to figures.
             </p>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:col-span-7">

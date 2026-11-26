@@ -1,8 +1,8 @@
 'use client';
 
-// The backs of the two prints of the real app (components/landing/chapter-analysis.tsx): turn a print over and
-// it shows the whole window, with four numbered notes on what else it does. Tracking: the preparation window's
-// Detect & link page. Outlines: the outline editor.
+// The backs of the three prints of the real app (components/landing/chapter-analysis.tsx): turn a print over and
+// it shows the window, with four numbered notes on what else it does. Tracking: the preparation window's
+// Detect & link page. Outlines: the outline editor. Simulated data: the generator's Kinetics page.
 //
 // To remove them: set PRINT_BACKS to false in chapter-analysis.tsx (both prints go back to one side), or delete
 // this file, its screenshots (assets/detect-link-app.webp, assets/edit-outlines-app.webp) and the lines marked
@@ -14,6 +14,8 @@ import { forwardRef } from 'react';
 // rendered off screen, 26 Nov 2026), and the outline editor, one field (macOS)
 import detectApp from '@/components/landing/assets/detect-link-app.webp';
 import editorApp from '@/components/landing/assets/edit-outlines-app.webp';
+// the generator's Kinetics page, its own example (rendered off screen, 26 Nov 2026), cut to the page's two cards
+import generatorKineticsApp from '@/components/landing/assets/generator-kinetics-app.webp';
 
 type Note = { x: number; y: number; title: string; line: string };
 
@@ -31,6 +33,14 @@ const EDITOR_NOTES: Note[] = [
   { x: 46.8, y: 13.5, title: 'View', line: 'Phase, sum or overlay, with tint and contrast.' },
   { x: 8.9, y: 9.8, title: 'Fields', line: 'Every field of a condition, and how many are done.' },
   { x: 8.2, y: 48.6, title: 'Cells', line: 'Each cell\u2019s length, width and shape as you edit.' },
+];
+
+/** the generator's Kinetics page, in % of its screenshot (1140 × 522), each pin in the space beside its control */
+const GENERATOR_NOTES: Note[] = [
+  { x: 44.3, y: 45, title: 'Movie times', line: 'Each movie at its own time since the addition.' },
+  { x: 23.1, y: 60.5, title: 'Delay and half-time', line: 'How fast the change comes, spread over replicates and cells.' },
+  { x: 36, y: 93.9, title: 'Mock', line: 'An addition that changes nothing, on the same schedule.' },
+  { x: 89.8, y: 70.9, title: 'Response', line: 'Every population’s D and share, from before to after.' },
 ];
 
 function Pin({ n, x, y }: { n: number; x: number; y: number }) {
@@ -122,6 +132,17 @@ export function TrackingBack() {
       image={detectApp}
       notes={TRACKING_NOTES}
       alt="SMTracker 3's Detect & link page on simulated movies: the tracker switch between TrackMate (Fiji) and u-track (MATLAB), a row per condition with its measured detection threshold, spot radius, linking radius and frame gap, and a chart of how the threshold stands against one movie's noise"
+    />
+  );
+}
+
+/** the back of the simulated-data print */
+export function GeneratorBack() {
+  return (
+    <PrintBack
+      image={generatorKineticsApp}
+      notes={GENERATOR_NOTES}
+      alt="SMTracker 3's simulated-data Kinetics page: a condition with a change after an addition, its movie times, delay, half-time and onset spreads, the mock switch, and the response curve with each movie's time marked"
     />
   );
 }

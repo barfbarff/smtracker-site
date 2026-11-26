@@ -1,6 +1,6 @@
 'use client';
 
-// The tracker cards of "A for Adaptive", as postage stamps: a perforated paper edge (.sm-stamp in app/global.css), a
+// The tracker cards of "Tracks from any tracker", as postage stamps: a perforated paper edge (.sm-stamp in app/global.css), a
 // hairline frame inside it, the picture in ink, and the tracker's name with its number in the series underneath. On
 // the page each lies tilted and floats slowly, as the cards did (CARD_LAYOUT; still under reduced motion).
 

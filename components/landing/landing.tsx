@@ -21,12 +21,15 @@ import { HeroCells } from '@/components/landing/hero-cells';
 import { CARD_H, CARD_LAYOUT, CARD_W, SOURCES, TracksPlay } from '@/components/landing/source-cards';
 import { StampFace } from '@/components/landing/stamp';
 import { AnalysisStack, OverviewCards, Polaroid, Recording } from '@/components/landing/chapter-analysis';
-import { OutlinesBack, TrackingBack } from '@/components/landing/polaroid-back';
+import { GeneratorBack, OutlinesBack, TrackingBack } from '@/components/landing/polaroid-back';
 import { ANALYSES } from '@/components/landing/analysis-prints';
 // the recording's first frame, shown before it plays and instead of it under reduced motion
 import outlinesPoster from '@/components/landing/assets/cell-outlines-poster.jpg';
 // the Track page after a TrackMate run on simulated movies (rendered off screen, 26 Nov 2026)
 import trackingApp from '@/components/landing/assets/tracking-app.webp';
+// the simulated-data window on its three-state example, Where in the cell (rendered off screen, 26 Nov 2026), cut
+// to the page under the title bar, without the rail of pages
+import generatorApp from '@/components/landing/assets/generator-app.webp';
 
 const navLinks = [
   { text: 'Docs', href: '/docs' },
@@ -167,9 +170,10 @@ export function Landing() {
     if (stampsShown) setStampsSeen(true);
   }, [stampsShown]);
 
-  // the two prints: each turns over on its own
+  // the three prints: each turns over on its own
   const [trackingFlipped, setTrackingFlipped] = useState(false);
   const [outlinesFlipped, setOutlinesFlipped] = useState(false);
+  const [generatorFlipped, setGeneratorFlipped] = useState(false);
 
   // "Built-in analysis": which print is on top. While the stack is in view it turns slowly on its own, until someone
   // leafs through it or turns a print over; then it is theirs (and under reduced motion it never turns by itself)
@@ -243,7 +247,7 @@ export function Landing() {
               SMTracker 3
             </h1>
             <p className="max-w-[30ch] text-xl leading-8 font-[425] text-balance text-(--landing-body) sm:text-[22px] sm:leading-[34px]">
-              From a folder of microscope movies to every analysis.
+              Single-molecule tracking, from raw movies to figures.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {/* the visitor's own system gets the primary button and goes first (macOS until we know) */}
@@ -267,7 +271,7 @@ export function Landing() {
           className="relative mx-auto w-full max-w-[1200px] px-6 pb-8 max-sm:[@media(max-height:709px)]:hidden"
         >
           <a
-            href="#adaptive"
+            href="#trackers"
             className="group inline-flex min-h-11 items-center gap-2 rounded-lg text-sm text-fd-muted-foreground transition-colors duration-150 hover:text-fd-foreground"
           >
             Scroll to learn more
@@ -289,13 +293,13 @@ export function Landing() {
         </motion.div>
       </section>
 
-      {/* ---------- A for Adaptive: every tracker's tracks ---------- */}
+      {/* ---------- Tracks from any tracker: every tracker's tracks ---------- */}
       <Section
-        id="adaptive"
+        id="trackers"
         pictureRef={stampsRef}
         words={
           <Words
-            title="A for Adaptive"
+            title="Tracks from any tracker"
             link={
               // as "Read the manual" on the title: the icon leads, only the words are underlined
               <Link href="/docs/other-tools" className={linkWithIcon}>
@@ -435,7 +439,7 @@ export function Landing() {
         }
       />
 
-      {/* ---------- Built-in analysis: the stack of four real figures, with its arrows ---------- */}
+      {/* ---------- Built-in analysis: the stack of five real figures, with its arrows ---------- */}
       <Section
         id="analysis"
         flip
@@ -474,6 +478,45 @@ export function Landing() {
               }}
             />
           </div>
+        }
+      />
+
+      {/* ---------- Data with a known truth: a print of the simulated-data window ---------- */}
+      <Section
+        id="simulated"
+        words={
+          <Words title="Data with a known truth">
+            {/* as the window has it: populations, where in the cell, switching, kinetics, cells, camera, build; tracks
+                or movies; the truth written beside the set */}
+            Describe the populations, where in the cell they live, how they switch and what an addition changes.
+            SMTracker writes the tracks, or whole movies from a measured camera, with every molecule’s truth recorded.
+            Analyze them like your own and see what comes back.
+          </Words>
+        }
+        picture={
+          <Polaroid
+            place="relative mx-auto"
+            width="w-[min(94%,560px)]"
+            reduce={reduce}
+            landed
+            landscape
+            caption={
+              <>
+                Simulated data<span className="hidden @[17rem]:inline"> · three states</span>
+              </>
+            }
+            back={<GeneratorBack />}
+            backLabel="Also in the generator"
+            flipped={generatorFlipped}
+            onFlip={setGeneratorFlipped}
+          >
+            <Image
+              src={generatorApp}
+              alt="SMTracker 3's simulated-data window on its three-state example, Where in the cell: where each population lives, the sizes of the places in the cell, and one cell drawn by the generator with bound and scanning molecules in the nucleoid and free ones across the cell"
+              sizes="(min-width: 768px) 560px, 94vw"
+              className="block h-auto w-full"
+            />
+          </Polaroid>
         }
       />
     </>

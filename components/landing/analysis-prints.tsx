@@ -1,6 +1,6 @@
 'use client';
 
-// "Built-in analysis": four real figures from SMTracker 3, as a stack of prints on the page
+// "Built-in analysis": five real figures from SMTracker 3, as a stack of prints on the page
 // (the stack itself is in components/landing/chapter-analysis.tsx, AnalysisStack). Each print's front is one
 // analysis across the conditions; its back, the same analysis looked at more closely. The figures are SMTracker's
 // own exports (their "Test Data" titles cut off), in components/landing/assets/analyses. Under the stack, arrows
@@ -8,6 +8,9 @@
 
 import Image, { type StaticImageData } from 'next/image';
 import hmmBack from '@/components/landing/assets/analyses/hmm-back.webp';
+// Kinetics: the generator's own kinetics example (an addition and a mock), simulated and fitted, 26 Nov 2026
+import kineticsBack from '@/components/landing/assets/analyses/kinetics-back.webp';
+import kineticsFront from '@/components/landing/assets/analyses/kinetics-front.webp';
 import hmmFront from '@/components/landing/assets/analyses/hmm-front.webp';
 import msdBack from '@/components/landing/assets/analyses/msd-back.webp';
 import msdFront from '@/components/landing/assets/analyses/msd-front.webp';
@@ -79,6 +82,18 @@ export const ANALYSES: AnalysisPrint[] = [
       'Jump-density maps for Condition 1, one row per replicate: all jumps, short, middle and long jumps',
     backLabel: 'Spatial map · per replicate, Condition 1',
     tilt: 3,
+  },
+  {
+    label: 'Kinetics',
+    detail: 'populations over time',
+    front: kineticsFront,
+    frontAlt:
+      'Populations over time after a simulated addition: the D of the slow and the fast population, each steady, and their shares, the slow share rising from about 35 to 70 % with a half-time of about two minutes, each replicate drawn as open circles',
+    back: kineticsBack,
+    backAlt:
+      'The bound share before and after the addition, for the treated condition and a mock addition, each replicate and their mean: the treated share rises by about 36 points, the mock’s by about 3',
+    backLabel: 'Kinetics · against a mock addition',
+    tilt: -2.5,
   },
 ];
 

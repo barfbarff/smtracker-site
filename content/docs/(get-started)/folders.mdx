@@ -7,7 +7,7 @@ Arrange your folders so SMTracker finds every condition. SMTracker doesn't ask y
 
 ## A condition is a folder
 
-A *condition* is one folder of movies that you compare against the others, for example PdhA in glucose. It's usually one strain under one treatment, but SMTracker only knows it as a folder. The folder holds all of that condition's movies, from every replicate:
+A *condition* is one folder of movies that you compare against the others, for example protein A in glucose. It's usually one strain under one treatment, but SMTracker only knows it as a folder. The folder holds all of that condition's movies, from every replicate:
 
 <Files caption="One condition: all its movies, from every replicate.">
   <Folder name="PdhA_LB">
@@ -62,12 +62,12 @@ The preparation window never moves or renames your files. The older classic trac
 As projects grow, you'll probably group conditions, for example one folder per protein:
 
 <Files>
-  <Folder name="ausgewertet">
-    <Folder name="PdhA">
+  <Folder name="experiments">
+    <Folder name="ProteinA">
       <Folder name="PdhA_LB" note="a condition" />
       <Folder name="PdhA_glucose" note="a condition" />
     </Folder>
-    <Folder name="PdhB">
+    <Folder name="ProteinB">
       <Folder name="…" note="its conditions" />
     </Folder>
   </Folder>
@@ -78,12 +78,12 @@ SMTracker's three windows don't read groups the same way:
 | You open | Preparation | Cell outlines | Analysis |
 | --- | --- | --- | --- |
 | A condition (`PdhA_LB`) | Yes | Yes | Yes |
-| A group of conditions (`PdhA`) | Yes | Yes | Yes |
-| A folder of groups (`ausgewertet`) | No: open each group | Yes, unless two groups hold conditions of the same name | Yes |
+| A group of conditions (`ProteinA`) | Yes | Yes | Yes |
+| A folder of groups (`experiments`) | No: open each group | Yes, unless two groups hold conditions of the same name | Yes |
 
 So in preparation, open one protein's folder at a time. In the analysis, open the top folder to compare every condition.
 
-<Callout type="check">The analysis treats `PdhA` as a group of conditions only when its conditions reuse the same movie names, each starting again at `series001`. If the series run on from one condition to the next (001 to 030, then 031 to 060), the analysis opens `PdhA` as one condition holding both media. Check the conditions it lists before you go on.</Callout>
+<Callout type="check">The analysis treats `ProteinA` as a group of conditions only when its conditions reuse the same movie names, each starting again at `series001`. If the series run on from one condition to the next (001 to 030, then 031 to 060), the analysis opens `ProteinA` as one condition holding both media. Check the conditions it lists before you go on.</Callout>
 
 When your movies sit two or more folders below the one you open, the analysis asks **What do the folders mean?**: whether each level is a *factor* that describes the condition (such as protein or medium), a *replicate*, or a level to skip. See [Opening a project](/docs/analysis/opening-a-project).
 
@@ -98,7 +98,7 @@ Sometimes one folder holds two experiments with the same conditions, for example
 | `stat/free` | `stat free` |
 | `stat/yloc` | `stat yloc` |
 
-The same goes for groups: `PdhA/LB` and `PdhB/LB` open in the analysis as `PdhA LB` and `PdhB LB`. Renaming a group folder therefore renames its conditions in the analysis.
+The same goes for groups: `ProteinA/LB` and `ProteinB/LB` open in the analysis as `ProteinA LB` and `ProteinB LB`. Renaming a group folder therefore renames its conditions in the analysis.
 
 The Cell outlines window can't tell such conditions apart, and finds nothing to segment. Open each experiment's folder (`exp`, then `stat`) there instead, or give the conditions different names, such as `PdhA_LB` and `PdhB_LB`.
 

@@ -32,32 +32,32 @@ You can also keep each replicate in a folder of its own. The two arrangements be
 
 On a first open, the board still proposes one replicate per imaging day, as above, so check that its groups match your folders.
 
-{/* TODO(Huy): with sub-folders that restart at series001 and no acquisition times, the series-number rule puts series001 (GM1), series001 (GM2) … into one day, so the folder replicates merge on the first open. Should the folders be the proposal there? */}
+{/* TODO(Huy): with sub-folders that restart at series001 and no acquisition times, the series-number rule puts series001 (Glc1), series001 (Glc2) … into one day, so the folder replicates merge on the first open. Should the folders be the proposal there? */}
 
 ### Replicates as sub-folders
 
 Each replicate sits in a folder of its own, inside the condition's folder. SMTracker reads them as one condition. Check on **Confirm project** that the board's groups match your folders.
 
 <Files>
-  <Folder name="CitZ-mNG">
-    <Folder name="GM" note="one condition">
-      <Folder name="GM1" note="replicate 1: series001, series002, …" />
-      <Folder name="GM2" note="replicate 2: series001, series002, …" />
-      <Folder name="GM3" note="replicate 3: series001, series002, …" />
+  <Folder name="ProteinA-mNG">
+    <Folder name="Glc" note="one condition">
+      <Folder name="Glc1" note="replicate 1: series001, series002, …" />
+      <Folder name="Glc2" note="replicate 2: series001, series002, …" />
+      <Folder name="Glc3" note="replicate 3: series001, series002, …" />
     </Folder>
   </Folder>
 </Files>
 
-Here every replicate starts its series again at `series001`. The replicates are ordered by their numbers, and the movies are listed as `series001 (GM1)`, `series001 (GM2)`, and so on, so you can still tell them apart.
+Here every replicate starts its series again at `series001`. The replicates are ordered by their numbers, and the movies are listed as `series001 (Glc1)`, `series001 (Glc2)`, and so on, so you can still tell them apart.
 
 For this to work, the folders must be named as replicates:
 
-- a number, after the condition's name if you like: `1`, `GM1`, `M2c`, `day 2`, `replicate 2`; or
+- a number, after the condition's name if you like: `1`, `Glc1`, `M2c`, `day 2`, `replicate 2`; or
 - the full date they were imaged, which orders them by date: `10.03.2025`, `2025-03-10`.
 
-<Callout type="check">If even one folder that holds movies isn't named as a replicate (say `GM/maltose` beside `GM/GM1`), the analysis can't tell that they belong together, and opens them as separate conditions. Rename the odd one out.</Callout>
+<Callout type="check">If even one folder that holds movies isn't named as a replicate (say `Glc/maltose` beside `Glc/Glc1`), the analysis can't tell that they belong together, and opens them as separate conditions. Rename the odd one out.</Callout>
 
-If you open the folder above the condition (`CitZ-mNG` here), the movies sit two levels down, so the analysis first asks **What do the folders mean?**. That's expected: mark the level as the replicate there, or click **Load without a design**. The same goes for numbered folders opened from above.
+If you open the folder above the condition (`ProteinA-mNG` here), the movies sit two levels down, so the analysis first asks **What do the folders mean?**. That's expected: mark the level as the replicate there, or click **Load without a design**. The same goes for numbered folders opened from above.
 
 ### Replicates in numbered folders
 
@@ -83,7 +83,7 @@ The folder names and series numbers decide how the folders are read:
 | Series numbers | Arrangement | Example |
 | --- | --- | --- |
 | Everything in one folder | [one replicate per imaging day](#one-replicate-per-imaging-day-the-default) | `LB/series001` to `series030` |
-| Start again at `series001` in every folder | [replicates as sub-folders](#replicates-as-sub-folders) | `GM/GM1`, `GM/GM2`, `GM/GM3` |
+| Start again at `series001` in every folder | [replicates as sub-folders](#replicates-as-sub-folders) | `Glc/Glc1`, `Glc/Glc2`, `Glc/Glc3` |
 | Continue across the folders | [replicates in numbered folders](#replicates-in-numbered-folders) | `LB/LB-1` (001–010), `LB-2` (011–020) |
 
 If your replicate folders fit none of these, for example dates written as `20240101`, open the folder above your conditions, describe your folders on **What do the folders mean?**, and mark that level as the replicate. See [Opening a project](/docs/analysis/opening-a-project).

@@ -33,7 +33,7 @@ Press <Kbd>Ctrl+S</Kbd>, or click <Ui>Save field</Ui>, to save the field on scre
 
 Edits stay in memory until you save, even when you move to another field or condition. You can't open another folder or go back to the menu while edits are unsaved, and closing the window asks whether to leave them.
 
-{/* TODO(Huy): which key is "Ctrl" on a Mac for Ctrl+S, Ctrl+Z and Ctrl+Y? Qt's default maps it to Cmd. */}
+{/* TODO(Huy): which key is "Ctrl" on a Mac for Ctrl+S, Ctrl+Z, Ctrl+Y and Ctrl+wheel? Qt's default maps it to Cmd. */}
 
 ## Fix the outlines
 
@@ -54,9 +54,7 @@ When SMTracker refuses an edit, the status line under the image says why, for ex
 
 **Width** sets the width of the next cell you draw, from 1 to 60 px (9 px by default). Typing in it while a cell is selected resizes that cell with every keystroke, so typing 12 first makes the cell 1 px wide. Selecting a cell doesn't show its width in the box.
 
-Shortcuts don't work while the cursor is in the **Width** box, and clicking the image doesn't give them back. Click the **Fields** or **Cells** list, or press <Kbd>Tab</Kbd>, to use them again.
-
-{/* TODO(Huy): in the new window the image never takes the keyboard focus, and Width doesn't hand it back (the classic window does both), so shortcuts stay off after typing in Width until a list is clicked. Fix in the app? */}
+Shortcuts don't work while the cursor is in the **Width** box. Press <Kbd>Enter</Kbd>, or click the image, to use them again.
 
 ## See the image better
 
@@ -69,11 +67,10 @@ These change only what you see; nothing is saved.
 | <Kbd>R</Kbd> | Reset brightness and contrast to 100 %. |
 | <Kbd>[</Kbd> / <Kbd>]</Kbd> | Contrast down or up by 15 %. |
 | <Kbd>+</Kbd> (or <Kbd>=</Kbd>) / <Kbd>-</Kbd>, <Kbd>F</Kbd> | Zoom in or out; fit the field to the window. |
+| <Kbd>Ctrl</Kbd> + wheel | Zoom in or out around the cursor. The wheel alone steps through the fields. |
 | <Kbd>F11</Kbd> | Focus mode: the image fills the screen, with a slim bar of tools. |
 
 Drag with the middle mouse button to pan.
-
-{/* TODO(Huy): Ctrl+wheel should zoom, but the editor reads the key from the image, which never gets key events in the new window, so Ctrl+wheel probably steps fields like the plain wheel. Fix (read event.modifiers) and then document it? */}
 
 **Bright** and **Contrast** change the image on screen, and in the overlay only the phase image underneath (both 100 % by default; <Kbd>R</Kbd> or **Reset** sets them back). **Tint** and **Alpha** set the color and strength of the fluorescence in the overlay (**Alpha** 50 % by default).
 
@@ -91,20 +88,16 @@ If the offset is more than 3 px, the button reads **Shift all by (dx, dy) px**. 
 
 Saving a field writes:
 
-- `cell_meshes/<field>.mat`, the outlines in Oufti's format, with the cells numbered again in list order;
+- `cell_meshes/<field>.mat`, the outlines in Oufti's format, with the cells numbered again in list order, and any outlines without ribs after them, unchanged;
 - `cell_masks/<field>.tif`, the same outlines as a label image, when SMTracker can read the image's size;
 - `cell_meshes/<field>.mat.curated.json`, a marker that you corrected the field by hand, which the sidebar counts as *corrected*;
 - the first time, if the field had an outline file, a copy of the automatic outlines in `cell_meshes_auto/`.
 
 <Callout type="check">
-<Kbd>Ctrl+S</Kbd> saves the field on screen even if you haven't changed it, and marks it as corrected. On a field with no outlines, or after you delete every cell, it saves an empty outline file, and the analysis then drops that movie's tracks. Save only fields you've checked.
+<Kbd>Ctrl+S</Kbd> saves the field on screen even if you haven't changed it, and marks it as corrected, so save only fields you've checked. On a field with no outlines where you've drawn nothing, it saves nothing, and the status line says so. If you delete every cell of a field, saving writes an empty outline file, and the analysis then drops that movie's tracks.
 </Callout>
 
-{/* TODO(Huy): should Ctrl+S on an unedited or "(no outlines yet)" field write a file and mark it corrected? On an empty field it writes an empty outline file, which drops the movie's tracks. */}
-
-Outlines from other tools that store only a contour, without the cross-lines (ribs) of Oufti's format, can't be edited. The status line names them when the field opens. Saving the field leaves them out of the file, but the copy in `cell_meshes_auto/` keeps them.
-
-{/* TODO(Huy): saving drops ribless outlines from the file without asking. Intended? */}
+Outlines from other tools that store only a contour, without the cross-lines (ribs) of Oufti's format, can't be edited. The status line names them when the field opens. Saving keeps them in the file as they are, so the analysis still uses them.
 
 ## When you're done
 

@@ -61,6 +61,8 @@ Then open the folder again in the outlines window. The model appears in each con
 </Step>
 </Steps>
 
+To remove a saved model, select it in the trainer's list of saved models and click <Ui variant="outline">Delete</Ui>. SMTracker asks first, then deletes it from the store.
+
 Training doesn't add a model anywhere by itself: until you save it, it only exists as a file in `training_set/models/`.
 
 <Callout type="check">
@@ -92,7 +94,5 @@ The trainer has a few rough edges. Work around them like this:
 - It finds conditions one level below the folder you open. Open the folder directly above your conditions, not a condition itself or a folder two levels up.
 - Building again writes into the same `training_set/` without clearing it, so images, held-out fields and models from an earlier build stay, and are trained on. Delete `training_set/` before you build a smaller set. **Export to…** also merges into an earlier export.
 - Closing the trainer while it trains freezes the window until the training has finished.
-- **Delete** in the trainer's model list fails for models saved from the trainer, with "No model called … in …". To remove one, close SMTracker and delete its folder in the model store.
 
-{/* TODO(Huy): Delete cuts the model's list line at the first ":", but the line has ", from …" before it, so it fails for every model saved from the trainer (segmentation/trainer_gui.py:476). Fix in the app? */}
 {/* TODO(Huy): should a rebuild clear training_set/ first, and should the trainer accept a single condition folder? */}

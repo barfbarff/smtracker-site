@@ -5,6 +5,8 @@ description: "Turn a folder of raw movies into tracks: choose the frames to keep
 
 **Image preparation + Tracking** turns a folder of raw movies (`.nd2`, `.stk` or TIFF stacks) into tracks. A TIFF stack records no timing, so you type its frame interval on Calibration & save. You choose the frames of each movie to keep, enter how it was imaged, set how molecules are detected and linked, then run the tracker. It's the first of SMTracker's three stages. To try it on movies with a known answer, the **Simulated data** card in the first window can build test movies to track here. Skip it if your tracks come from another program, because the analysis reads them directly: see [Tracks from other tools](/docs/other-tools).
 
+{/* TODO(Huy): the code seems to find TIFF stacks only loose in a folder that is a condition for another reason (organise.py:511-558); test a folder of TIFF stacks alone, and TIFFs in raw/. */}
+
 ## Open it
 
 In SMTracker's first window, click the **Image preparation + Tracking** card. Click the card itself: pressing Return opens the analysis instead. In the window that opens, click <Ui variant="outline">Open folder…</Ui> and choose a condition folder, or a folder that holds several conditions. For the layouts SMTracker recognizes, see [Organizing your folders](/docs/folders).

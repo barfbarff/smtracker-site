@@ -33,7 +33,7 @@ Each movie usually comes with a *phase-contrast snapshot* of the same field, whi
 <Columns>
 <Files caption="Straight off the microscope: movie and snapshot side by side.">
   <Folder name="PdhA_LB">
-    <File name="series001.nd2" note="or .stk" />
+    <File name="series001.nd2" note="or .stk, or a TIFF stack" />
     <File name="series001.tif" note="phase snapshot" />
   </Folder>
 </Files>
@@ -48,6 +48,8 @@ Each movie usually comes with a *phase-contrast snapshot* of the same field, whi
   </Folder>
 </Files>
 </Columns>
+
+A TIFF stack works as a movie too. A single-page `.tif` with the same name as a movie is read as its snapshot, not as a movie.
 
 A snapshot is paired with its movie by name, so keep the two names identical apart from the extension: `series001.nd2` goes with `series001.tif`.
 

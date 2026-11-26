@@ -4,8 +4,9 @@
 // the ground stays the page's own), three rod-shaped cells drifting very slightly across it, and in each
 // cell two molecules drawn as small spots of lit pixels (asked 26 Nov 2026: two per cell, as sparse as a real
 // single-molecule movie). The slow one hovers near one place, like the bound population, and the fast one
-// roams the cell. Each leaves a short track that fades: a tight knot for the slow one, an open path for the
-// fast one.
+// roams. Each keeps to its own half of the cell, with a gap between the halves, so the two never overlap
+// (asked the same day). Each leaves a short track that fades: a tight knot for the slow one, an open path
+// for the fast one.
 // Pixels are the camera data, the smooth outline is the cell SMTracker found, the line is its track.
 //
 // Canvas, drawn only in the browser (the server renders an empty canvas, so nothing can mismatch).
@@ -21,7 +22,7 @@ const TAIL = 14; // positions in each molecule's track (about a second)
 const PSF = 0.75; // spot width, in camera pixels
 
 type Cell = { cx: number; cy: number; len: number; w: number; ang: number; phase: number };
-type Mol = { cell: number; u: number; v: number; vu: number; vv: number; au: number; av: number; fast: boolean; tail: [number, number][] };
+type Mol = { cell: number; u: number; v: number; vu: number; vv: number; au: number; av: number; fast: boolean; side: number; tail: [number, number][] };
 
 // in camera pixels; three cells packed close, like a small colony. The nearest gaps between outlines
 // stay at least 0.6 px (top/middle) and 0.46 px (middle/bottom) through the drift: checked over ten
@@ -32,6 +33,10 @@ const CELLS: Cell[] = [
   { cx: 16.4, cy: 33.6, len: 25, w: 9, ang: -0.08, phase: 4.2 },
 ];
 const DRIFT = 0.18; // camera pixels; each cell moves at most this far, so two can close a gap by 0.36 at most
+/** camera pixels kept clear across the middle of a cell: each molecule stays on its own side of it */
+const GAP = 6;
+/** a molecule's own half of its cell (`side` -1 or 1 along the cell's long axis), the middle band left clear */
+const onSide = (side: number, u: number, room = 0) => u * side >= GAP / 2 + room;
 
 function inside(c: Cell, u: number, v: number, pad = 1.6) {
   const r = c.w / 2 - pad;
@@ -45,15 +50,16 @@ const gauss = () => {
   return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * Math.random());
 };
 
-function spawn(cell: number, fast: boolean): Mol {
+function spawn(cell: number, fast: boolean, side: number): Mol {
   const c = CELLS[cell];
   let u = 0;
   let v = 0;
+  // the slow one's place sits a little further from the middle, so its knot stays on its side too
   do {
     u = (Math.random() - 0.5) * c.len;
     v = (Math.random() - 0.5) * c.w;
-  } while (!inside(c, u, v));
-  return { cell, u, v, vu: 0, vv: 0, au: u, av: v, fast, tail: [] };
+  } while (!inside(c, u, v) || !onSide(side, u, fast ? 0 : 1.5));
+  return { cell, u, v, vu: 0, vv: 0, au: u, av: v, fast, side, tail: [] };
 }
 
 function hexRgb(h: string): [number, number, number] {
@@ -109,7 +115,10 @@ export function HeroCells({ paused = false }: { paused?: boolean }) {
 
     let colors = palette(canvasRef.current);
     let px = 8; // css pixels per camera pixel
-    const mols: Mol[] = CELLS.flatMap((_, i) => [spawn(i, false), spawn(i, true)]);
+    const mols: Mol[] = CELLS.flatMap((_, i) => {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      return [spawn(i, false, side), spawn(i, true, -side)];
+    });
     const light = new Float32Array(COLS * ROWS);
     let t = 0; // seconds of movie
 
@@ -141,7 +150,7 @@ export function HeroCells({ paused = false }: { paused?: boolean }) {
       for (const m of mols) {
         const c = CELLS[m.cell];
         if (m.fast) {
-          // a smoothed random walk across the whole cell
+          // a smoothed random walk across its half of the cell
           m.vu = m.vu * 0.55 + gauss() * 0.55;
           m.vv = m.vv * 0.55 + gauss() * 0.55;
         } else {
@@ -152,7 +161,7 @@ export function HeroCells({ paused = false }: { paused?: boolean }) {
         }
         const nu = m.u + m.vu;
         const nv = m.v + m.vv;
-        if (inside(c, nu, nv)) {
+        if (inside(c, nu, nv) && onSide(m.side, nu)) {
           m.u = nu;
           m.v = nv;
         } else {

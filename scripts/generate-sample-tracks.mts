@@ -53,13 +53,17 @@ function inside(c: Cell, x: number, y: number, margin = 6) {
   return du * du + v * v < r * r;
 }
 
-function startPoint(c: Cell): [number, number] {
+/** drawing units kept clear across the middle of a cell: each molecule stays on its own side (asked 26 Nov 2026) */
+const GAP = 40;
+const onSide = (c: Cell, side: number, x: number, y: number, room = 0) => toLocal(c, x, y).u * side >= GAP / 2 + room;
+
+function startPoint(c: Cell, side: number, room: number): [number, number] {
   for (;;) {
     const u = (rng() - 0.5) * (c.len - 30);
     const v = (rng() - 0.5) * (c.w - 24);
     const x = c.cx + u * Math.cos(c.ang) - v * Math.sin(c.ang);
     const y = c.cy + u * Math.sin(c.ang) + v * Math.cos(c.ang);
-    if (inside(c, x, y)) return [x, y];
+    if (inside(c, x, y) && onSide(c, side, x, y, room)) return [x, y];
   }
 }
 
@@ -75,16 +79,18 @@ const PLAN: boolean[][] = [
 ];
 
 export const tracks: Track[] = PLAN.flatMap((kinds, ci) =>
-  kinds.map((slow) => {
+  kinds.map((slow, k) => {
     const c = cells[ci];
     const sigma = (slow ? SIGMA_PX.slow : SIGMA_PX.fast) * UNITS_PER_PX;
-    let [x, y] = startPoint(c);
+    // the cell's two molecules on opposite halves, so their tracks never cross
+    const side = k === 0 ? -1 : 1;
+    let [x, y] = startPoint(c, side, slow ? 20 : 0);
     const pts: [number, number][] = [[x, y]];
     for (let s = 0; s < (slow ? STEPS.slow : STEPS.fast); s++) {
       for (let t = 0; t < 12; t++) {
         const nx = x + gauss() * sigma;
         const ny = y + gauss() * sigma;
-        if (inside(c, nx, ny)) {
+        if (inside(c, nx, ny) && onSide(c, side, nx, ny)) {
           x = nx;
           y = ny;
           break;

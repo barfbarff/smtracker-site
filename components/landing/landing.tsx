@@ -365,7 +365,7 @@ export function Landing() {
               </Link>
             }
           >
-            Crop and calibrate your raw .nd2 or .stk movies, then track them with TrackMate or u-track without leaving
+            Crop and calibrate your raw movies (.nd2, .stk or TIFF), then track them with TrackMate or u-track without leaving
             SMTracker. One condition at a time, or many folders overnight.
           </Words>
         }

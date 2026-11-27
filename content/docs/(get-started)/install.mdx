@@ -43,7 +43,7 @@ Windows limits a file's full path to 260 characters, and the longest file inside
 <Step>
 ### Start it
 
-Open the folder and double-click `smtracker.exe`. A console window opens beside the app and shows what SMTracker is doing. Leave it open: closing it closes SMTracker.
+Open the folder and double-click `smtracker.exe`. It opens SMTracker's window and no console. To watch SMTracker's messages as it works, double-click `smtracker-console.exe` instead: the same program, with a console window beside it. Closing that console closes SMTracker.
 
 The first time, Windows may show **Windows protected your PC**. SMTracker isn't signed with a paid certificate, so Windows doesn't recognize it yet. Click **More info**, then **Run anyway**. You only need to do this once.
 </Step>
@@ -106,7 +106,7 @@ On Windows, click **Start**, type `cmd` and press <Kbd>Enter</Kbd>. On a Mac, op
 <Step>
 ### Run the self-test
 
-Go to the SMTracker folder: type `cd C:\SMTracker` on Windows or `cd ~/SMTracker` on a Mac, and press <Kbd>Enter</Kbd>. Then type `smtracker.exe --selftest` on Windows or `./smtracker --selftest` on a Mac, and press <Kbd>Enter</Kbd>. The output ends with `analysis self-test: OK` when all is well.
+Go to the SMTracker folder: type `cd C:\SMTracker` on Windows or `cd ~/SMTracker` on a Mac, and press <Kbd>Enter</Kbd>. Then type `smtracker-console.exe --selftest` on Windows or `./smtracker --selftest` on a Mac, and press <Kbd>Enter</Kbd>. The output ends with `analysis self-test: OK` when all is well.
 </Step>
 </Steps>
 

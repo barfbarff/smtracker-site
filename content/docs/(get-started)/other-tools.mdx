@@ -53,7 +53,7 @@ SMTracker has to know the units of the positions, and how long a frame is, becau
 | `pixel_size_nm` | The size of one camera pixel in the sample, in nm. Needed when SMTracker hasn't saved a calibration for this folder, whatever the table's units |
 | `frame_interval_ms` | The time between two frames, in ms: the camera's frame interval, not the exposure. Needed in the same case |
 
-A calibration saved on Calibration & save wins: a number it has replaces the one in `format.json`. If the two differ, the console window beside SMTracker names both, because every D depends on which is right. Correct the one that's wrong. For why the frame interval and exposure differ, see [Frame interval and pixel size](/docs/timing-and-pixel-size).
+A calibration saved on Calibration & save wins: a number it has replaces the one in `format.json`. If the two differ, SMTracker names both in its log (**Report a problem…** sends it) and, when you start it with `smtracker-console.exe`, in the console window, because every D depends on which is right. Correct the one that's wrong. For why the frame interval and exposure differ, see [Frame interval and pixel size](/docs/timing-and-pixel-size).
 
 ### Describing a table of your own
 

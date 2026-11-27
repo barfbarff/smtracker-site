@@ -58,6 +58,7 @@
   --em-body: #3a4f0d; /* text on emission grounds */
   --em-callout-text: #22300a;
   --fg-secondary: #525252; /* body copy beside headings, inactive nav */
+  --fg-table: #404040; /* table cells: a step darker than secondary, for 15px text */
   --landing-body: #404040; /* the landing page's body copy (always light): 10.4:1 on white, a step under the titles */
 
   /* Illustration palette */
@@ -116,6 +117,7 @@
   --em-body: #b5da55;
   --em-callout-text: #e6f3c2;
   --fg-secondary: #d4d4d4;
+  --fg-table: #e5e5e5;
 
   /* Five values swap; the drawing itself does not change. In the dark the spot glows. */
   --ill-ground: #10150a;
@@ -371,17 +373,23 @@ html:not(.dark) #nd-sidebar-mobile a:not([data-active='true']):not(:hover) {
   --tw-prose-body: var(--foreground);
   font-size: 16px;
   line-height: 28px;
+  /* Inter is variable: a touch heavier than regular, so body text holds up on macOS's thin smoothing. */
+  font-weight: 450;
+}
+/* Bold keeps its distance from the heavier body. */
+.prose :where(strong, b) {
+  font-weight: 700;
 }
 .prose :where(h2) {
   font-size: 24px;
   line-height: 32px;
-  font-weight: 600;
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 .prose :where(h3) {
   font-size: 18px;
   line-height: 28px;
-  font-weight: 600;
+  font-weight: 650;
 }
 .prose :where(:not(pre) > code) {
   font-family: var(--font-mono);
@@ -410,8 +418,10 @@ html:not(.dark) #nd-sidebar-mobile a:not([data-active='true']):not(:hover) {
 
 /* Tables: 12px frame, sidebar-gray header, first column set in 500, the rest secondary. */
 .prose :where(table) {
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 15px;
+  line-height: 24px;
+  /* the same radius as the scroll box around it, which clips it; a smaller one gets its corners cut off */
+  border-radius: 12px;
 }
 .prose :where(div:has(> table)) {
   border-radius: 12px;
@@ -423,11 +433,19 @@ html:not(.dark) #nd-sidebar-mobile a:not([data-active='true']):not(:hover) {
 }
 .prose :where(tbody td) {
   padding: 10px 16px;
-  color: var(--fg-secondary);
+  color: var(--fg-table);
+  /* a label stays beside the first line of its explanation, not halfway down a long cell */
+  vertical-align: top;
+}
+@media (max-width: 640px) {
+  .prose :where(th, td) {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
 }
 .prose :where(tbody td:first-child) {
   color: var(--foreground);
-  font-weight: 500;
+  font-weight: 600;
 }
 .prose :where(td code) {
   background: none;

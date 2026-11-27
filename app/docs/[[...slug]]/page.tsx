@@ -37,7 +37,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       full={page.data.full}
       tableOfContent={{ component: <PageRail key={page.url} items={toc} footer={railFooter} /> }}
     >
-      <DocsTitle className="text-[36px] leading-10 font-semibold tracking-[-0.025em]">
+      <DocsTitle className="text-[36px] leading-10 font-[650] tracking-[-0.025em]">
         {page.data.title}
       </DocsTitle>
       <DocsDescription className="mb-0 text-lg leading-[30px] text-fg-secondary">

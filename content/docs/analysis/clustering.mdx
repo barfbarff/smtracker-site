@@ -1,26 +1,69 @@
 ---
 title: "Clustering"
-description: "Groups tracks by the shape of their MSD."
+description: "Group each track's MSD curve with k-means, and see whether the groups go beyond what chance tracks give."
 ---
 
-Clustering groups each track's MSD curve with k-means. Because k-means always finds clusters, each grouping is also made on tracks that contain none, and the card says whether the data beat that chance. A cluster is a curve shape, not a diffusive state; read it beside the SQD fractions.
+Use Clustering as an exploratory cross-check, as SMTracker 2's Clustering tab was: it groups each track's MSD curve with k-means. Because k-means finds clusters in any data, the same analysis also runs on chance tracks that hold none, and each card says whether your data go beyond them. A cluster is a curve shape, not a diffusive state, so read it beside the fractions on [SQD: Populations](/docs/analysis/sqd).
 
-**Run** opens the settings.
+Clustering has one page. A Run covers every loaded condition, and doesn't need an SQD Run first.
+
+## Run it
+
+Choose how the curves are built, and what they're scored against, before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure clustering** ([Run a section](/docs/analysis/workspace#run-a-section)):
 
 | Setting | What it does | Default |
-|---|---|---|
-| **Lags** | Lags per curve (3, 4, 6 or 8); a track needs all of them. | 4 |
-| **Feature scale** | **MSD**, or **log MSD**, which damps the noisy tail. | MSD |
-| **Clusters** | **Each condition alone**, or **Shared clusters**. | Each condition alone |
-| **Number of clusters (k)** | **Data chooses**, or a k you set (shared clusters only). | Data chooses |
-| **Largest k the data may choose** | 3, 4 or 5. | 4 |
-| **Chance** | **The SQD mixture** draws chance tracks from the condition's fitted SQD populations; **One free population** draws tracks of a single D and only asks whether the curves hold more than one D. | The SQD mixture |
-| **Localisation error** | For the SQD mixture: **Per spot**, **The acquisition's**, or **Set** in nm. | Per spot |
-| **SQD populations** | **Best (BIC)**, 1, 2 or 3. | Best (BIC) |
-| **Chance draws** | 20, 50 or 100. | 20 |
+| --- | --- | --- |
+| **Lags** | How many lags each track's MSD curve has: *3*, *4*, *6* or *8*. A track needs all of them, so more lags keep fewer tracks but describe the shape better. 4 is SMTracker 2's. | *4* |
+| **Feature scale** | *MSD*, as in SMTracker 2, or *log MSD*, which damps the noisy top of short tracks' curves. | *MSD* |
+| **Clusters** | *Each condition alone*: every condition gets its own clusters, so their shares can't be compared. *Shared clusters*: one set of clusters for every condition ([below](#shared-clusters)). | *Each condition alone* |
+| **Number of clusters (k)** | *Data chooses*, or *2* to *5* set by hand. Shared clusters only. | *Data chooses* |
+| **Largest k the data may choose** | k is tried from 2 up to this: *3*, *4* or *5*. | *4* |
+| **Chance** | What the grouping is scored against ([below](#scored-against-chance)): *The SQD mixture* or *One free population*. | *The SQD mixture* |
+| **Localisation error** | For the SQD mixture: *Per spot*, *The acquisition's*, or *Set*, one value in nm for every condition (30 nm to start). | *Per spot* |
+| **SQD populations** | For the SQD mixture: *Best (BIC)*, which picks 1 to 3 populations, or *1*, *2* or *3*. | *Best (BIC)* |
+| **Chance draws** | How many sets of chance tracks: *20*, *50* or *100*. 20 is the fewest whose spread can be quoted; more cost time. | *20* |
 
-**Cancel** ends the Run's workers.
+The defaults hold for a new page; after that, the dialog starts from the last Run. Click <Ui>Run</Ui>. With a k set by hand, **Largest k the data may choose** and **Chance draws** are grayed out, because no chance test is made. Shared clusters need at least two conditions. Stopping a Run with the **Compute** mark drops its results, though work already under way stops only when nothing else in the workspace is running.
 
-Each card opens with **Cluster structure beyond the SQD mixture at k = 3**, or **No cluster structure beyond the SQD mixture**, meaning the grouping beats chance by more than two standard deviations of the chance draws. When it does not, the clusters wait behind **Show the clusters anyway**; they are then the best partition of noise. Each cluster, slowest first, shows its share of tracks, MSD curve, D, alpha and share per replicate. Real long tracks are slower on average, so a length effect alone can read as structure beyond the mixture.
+## Scored against chance
 
-**Shared clusters** fits the clusters once on all conditions' pooled tracks, so cluster 1 is the slowest curve shape everywhere. One card shows each condition's share per cluster, a dot per replicate with mean and SD, and a table. **Test conditions** (off) adds Welch's test on the replicates' shares for each pair and cluster, Holm-adjusted; replicates are independent samples, never matched by number. A share is a fraction of tracks, not of steps, and is not an SQD fraction.
+Because k-means always finds groups, a cluster is worth reading only when your data group better than chance tracks do. Each grouping is scored with the Calinski-Harabasz index, which rises as clusters are tighter and further apart. The same steps then run on each set of chance tracks. For each k, the card's table gives the data's **Index**, the chance draws' **Chance ± SD**, the **Excess** and the **Excess / SD**. The k shown is the one with the largest Excess / SD, and the data count as beyond chance when the excess there is more than two chance SDs. That's a convention, not a p-value, and it isn't corrected for trying several k.
+
+The two kinds of chance ask different questions:
+
+- **The SQD mixture** draws tracks from the condition's own SQD populations, fitted at lag 1, with its track lengths and localization error. Beating it means the curves hold something those populations don't explain, such as switching or confinement. It needs at least 50 steps.
+- **One free population** draws tracks of a single D, with the same lengths and no localization error. Beating it only means the curves hold more than one D, which any condition with two SQD populations does.
+
+A drawn track keeps one population for its whole length, while real long tracks are slower on average. So a track-length effect alone can read as structure beyond the SQD mixture.
+
+## A condition's card
+
+Under *Each condition alone*, each condition gets a card that says whether its tracks group beyond chance, and how. Hover over **How to read this section**, above the cards, for the reading notes. The line above it repeats the Run's settings.
+
+The card opens with its verdict, such as "Cluster structure beyond the SQD mixture at k = 3" or "No cluster structure beyond the SQD mixture". A line under it says what the verdict means. Then come:
+
+- The k table, scoring every k tried.
+- The clusters: each cluster's ensemble MSD against lag time, numbered from the slowest D, and a table of its **Tracks**, **Share of all tracks**, **D (µm²/s)**, **alpha** and **R²**. With two or more replicates, a last column gives each cluster's share per replicate, as mean ± SD.
+
+When the data don't go beyond chance, the clusters are folded away; click <Ui variant="outline">Show the clusters anyway</Ui> to see them, drawn faded: they split tracks the chance explains as well, so don't read them as structure. The caption counts the tracks long enough to cluster, and warns when the smallest cluster holds fewer than 30 tracks.
+
+A share is a fraction of tracks, each counted once, not of steps, so it isn't an SQD fraction and the two needn't agree. Under *Each condition alone*, cluster 1 of one condition isn't cluster 1 of another.
+
+## Shared clusters
+
+*Shared clusters* finds the clusters once, on every condition's tracks pooled, then assigns each condition's tracks to them. Cluster 1 is then the same curve shape everywhere, numbered from the slowest, so the shares can be compared. One card holds:
+
+- the verdict and k table, judged on the pooled tracks;
+- a chart of each condition's share per cluster: a dot per replicate, with their mean and SD;
+- a table of each condition's replicates, tracks, and share in each cluster;
+- the pooled clusters' curves and table.
+
+**Test conditions**, on the shared card, is *Off* to start. Set it to *Welch on replicates* to add a table comparing every pair of conditions in every cluster: Welch's t-test on the replicates' shares, Holm-adjusted over all the tests made. Replicates are independent samples, never matched by number. A condition with one replicate can't be tested.
+
+When the data don't go beyond chance, the shares, their table and **Test conditions** are folded away with the curves. With a k set by hand, no chance test is made: the card says so, and the k table is empty. The shares still compare, because every condition sits on the same clusters.
+
+{/* TODO(Huy): Each condition alone numbers clusters by their fitted D, Shared clusters by each centroid's mean feature value. Can the two orders disagree, so that "slowest" means different things? */}
+
+## Export
+
+Each card has an export button and **Axes**, for lag time (s) and MSD (µm²). A condition's card exports its cluster curves, with the cluster table in the source data. The shared card exports the shares chart; its pooled curves are exported through the Composer's **Export every figure…**. See [Figures](/docs/analysis/figures).

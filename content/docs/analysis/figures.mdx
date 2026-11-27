@@ -1,42 +1,77 @@
 ---
 title: "Figures"
-description: "Export any result as a figure with its source data, significance brackets and the Composer."
+description: "Export any chart as a journal-ready figure with its source data, add significance brackets, and put several charts together in the Composer."
 ---
 
-Every chart has an **Export** button. Its dialog has these rows (only those a chart can use appear):
+Turn any result into a figure ready for a journal: every chart exports at a journal's width and type sizes, with its source data and a drafted legend beside it. Significance brackets are set on the chart and exported as shown, and the Composer lays several charts out as one lettered figure.
 
-- **For**: Nature (default), Cell, eLife, Slides, Dark slides or Poster. Colors follow the figure's page, not the screen.
-- **Width**: **1/4**, **1/3**, **1/2**, **2/3**, **3/4**, **Full** (a fraction of the journal's full width: Nature 183 mm, Cell 174, eLife 170), or Custom in mm. The same fraction means the same width in the Composer.
-- **Size**, **Font**: height and font; the font size applies to all text.
-- **Files**: PDF and PNG at 600 dpi; SVG and TIFF are also offered. Each figure comes with source data (`.xlsx`, `.csv`) and a draft legend.
-- **Title**: filled in from the project and editable.
-- **Names**: how each condition is named in the figure (empty keeps its own). Grouped bubble charts list their **Group headers** and **Column labels** here.
-- **Show**: the parts this chart has. For the Spatial Map: **Numbers**, **Scale bar** (length typed; empty is 1 µm), **Colour bar** and **Labels**.
-- **Map scale** (Spatial Map): cell size in mm per µm. Empty is the standard, 6 mm per µm at a journal column, so map figures compare cell for cell. Where the columns do not fit, the cells shrink and the line under the preview gives the scale drawn.
+## Export a chart
 
-Text that does not fit takes its short form ("1-pop"), then shrinks to the journal's minimum (Nature 5 pt, Cell 6, eLife 7), then wraps. The line under the preview marks anything shortened or too small. Bubble numbers sit under their bubbles; when columns are narrow, the ± goes on a second line.
+Export any chart at a journal's size, with its source data and a draft legend. Click the export button on a chart, or a page's button for every condition (**Export all…**, **Export all conditions…** or **Export all diagrams…**), to open **Export figure**. The settings are on the left and a preview on the right; only the rows the chart can use appear.
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **For** | *Nature*, *Cell*, *eLife*, *Slides*, *Dark slides* or *Poster*: the width, type sizes and minimum the figure is checked against. Colors follow the figure's page, not the screen. Choosing one resets the font size and height. | *Nature* |
+| **Width** | A fraction of the journal's full width: *1/4*, *1/3*, *1/2*, *2/3*, *3/4* or *Full*, or *Custom* in mm. *1/2* and *Full* are one and two columns, and *2/3* is Cell's 1.5 columns. | *1/2* |
+| **Size** | The width in use and the height, in mm. Clear **auto height** to type the height. | auto height |
+| **Font** | *Arial*, *Helvetica* or *Inter*, and the body size in pt, which starts at the journal's. Tick labels and numbers are set one point smaller, and the title in bold. | *Arial* |
+| **Show** | The parts this chart has, such as **Numbers**, **Grid**, **Legend** and **n** (the sample size under each column). | most on; some start as the chart shows them |
+| **Files** | *PDF*, *SVG*, *PNG* and *TIFF*. **Images** sets PNG and TIFF to 300 or 600 dpi. | PDF, PNG at 600 dpi |
+| **Title** | Centered over the figure, in bold. It starts as the project's name (and the condition's, for a chart of one); type to change it, or clear it for none. | the project's name |
+| **Y axis**, **X axis** | Each axis's title, and where it starts and ends; empty is automatic. The figure starts on the chart's own typed range. | the chart's |
+| **Names** | How each condition is named in the figure; empty keeps its own. Grouped charts list **Group headers** and **Column labels**. | own names |
+
+Full width is 183 mm for Nature, 174 for Cell and 170 for eLife, and the same fraction means the same width in the Composer.
+
+Some charts add settings of their own. For the Spatial Map, **Show** adds **Scale bar** (type its length, or leave it empty for a round one), **Colour bar** and **Labels**, and **Map scale** sets the cells' size in mm per µm: 6 mm per µm at a journal column unless you type another, so map figures compare cell for cell. The **Fit** setting of Jump distances and Apparent Diffusion, the **Y unit** of Jump distances, and HMM's **Grid** and condition boxes are described on their pages.
+
+Under the preview, a line gives the size and font. A check line names anything to fix: text under the journal's minimum, a figure taller than the journal allows, text that runs off or overlaps, or lines too thin for print. Text that doesn't fit first takes its short form ("1-pop" for "1 population"). Then it shrinks to the journal's minimum (Nature 5 pt, Cell 6, eLife 7), then wraps; it's never cut. Bubble numbers sit under their bubbles; in narrow columns, the ± goes on a second line.
+
+- <Ui>Export…</Ui> writes the figure files, with the plotted values as a CSV and an Excel workbook (`.source_data.xlsx`), a draft legend (`.legend.txt`), and the settings (`.figure.json`). Check the legend against your analysis before you use it. The folder then opens.
+- <Ui variant="outline">Copy image</Ui> puts the figure on the clipboard at 300 dpi, for a slide or a message.
+- <Ui variant="outline">Add to composer</Ui> keeps the chart, as set here, as a panel of a multi-panel figure ([below](#the-composer)).
+
+The style (journal, width, font, files, Show) is remembered for your next export; a chart's titles, names and ranges are remembered for that chart in this project.
 
 ## Significance
 
-Significance is set on the chart (SQD and Apparent Diffusion bubbles and the HMM comparison; off by default) and exported as shown. Open **Significance** on the right rail, pick two conditions, press **+** for each pair, then choose whose fraction (one population or **all**) and the test.
+Significance brackets compare conditions on the chart, and the export draws them as shown. They're offered on the *Populations* bubbles of SQD and Apparent Diffusion, and on HMM's *Slow state* panels, and are off to start. Run the section with *Replicates* (or *Chunks*) uncertainty to get a p.
+
+Click **Significance** on the right rail:
+
+1. Select the pairs to compare, or choose a rule under **Pick pairs by a rule**: *Every pair* or *Each against* one condition. Selecting the first pair turns **Brackets on the chart** on.
+2. Choose the test.
+3. Choose whose fraction: one population (*1 (slowest)* and up), *all*, or *D &lt;* the run's threshold (0.15 µm²/s to start), the share below it, where the data carry it. Conditions fitted with different numbers of populations can only be compared on that share. On HMM, choose a panel instead.
+4. Choose what a bracket says: *Stars*, *Exact p* or *Both*.
 
 | Test | What it asks | Needs |
-|---|---|---|
-| **Welch on replicates** | The standard: each condition's replicates form one sample. | 2 replicates a side |
-| **Paired t (declared pairs)** | Differences within replicate pairs declared on the Groups board. Use it only where the pairing is real. | **Pair replicates** selected, 2 shared pairs |
-| **Equivalence (TOST)** | Are the two the same within a margin (5 points by default)? Shows ≈ or "not ≈". | 2 replicates a side |
-| **Mixed model** | Each cell's fraction, cells within movies within replicates. | SQD or Apparent Diffusion bubbles, 2 replicates a side |
-| **Bayesian model** | Hierarchical model on each cell's fraction; takes one replicate on one side. | SQD or Apparent Diffusion bubbles, 3 replicates in all |
-| **Meta-analysis** | Each replicate with its own uncertainty, random effects between replicates. | SQD or Apparent Diffusion bubbles, 3 replicates a side |
-| **Hierarchical bootstrap** | Replicates, then movies, then cells resampled. | SQD or Apparent Diffusion bubbles, 3 replicates a side |
+| --- | --- | --- |
+| **Welch on replicates** | Do the conditions differ? Each condition's replicates form one sample; the standard. | 2 replicates a side |
+| **Paired t (declared pairs)** | The difference within replicate pairs, each one culture or session in both conditions, declared with **Pair replicates** on [Opening a project](/docs/analysis/opening-a-project#pair-replicates). Use it only where the pairing is real; it's listed only when pairs are declared. | 2 shared pairs |
+| **Equivalence (TOST)** | Are the two the same within a margin (**Same within ±**, 5 percentage points by default)? A bracket shows ≈ or "not ≈". A non-significant Welch p doesn't show this. | 2 replicates a side |
+| **Difference beyond margin** | Do they differ by more than the margin? A smaller difference is never significant, however much data there is. | 2 replicates a side |
+| **Mixed model** | Each cell's fraction, cells within movies within replicates. | 2 replicates a side |
+| **Bayesian model** | Each cell's fraction in a hierarchical model; works with one replicate on a side. | 3 replicates in all, 3 cells a side |
+| **Meta-analysis** | Each replicate with its own uncertainty, random effects between replicates. | 3 replicates a side |
+| **Hierarchical bootstrap** | Replicates, then movies, then cells resampled. | 3 replicates a side |
 
-The last four tests use each cell's fraction, so they need cell outlines and a D shared by a condition's replicates (**Force same D across** **Replicates** or **Whole data set**). Beside the Bayesian, meta-analysis and bootstrap p, the legend gives the design's floor ("an exact test on 3 v 3 replicates cannot go below 0.1"). Under Uncertainty **Chunks**, only Welch and equivalence are offered.
+Set the margin before you look at the results, not from the data you're testing. The last four tests use each cell's fraction. So they're offered only on the SQD and Apparent Diffusion bubbles, and they need cell outlines. They also need a D shared by each condition's replicates: **Force same D across** on *Replicates* or *Whole data set*. Beside the Bayesian, meta-analysis and bootstrap p, the legend gives the lowest p the design can reach, such as 0.1 for 3 against 3 replicates. HMM offers Welch and the paired test only.
 
-A bracket shows **stars** by default (\* p &lt; 0.05, \*\* &lt; 0.01, \*\*\* &lt; 0.001; edit under **Stars at p &lt;**), the exact p, or both. The p is Holm-adjusted over the tests shown; **Correction** offers Benjamini-Hochberg instead, and the legend names the one used. Conditions fitted with different numbers of populations cannot compare "population 1"; choose **D &lt; 0.15** (the share below that threshold). A population flagged by **Check the fit** (under 5 %, or two populations within twofold in D) is still bracketed; the flag line names it.
+On HMM, chunks give no bracket. On the bubbles, under *Chunks* uncertainty, the test starts on **Difference beyond margin**, because two cultures always differ a little; Welch and equivalence run on the chunks too, and each line gives the range of p over other deals of the chunks.
 
-## Composer
+Under **Stars at p &lt;**, set one threshold per star (*0.05*, *0.01* and *0.001* to start); a p above the first reads "ns". The p is Holm-adjusted over the brackets shown; **Correction** offers Benjamini-Hochberg instead, and the legend names the one used. A population flagged by **Check the fit** (under 5 %, or two populations within twofold in D) keeps its bracket, and the warning under the chart names it.
 
-- **Add to composer** (Export dialog) collects panels; the **Composer** section lays them out as one figure. **Export every figure…** writes every computed chart into one folder.
-- Each panel has a **width** (1/4 to Full); a row takes panels in order until the next would pass the full width. **Rows** is Auto or fixed.
-- The **pencil** on a panel opens that chart's Export dialog with the panel's settings. **Apply to panel** changes that panel only; **Cancel** leaves it. Journal, width, size, font and files are set in the Composer.
-- Every Composer export writes a `<name>.composer` file. **Open…** in the Panels card restores the figure with its data, without the project; **Save…** writes one without exporting. It holds the figure's data, so share it like source data and open only files you made.
+{/* TODO(Huy): the refusal message for the cell tests under Chunks still says only "Welch or the equivalence test compare the chunks"; Difference beyond margin runs too, and is the default there. */}
+
+## The Composer
+
+The **Composer**, at the foot of the sidebar, combines panels from any chart's **Export figure** into one lettered figure, with one source-data sheet per panel. A panel is a snapshot: the chart as it was when added, so a later Run doesn't change it.
+
+- **For**, **Size**, **Font**, **Files** and **Images** are set for the whole figure. **Rows** is *Auto* or a fixed grid; **Letters** is *Journal* (Nature's a, b, c; others' A, B, C), *a, b, c*, *A, B, C* or *None*.
+- Each panel has a **width** (1/4 to Full) and, with several rows, how many rows it spans. A row takes panels in order until the next would pass the full width.
+- **size** shrinks a panel in its cell, and **snap to** makes its plot as tall or as wide as another panel's, lined up.
+- The arrows reorder panels, and the pencil opens that chart's **Export figure** with the panel's own words: titles, names, ranges and what it shows. Click <Ui>Apply to panel</Ui> to change that panel only, or <Ui variant="outline">Cancel</Ui> to leave it.
+
+<Ui>Export…</Ui> writes the figure, a CSV per panel, one workbook with a sheet per panel, the legend, and a `.composer` file. **Open…** in the **Panels** card reopens a `.composer` file with its data, without the project; **Save…** writes one without exporting. A `.composer` file holds the figure's data, so share it like source data, and open only files you made.
+
+<Ui variant="outline">Export every figure…</Ui> writes every chart computed in the workspace into one folder, each with the settings it was last exported with, and the composition if it has panels. A `figures.txt` lists them, and names any that couldn't be written.

@@ -1,17 +1,40 @@
 ---
 title: "Analysis options"
-description: "The standards a new analysis session starts from."
+description: "Set the standards a new analysis starts from: the SQD fit's settings, the cell filter, the frame interval, and update checks."
 ---
 
-The **Analysis options** screen (the button at the foot of the analysis rail) sets the standards a new session starts from.
+Set the standards once, so every new analysis starts the way you work. An option is never a second control: each one is the value a control on a page starts from, mostly in **Configure SQD**. Changing an option reruns nothing.
+
+Open **Analysis options** from the **Options** button on the right rail of the workspace, or at the top right of the analysis start page before you open a project. Click <Ui>Save</Ui> to keep your changes; nothing is saved until you do. **Reset to defaults** puts every option back. The options are kept for you on this computer, not in the project.
+
+## SQD fit
+
+These are the standards for **Configure SQD** on [SQD: Populations](/docs/analysis/sqd#run-it). Other sections keep their own settings.
 
 | Option | What it does | Default |
-|---|---|---|
-| **Weighting** | SQD fit: **Step** counts every displacement once; **Track** counts every track once. | Step |
-| **Uncertainty** | SQD fit: **Replicates**, **None**, **Movies**, **Cells** (single session, slow) or **Chunks** (random chunks as pseudo-replicates, for data without replicates). | Replicates |
-| **Chunks per condition** | Chunks each condition is dealt into (2 to 20). | 5 |
-| **ECDF** | **Fast** fits at 2000 points; **Full** uses every point (slower). | Fast |
-| **Optimiser** | **Fast** uses exact derivatives; **Standard** estimates them numerically. | Fast |
-| **Best (BIC) also tries 4 populations** | Adds four populations to Best (BIC)'s 1 to 3 (about 70 s more per condition). | Off |
-| **Outline tolerance** | Keeps a track when every point lies inside its outline widened by this distance (0 to 500 nm). Tight outlines raise the slow fraction. Applies when a project is next opened; QC says how many tracks it added. | 0 nm |
-| **One frame interval for movies within** | Movies whose frame intervals differ by less than this are put on one interval; further apart, a pooled fit refuses them. 0 never rescales. Applies when a project is next opened. | 10 % |
+| --- | --- | --- |
+| **Weighting** | *Step* counts every displacement once, so a fraction is the share of observed time, as in SMTracker 2. *Track* counts every track once, so it's the share of molecules. | *Step* |
+| **Uncertainty** | *None*, *Replicates*, *Movies*, *Cells* or *Chunks* ([Uncertainty](/docs/analysis/workspace#uncertainty)). *Movies* and *Cells* are for single-session data, and slow. | *Replicates* |
+| **Chunks per condition** | Under *Chunks*, how many random chunks each condition's movies are dealt into, from 2 to 20. | 5 |
+| **ECDF** | *Fast* evaluates the fit at 2000 points along the ECDF; *Full* at every point, exact and slower. | *Fast* |
+| **Optimiser** | *Fast* uses the model's exact derivatives, about twofold faster at 3 populations; *Standard* estimates them numerically. Both give the same fits, on SQD and on Jump distances. | *Fast* |
+| **Best (BIC) also tries 4 populations** | Lets Best choose 4 populations as well as 1 to 3, at about 70 s more per condition. SMTracker 2 fits 1 to 3 only. | cleared |
+
+When you save from the workspace, a new standard applies at once to every SQD page whose setting still sat at the old standard. A setting you changed in the dialog keeps your value, and nothing is fitted again until the next Run. **Force same D across**, **Overlay**, **Time lag** and **Localisation error** have no standard: a new page starts them at *Replicates*, *Off*, *1* and *Not modelled*.
+
+{/* TODO(Huy): the Chunks per condition help here, and the field's tooltip in Configure SQD, say "fewer than two movies per chunk"; the code needs at least 3 movies a chunk. */}
+
+## Cell filter and frame interval
+
+These two shape the tracks every section reads, so they apply when a project is next opened.
+
+| Option | What it does | Default |
+| --- | --- | --- |
+| **Outline tolerance** | Keeps a track when every point lies inside its cell outline widened by this distance, from 0 to 500 nm. 0 is SMTracker 2's filter. Tight outlines drop free molecules near the membrane and raise the slow fraction; QC says how many tracks the tolerance added. | 0 nm |
+| **One frame interval for movies within** | When all the project's frame intervals lie within this of each other (0 to 25 %), every movie is rescaled to the most common interval, so D reads the same. Further apart, nothing is rescaled, and a pooled fit refuses them. | 10 % |
+
+Set the frame-interval limit to 0 to never rescale. A session you saved keeps the outline tolerance it was saved with.
+
+## Updates
+
+SMTracker can tell you when a newer version is out. **Check for updates at start**, selected by default, asks GitHub once a day, when SMTracker starts, whether a newer version is out, and tells you if there is one. It sends nothing about you or your data, and installs nothing until you click the button. This option is shared with the preparation and cell-outline screens, and **Reset to defaults** resets it too.

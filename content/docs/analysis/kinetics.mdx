@@ -1,59 +1,87 @@
 ---
 title: "Kinetics"
-description: "Populations over time after a trigger."
+description: "Follow how mobility or the populations change after something you did, against time since the trigger, and read the change against a mock addition."
 ---
 
-Kinetics is for an experiment with a trigger at a known moment, such as a medium switch or a drug addition. For **Populations over time**, the Run dialog first asks how the compound was added.
+Use Kinetics when something happens at a known moment, such as a medium switch or a drug addition, and you want to know whether the molecules respond, and how fast. It places every step at its own time since the trigger, fits how the populations change, and chooses between "no change" and a response on movies held out of the fit.
 
-| Design | Meaning | Independent unit |
-|---|---|---|
-| **Added under the microscope** | The compound reaches the cells under the objective; the same cells are imaged before and after. | The replicate (chamber); its movies are time points of one response. |
-| **Added to the culture** (default) | You add it to the culture, incubate, mount, then film several movies of that culture. | The culture (replicate); its movies are time points, never replicates. |
-| **Added to each sample** | Each sample (slide, tube or movie) is induced at its own time. | The culture the samples came from. |
+Kinetics has one page. No condition is selected the first time, so select the conditions in **Configure kinetics**.
 
-Under **Added to each sample**, every movie is its own sample unless you give movies of one sample the same name. Type each sample's addition time or press **Paste from Excel...** (lines of `movie<TAB>time`, or a column of times in the order shown). Every movie needs a time; the Run names any that lack one.
+## Run it
 
-## Clock
+Choose what to read, how the compound was added, and when, before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure kinetics** ([Run a section](/docs/analysis/workspace#run-a-section)). Work down it from the top.
 
-| Setting | What it does |
-|---|---|
-| **Trigger frame in each movie** | The addition happened during the recording. Type the frame per condition (frame 1 is the first tracked frame). |
-| **Time after the addition** (Populations over time) | Type the clock time of the addition once per replicate (`10:30`, or `2026-10-23 10:30` if on another date), or once for all in **Same time for every replicate**. Each movie's time is read from its camera file; a movie before the addition is the baseline. A movie without a camera file is named and the condition not run. |
+### Choose a readout
 
-The dialog plots one dot per movie for each selected condition (a model-free apparent D against time since the addition, colored by replicate), so you can see whether anything moves before choosing a readout.
-
-## Other settings
-
-| Setting | What it does | Default |
-|---|---|---|
-| **Time resolution** | **Auto** picks a round bin width from your movies and says which; **Width in seconds** lets you type one; **Unbinned** draws no bins. | Auto |
-| **Independent unit** | Movie, cell, or **Replicate** (Populations over time). With three replicates the intervals are coarse, and the card says so. | Movie |
-| **Readout** | See below. | Mean mobility over time |
+**Readout** sets what is followed over time. Start with the mean if you only need to know whether anything moved.
 
 | Readout | What it shows |
-|---|---|
-| **Mean mobility over time** | One D at each time (the mean of every jump); the choice is only "no change" or "the D changed". Quickest and least noisy. A change in D or in the bound share both move it. |
-| **Populations over time** | Each population's D and share against time since the addition, from one model fitted to every step at its own time. |
-| **Slow fraction (HMM)** | The slow state's share against time, from a two-state HMM, with a linear and an exponential model. |
+| --- | --- |
+| *Mean mobility over time* (the default) | One D at each time, the mean of every jump, so the choice is only "no change" or "the D changed". A change in D and a change in the bound share both move it. The least noisy readout. |
+| *Populations over time* | Each population's D and share over time, from one model fitted to every step at its own time. Held-out data then decide which of the two moved. |
+| *Slow fraction (HMM)* | The slow state's share over time, from a two-state HMM fitted once. A D that changes reads here as a share that changes. |
+### Say how it was added
 
-## Populations over time
+For *Mean mobility over time* and *Populations over time*, **How was it added?** sets the clock and what the permutation test shuffles, and the card names which unit is independent:
 
-Held-out movies decide what changed (nothing, the shares, the D values or both) and how fast (linear, exponential or sigmoid). Where the shapes cannot be told apart, the first of exponential, sigmoid and linear is drawn bold and the others faintly.
+| Choice | What it means |
+| --- | --- |
+| *Added under the microscope* | The compound reaches the cells under the objective, so the same cells are imaged before and after. The replicate (the chamber) is the unit. |
+| *Added to the culture* (the default) | You add it to the culture, incubate and mount, then record movie 1, 2, 3. The replicate (the culture) is the unit; its movies are time points, not replicates. |
+| *Added to each sample* | Each sample (a slide, a tube, or one movie) is induced at its own time. The culture the samples came from is the unit. |
+### Give the times
 
-| Setting | What it does |
-|---|---|
-| **Populations** | 2 or 3. |
-| **Localisation error per spot** | Each step gets its own error through the Per spot calibration; a condition without per-spot precision is fitted without it. |
-| **Also test whether movies started responding at different times** | Compares with shuffled movies. Slow (about 20 extra fits per condition); not offered for cells. |
-| **Also run the permutation test** | Asks whether the order of the clock matters at all (199 shuffles within each replicate). Its p is shown beside the held-out verdict, not instead of it; the smallest p is 0.005. |
-| **Compare with a known curve (optional)** | **Browse** for a CSV with columns `t_s, population, D_um2_s, share`; it is drawn dashed as "Reference". A `reference*.csv` in the project folder is picked up automatically; **Clear** drops it. |
+**Clock** sets when the compound was added, and its fields follow the design: *Added to the culture* uses the time after the addition, *Added under the microscope* offers either, and *Slow fraction (HMM)* always uses the trigger frame.
 
-The card shows a D panel per population over the share panel: the model as a line with its 95 % band, hollow dots for free fits per time bin and open circles for each replicate's own fit (these show the data, not the estimate). A table gives each population's values before and where the data end, and the half-time. The card says what the data cannot decide (indistinguishable shapes, an unfinished response, too few movies) and lists the window observed, the baseline, the acquisition per time window and a within-track statement.
+- **Trigger frame in each movie**: the addition happened during the recording. Type the frame per condition; frame 1 is the movie's first tracked frame.
+- **Time after the addition**: type the clock time of the addition once per replicate, such as `10:30`, or `2026-10-23 10:30` for another date. **Same time for every replicate** fills every selected condition at once. Each movie's time is read from its camera file, and movies recorded before the addition are the baseline.
+- Under *Added to each sample*, type each sample's addition time per movie. Every movie is its own sample unless you give movies of one sample the same name. <Ui variant="outline">Paste from Excel…</Ui> takes one line per movie (movie, tab, time), or a column of times in the order shown.
 
-**Slow fraction (HMM)** prints how far an untriggered slow fraction drifts. That band comes from another protein, not your project; a response has to beat it. A condition whose tracks never switch state is refused.
+Typing a time selects its condition. **What the data look like, before any fit** then draws one dot per movie, a model-free apparent D against its time, colored by replicate, for the first four selected conditions. Check that something moves before you choose a readout.
+### Set the rest and run
 
-## Axes, export and canceling
+The last settings choose how time is binned and what counts as independent; the defaults suit most experiments.
 
-- **Axes** sets the time (x), the D panels' y and the share y (%). A typed range stays through a new Run until **Auto**. In the Axes popover, **time axis in** switches Seconds (default) and Minutes; it changes the display only.
-- **Export** writes the figure, source data and legend. **Export all conditions…** draws every condition on one time axis. The Export dialog's **Slowest D** and **Other shares** boxes (both on) leave out the slowest D and draw only the slowest share. **Export against the mock…** draws each treated condition beside its mock.
-- **Cancel** stops a run. A repeated Run on the same data is read from the kept results. A failed condition shows its message on the card.
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Time resolution** | *Auto* picks a round bin width from your movies and says why; *Width in seconds* takes your own; *Unbinned* draws no bins. For the population readouts, bins only draw the free fits beside the model, which uses every step at its own time. | *Auto* |
+| **Independent unit** | *Movie*, *Cell* or *Replicate*: what's held out to choose the model and resampled for every interval. With *Movie* or *Cell*, the intervals leave out the variation between replicates, and the card says so. *Slow fraction (HMM)* takes movies or cells only. | *Movie* |
+| **Populations** | *Populations over time* only: *2* or *3*. | *2* |
+| **Localisation error per spot** (population readouts) | Each step's own error, through the per-spot calibration of [SQD: Populations](/docs/analysis/sqd#per-spot-localization-error). Conditions whose tracks carry none are fitted without it. | cleared |
+| **Also test whether movies started responding at different times** (population readouts) | Compares with shuffled movies, at about 20 extra fits per condition. | cleared |
+| **Also run the permutation test** (population readouts) | Asks whether the order of the clock matters at all: 199 shuffles of the clocks within each replicate. Its p is shown beside the held-out verdict, not instead of it; the smallest it can be is 0.005. | cleared |
+| **Compare with a known curve (optional)** (*Populations over time*) | <Ui variant="outline">Browse…</Ui> for a CSV with columns `t_s`, `population`, `D_um2_s` and `share`, drawn dashed as "Reference". A `reference*.csv` in the folder above the conditions is picked up by itself; **Clear** drops it. | none |
+| **Compare with a mock addition (optional)** (population readouts) | A condition imaged on the same schedule with nothing added ([below](#against-a-mock-addition)). | *None* |
+| **Also align each unit to its own onset** (*Slow fraction (HMM)*) | Aligns each unit to its own onset before averaging, with the null always shown beside it. Slower, and not with *Unbinned*. | cleared |
+
+Click <Ui>Run</Ui>. Until everything needed is filled in, **Run** is grayed out and a line beside it names what's missing, such as a movie without a time. A movie without a camera file can't be placed on the clock, and its condition isn't run.
+
+A Run writes the addition times you typed to `kinetics_additions.json` in each condition's folder, so the next Run starts from them.
+
+## Reading a card
+
+Each condition's card shows how its mobility changes over time, and which model of that change the held-out data support. For *Populations over time*, a D panel per population sits above the share panel; *Mean mobility over time* shows one D panel. The model is a line with its 95 % band; hollow dots are free fits per time bin, and open circles are each replicate's own fit; under *Unbinned*, neither is drawn. The dots and circles show the data; the line is the estimate.
+
+The model is chosen on held-out units: "no change", or a change in the shares, the D or both (for *Mean mobility over time*, only the D), shaped linear, exponential or sigmoid. A change wins only when it predicts the held-out units better by 2 standard errors. Where the shapes can't be told apart, the first of exponential, sigmoid and linear is drawn bold and the others faintly. At least three units are needed.
+
+Under the chart:
+
+- The model table: how far each model is behind the best, and how many units it won.
+- The verdict, such as "The mean D changed (exponential response)", or "No change shown".
+- The values: each population's D and share before, and where the data end, with intervals, and the half-time.
+- What the data can't decide: shapes it can't tell apart, a response not complete where the data end, or too few units for a reliable interval (fewer than five).
+- Design and acquisition: the window observed, the baseline, and the track length and localization error per time window, so a change in acquisition can't pass for a response.
+
+*Slow fraction (HMM)* compares a linear and an exponential model on held-out units, and recommends the exponential only when it beats the line by 2 standard errors. A condition whose tracks never switch state has nothing to time, and its card says so.
+
+## Against a mock addition
+
+Real sessions drift with nothing added, so a change in one condition alone is mixed up with time in the session. Without a mock, a card with baseline movies under *Added to the culture* or *Added to each sample* warns that a drift can read as a response.
+
+Choose a condition imaged on the same schedule with nothing added under **Compare with a mock addition (optional)**, and select it too. Every other card then opens with **Against the mock addition**. It compares each replicate's change, from its baseline to the **After window**, with the mock's, by Welch's test on the replicates (never paired). It reads the mean D for *Mean mobility over time*, and the bound share for *Populations over time*. The card also gives the smallest change this comparison finds four times in five.
+
+**After window** defaults to *Auto*, which starts where the treated condition's response is 90 % complete, or at the middle of the record after the addition. *Start in seconds* lets you set it. The held-out verdict follows the mock block.
+
+## Export
+
+Each card has an export button. The two population readouts' cards also have **Axes**: time, one y range for every D panel, and the share's y. A typed range stays through a new Run until **Auto**. In the Axes popover, **time axis in** switches *Seconds* (the default) and *Minutes*, for display only. **Export all conditions…** draws every condition on one time axis, and **Export against the mock…** draws each treated condition beside its mock. In the export dialog, **Slowest D** and **Other shares** (both on) leave out the slowest D and draw only the slowest share when cleared. See [Figures](/docs/analysis/figures).

@@ -1,68 +1,85 @@
 ---
 title: "Spatial Map"
-description: "Where in the cell each kind of motion happens."
+description: "Map where in the cell each population, state or kind of motion sits, on one averaged cell, condition by condition."
 ---
 
-The Spatial Map shows where in the cell each kind of motion happens. **Compute** opens the settings, one page per setting. Choose the method first.
+See where in the cell each kind of motion happens. Every condition's jumps are drawn on one averaged cell, along and across its long axis, in a grid: conditions down, maps across. Use it to tell whether a slow population sits at the poles, at the membrane or along the middle.
 
-| Method | What it draws |
-|---|---|
-| **SQD** (default) | The share of each SQD population at each position along and across an averaged cell. |
-| **Apparent Diffusion** | The same for apparent-D populations. |
-| **HMM (Kinetics)** | The same for HMM states. |
-| **Confinement (SLA)** | Free, mixed and dwelling tracks, with a chance rate for each from matched free diffusion (in the **Metadata** receipt and the exported legend). Set the confinement radius and the **Minimum dwell** (default 5 steps) on their own pages. |
-| **SDA** | Maps of localizations, speed, apparent D and acceleration. **Adaptive smoothing** (on) widens the smoothing only in bins with too few steps. |
+Spatial Map has one page, though **Map this fit** on SQD, Apparent Diffusion or HMM adds a page that maps that fit. A Run maps every loaded condition.
 
-## Populations page (SQD, Apparent Diffusion, HMM)
+## Run it
+
+Choose the method first, then how jumps are placed and counted. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Map Configuration** ([Run a section](/docs/analysis/workspace#run-a-section)). Its settings are listed down the left, each with its current value; click one to set it on the right, with a picture and a line on what it does. Clear **Show tips** to see the controls alone.
+
+Click <Ui>Run</Ui>. If it can't run, it stays open on the page at fault, **Split** or **Bin size**, which says why.
+
+### Method
+
+**Computational method** sets what the maps color by, and which settings follow:
+
+| Method | What it maps |
+| --- | --- |
+| *SQD* (the default) | One map per SQD population, and an **All jumps** map. |
+| *Apparent Diffusion* | One map per apparent-D population, from each track's localizations, and an **All tracks** map. |
+| *HMM (Kinetics)* | One map per HMM state, from each step, and an **All jumps** map. **Show** chooses *Steps*, *Turning back* (among a state's pairs of steps that go straight on or straight back, the share that turned back; 0.5 is no preference) or *Beyond chance* (that share minus what free molecules give at the same places; 0 is as free). |
+| *Confinement (SLA)* | SMTracker 2's Confined Map: **Free tracks**, **Mixed-behaviour tracks** and **Dwelling segments**, in SMTracker 2's colors. |
+| *SDA* | SMTracker 2's SDA maps: where molecules are, and their mean speed, apparent D and acceleration per bin. Apparent values, no fit. |
+
+Each population's map is its own density over the cell, summing to 1. Its colors compare places within that map; they don't give the population's share of the jumps at a place. (SDA's speed, D and acceleration maps are means per bin instead.)
+
+### Populations
+
+For SQD, Apparent Diffusion and HMM:
+
+- **Use the same D as the SQD fit** (or the apparent-D or HMM fit), selected to start, takes each condition's D and number of populations from that section's last Run, so a population means the same here as there. The map then fits only the shares at those D (for HMM, the switching between states). With added pages, a list beside it picks which page supplies the D. If that section is still running, the map waits; if it has never run, Run starts it.
+- Clear it to fit each condition here. Set the number of populations on **Every condition**, or per condition: *1*, *2* or *3* (Apparent Diffusion *2* or *3*), or *Best (BIC)*. With *Fitted* split, **Localisation error** then offers *Not modelled* or *Per spot* (not at Time lag *1–4*), through the [Per spot calibration](/docs/analysis/sqd#per-spot-localization-error).
+
+With the box selected, a condition the section has no usable fit for is refused in its own row. If you run that section again with other settings, the map says it was made with an earlier fit, with a **Run** beside it. The grid has a column for every map some condition draws; a condition at one population shows "One population: no split", and one at *Best (BIC)* shows "waiting…" until its number is chosen.
+
+### Split
+
+For SQD and Apparent Diffusion, **Split** decides where one population ends and the next begins:
+
+- *Fitted* (the default) cuts each condition where its fitted populations cross.
+- *Manual* takes up to four ranges you set, the same for every condition: jump length in nm for SQD, a track's mean apparent D in µm²/s for Apparent Diffusion. The page draws a condition's histogram (**Histogram of** chooses which) with the share in each range. **From the fit** starts the ranges where the fit would cut. Ranges may leave gaps but not overlap, and data in no range isn't drawn. SQD needs one time lag.
+
+### The other settings
 
 | Setting | What it does | Default |
-|---|---|---|
-| **Populations** | Number of maps: SQD 1, 2 or 3; Apparent Diffusion 2 or 3; HMM 1, 2 or 3 states. One SQD population draws a single map, **All jumps**. | 2 |
-| **Use the same D as the SQD fit** (or the apparent-D or HMM fit) | Each condition's map takes that section's last Run: its D values, number of populations and fit settings. The map fits only the shares at those D values. The counts below and the SQD **Time lag** are grayed while it is selected. Clear it to fit each condition on its own. | Selected |
-| **Localisation error** | Shown while the box is cleared and the split is Fitted. **Not modelled**, or **Per spot**, which gives each jump (or four-step piece) its own error through the calibration SQD's Per spot uses. Not available with SQD lags 1-4 together. | Not modelled |
-| **Every condition** and one row per condition | Each condition's count: 1, 2, 3 or **Best (BIC)**. The Every condition row sets them all. | |
-| **Time lag** (SQD) | Jumps 1 to 4 frames apart; **1-4** fits all four together. | 1 |
+| --- | --- | --- |
+| **Time lag** | SQD: jumps 1 to 4 frames apart, or *1–4* together. With the box on Populations selected, the SQD fit's lag is used. | *1* |
+| **Jump drawn at** | SQD, HMM and SDA: which end of a jump is counted, *Start*, *Midpoint* or *End*. Counted at the start, long jumps read as peripheral; *Midpoint* pulls them toward the axis. | *Start* |
+| **Assignment** | SQD and HMM: *Soft* shares each jump among populations by its chance of being in each; *Hard* gives it wholly to the most likely one. | *Soft* |
+| **Fold** | *On* sums the cell's four quarters, so the map is symmetric; *Off* draws the jumps as they fell. | *Off* |
+| **Cell frame** | The averaged cell every cell is drawn onto: *Measured*, the median of every outlined cell of every condition, or *Deposit*, a fixed 2.94 × 1.00 µm frame, used when no cell can be measured. | *Measured* |
+| **Cells** | *All*, or only the *Short*, *Mid* or *Long* third by length, cut over every condition's cells together. The populations are still fitted on every cell. | *All* |
+| **Long axis** | *Normalised* stretches every cell to the drawn length, as SMTracker 2 did. *Pole-anchored* keeps each pole its own size and stretches only the middle, so a pole bin is the same distance from the tip in every cell. | *Normalised* |
+| **Bin size** | *1 px*, one camera pixel from your data's pixel size, or *In nm*, 30 to 400 nm. | *1 px* |
+| **Bin masking** | Leaves out bins built from too few jumps (**Minimum jumps per bin**, 0 to 40; 0 turns it off), or, with *Tracks* or *Cells*, from too few independent tracks or cells (n_eff, 2 to 20, provisional). | off |
+| **Weighting** | *By steps* counts every jump; *By track* counts every track once. | *By steps* |
+| **Maximum localisations per track** | *Tracks* leaves out tracks longer than the limit (40 to start); *Cells + Tracks* leaves out the whole cells that hold one. The page says what share of the jumps that removes, and **Short/long split from** sets whether the fit learns from all tracks or only the kept ones. | *Off* |
+| **Confinement radius**, **Minimum dwell** | Confinement: how close a molecule must stay to one of its own points, and for how many steps in a row (5 to start), to be dwelling. | the pixel size, 5 steps |
+| **Adaptive smoothing** | SDA: widens the speed, D and acceleration maps' smoothing only in bins with too few steps for a mean. | *On* |
 
-If the section is still running, the map waits for it; if it has never run, **Run** starts it. If you run the section again with other settings, the map says "Made with an earlier SQD fit" with a **Run** beside it. The caption and **Metadata** receipt say which D was used.
+## Reading the maps
 
-The grid has a column for every map some condition draws. Every SQD row also draws **All jumps** (every jump once), so that column compares conditions on one footing; Apparent Diffusion draws **All tracks**. A condition at one population shows "One population: no split". A condition at **Best (BIC)** shows "waiting…" until its count is chosen. If your count is higher than Best (BIC) would choose, your count is kept and a warning under the grid says so. Any column can be hidden in **Visibility**.
+Under each map, a line gives how many jumps (or localizations) built it, and why a map isn't drawn. A map from fewer than 150 jumps, or with most bins masked, is grayed and says it's too sparse to map. A warning line under the grid names anything to check, such as a number of populations you set where Best would choose fewer. For Confinement, the chance rate from matched free diffusion is in the **Metadata** receipt and the exported legend; read every share against it.
 
-At **Hard** assignment, an HMM state that no step was most likely in gives an empty map; use Soft. A condition whose tracks never switch state is still mapped, with each track in one state, and the map says so.
+**Visibility**, on the right rail, sets how the maps are drawn, without running again:
 
-## Split page
+- **Figures** hides or shows a column of maps.
+- **Colormap**: *jet*, *magma*, *viridis* or *Custom…* (SDA starts on *v2 hot*).
+- **Rendering**: *Bins* as computed, *Smooth* for display, *n_eff* (how many independent tracks built each bin), or for Confinement, *Tracks* as lines.
+- **Colour scale**: *Population* (one scale per column, shared by every condition, the default), *Condition* (one per row), *Map* (each map its own) or *All* (one scale for every map).
 
-| Setting | What it does | Default |
-|---|---|---|
-| **Fitted** | Cuts each condition where its fitted populations cross. | Default |
-| **Manual** | Up to four ranges that you set (jump length in nm for SQD, mean apparent D in µm²/s for Apparent Diffusion), one map per range, the same for every condition. The page shows the chosen condition's histogram and the share in each range. **From the fit** starts the ranges where the fitted maps would cut. Ranges may leave gaps but not overlap; data in no range is not drawn. Needs one time lag. | |
+### A condition's replicates
 
-## Other settings
+Click a condition's maps to open its replicates, one row per replicate; the breadcrumb switches to another condition. Click a spot on a map to see which cells and tracks build it, and how many independent ones (n_eff); the arrow keys move the spot, and <Kbd>Escape</Kbd> clears it. Pick one of the spot's largest tracks to play it over the movie, or open it in [Images & tracks](/docs/analysis/images-and-tracks) or napari. The eye beside a track hides it from the map for this session, and that condition's fit is redone without it.
 
-| Setting | What it does | Default |
-|---|---|---|
-| **Jump drawn at** | Where a jump is placed: where it began, halfway, or where it landed (SQD, HMM, SDA). Counted at the start, long jumps read as peripheral; halfway pulls them toward the axis. | Start |
-| **Assignment** | **Soft** shares each jump among populations; **Hard** gives it to the most likely one. | Soft |
-| **Fold** | **On** sums the cell's four quarters, so the map is symmetric. **Off** draws the data as it fell. | Off |
-| **Cells** | All, Short, Mid or Long (thirds by cell length). | All |
-| **Minimum jumps per bin** | Bins with fewer are left blank; 0 turns it off. | 0 |
-| **Bin size** | **1 px** is one camera pixel, read from your data's pixel size and shown on the pill. **In nm** (or the slider, 30 to 400 nm) sets a bin in nm. If no pixel size is recorded, Run asks for nm. | 1 px |
-| **Cell frame** | The averaged cell the maps are drawn in. **Measured** is the median outline of this project's own cells; **Deposit** is a fixed frame from an earlier data set. | Measured |
-| **Long axis** | **Normalised** stretches every cell to the drawn length, as SMTracker 2 did, so a pole bin is a fraction of each cell. **Pole-anchored** keeps each pole's own size and stretches only the middle, so a pole bin is the same distance from the tip in every cell. | Normalized |
-| **Weighting** | **By steps** counts every jump; **By track** counts every track once. Under "Use the same D as the SQD fit" the shares follow that fit's weighting. | By steps |
-| **Maximum localisations per track** | **Tracks** leaves out tracks longer than the limit; **Cells + Tracks** leaves out the whole cells that hold one. The line under the setting says how many tracks or cells and what share of the jumps that removes. | Off |
-| **Effective sample size** | Leaves blank (gray) the bins worth fewer than the set number of independent tracks or cells. The cutoff is provisional: it has not been checked against a simulation. | Off |
+### Where the jumps sit
 
-## Reading the result
+**Where the jumps sit**, under the grid, plots each population's profile along the cell (distance from the nearer pole, both poles pooled) and across it (-1 to 1, the cylinder only, without the caps), against an even spread (dashed). Its table gives each population's mean |d_norm|, mean distance from the pole and share in the caps. The eye beside a condition hides it from this card and its export. Confinement has no profiles.
 
-- Click a map to open that condition's replicates; click a spot on a replicate's map to list the tracks and cells behind it. The **eye** beside a listed track hides it from the map only, for this session.
-- **Where the jumps sit** (under the maps) gives, for each population, every condition's profile along the cell (distance from the nearer pole, nm) and across it (-1 to 1), against an evenly spread population (dashed), with a table of mean |d_norm|, mean distance from the pole and share in the caps. The **eye** beside a condition in the key hides it everywhere.
-- Both cards have **Export**, with every bin in the source data.
+## Export
 
-**Colour scale** (in **Visibility**, on the right rail):
-
-| Choice | Bars |
-|---|---|
-| **Population** (default) | One bar under each column. |
-| **Condition** | One bar to the right of each condition's maps. |
-| **Map** | One bar under every map, each on its own scale. |
-| **All** | One scale for every map. |
+The grid and the profiles card each have an export button. The grid exports as shown, with every bin in the source data and every setting in the legend; its **Map scale** sets the cells' size on paper, 6 mm per µm at a journal column unless you type another; where the columns don't fit, the cells are drawn smaller. See [Figures](/docs/analysis/figures).

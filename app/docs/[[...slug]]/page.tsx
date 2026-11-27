@@ -11,6 +11,8 @@ import { getMDXComponents } from '@/components/mdx';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { getPageImageUrl, getPageMarkdownUrl } from '@/lib/shared';
+import { withoutStepHeadings } from '@/lib/toc';
+import { PageRail } from '@/components/page-rail';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -18,22 +20,22 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  // "On this page" lists sections, not the steps of a procedure
+  const toc = withoutStepHeadings(page.data.toc, await page.data.getText('raw'));
+  const railFooter = (
+    <div className="mt-4 flex flex-col gap-1.5 rounded-xl border border-em-soft bg-em-softer p-3.5 text-[13px] leading-5">
+      <span className="font-semibold text-em-strong">In the app</span>
+      <span className="text-em-body">Help in the window&apos;s header opens this chapter.</span>
+    </div>
+  );
   // fetched by the button itself, so it needs the prefix the site is served under (next.config.mjs)
   const markdownUrl = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${getPageMarkdownUrl(page).url}`;
 
   return (
     <DocsPage
-      toc={page.data.toc}
+      toc={toc}
       full={page.data.full}
-      tableOfContent={{
-        style: 'normal',
-        footer: (
-          <div className="mt-4 flex flex-col gap-1.5 rounded-xl border border-em-soft bg-em-softer p-3.5 text-[13px] leading-5">
-            <span className="font-semibold text-em-strong">In the app</span>
-            <span className="text-em-body">Help in the window&apos;s header opens this chapter.</span>
-          </div>
-        ),
-      }}
+      tableOfContent={{ component: <PageRail key={page.url} items={toc} footer={railFooter} /> }}
     >
       <DocsTitle className="text-[36px] leading-10 font-semibold tracking-[-0.025em]">
         {page.data.title}

@@ -295,24 +295,74 @@ html:not(.dark) #nd-sidebar-mobile a:not([data-active='true']):not(:hover) {
   font-weight: 500;
   font-size: 13px;
 }
-/* Plain list on a 1px rule; drop Fumadocs' drawn thumb. */
-#nd-toc svg:not(#toc-title svg),
-#nd-toc .rounded-full.bg-fd-primary {
-  display: none;
-}
-#nd-toc a {
-  padding: 4px 12px !important;
+/* The rail: sections on a 1px rule, their subsections indented under them.
+   Sections fold when out of view (components/page-rail.tsx). */
+#nd-toc .sm-rail-link {
+  display: block;
+  padding: 4px 12px;
   font-size: 13px;
+  line-height: 20px;
   color: var(--muted-foreground);
+  text-decoration: none;
   box-shadow: inset 1px 0 0 var(--border);
+  transition: color 150ms, box-shadow 150ms;
 }
-#nd-toc a:hover {
+#nd-toc .sm-rail-link:hover {
   color: var(--foreground);
 }
-#nd-toc a[data-active='true'] {
+#nd-toc .sm-rail-section[data-current] {
+  color: var(--foreground);
+  font-weight: 500;
+}
+#nd-toc .sm-rail-sub {
+  padding-left: 24px;
+}
+#nd-toc .sm-rail-sub[data-depth='4'] {
+  padding-left: 36px;
+}
+#nd-toc .sm-rail-link[data-active] {
   color: var(--em-strong);
   font-weight: 500;
   box-shadow: inset 2px 0 0 var(--emission-600);
+}
+#nd-toc .sm-rail-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+}
+#nd-toc .sm-rail-toggle:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+#nd-toc .sm-rail-toggle:focus-visible {
+  outline: 2px solid var(--emission-600);
+  outline-offset: -2px;
+}
+#nd-toc .sm-rail-toggle svg {
+  transition: transform 200ms ease;
+}
+#nd-toc .sm-rail-toggle svg[data-open] {
+  transform: rotate(90deg);
+}
+#nd-toc .sm-rail-fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms ease;
+}
+#nd-toc .sm-rail-fold[data-open] {
+  grid-template-rows: 1fr;
+}
+@media (prefers-reduced-motion: reduce) {
+  #nd-toc .sm-rail-fold,
+  #nd-toc .sm-rail-toggle svg,
+  #nd-toc .sm-rail-link {
+    transition: none;
+  }
 }
 
 /* ---------- Docs board: article ---------- */

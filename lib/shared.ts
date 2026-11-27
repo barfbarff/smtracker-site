@@ -10,8 +10,8 @@ export const links = {
   source: 'https://github.com/longestgiraffe/smtracker',
   /** the newest release: the Windows installer and zip */
   download: 'https://github.com/longestgiraffe/smtracker/releases/latest',
-  /** no macOS package is published yet: the install page says how to run it on a Mac until there is one */
-  downloadMac: '/docs/install#run-from-source',
+  /** the same release holds the Mac installer (Apple silicon) */
+  downloadMac: 'https://github.com/longestgiraffe/smtracker/releases/latest',
   cite: '#',
   lab: 'https://www.uni-marburg.de/en/fb15/researchgroups/ag-graumann', // the AG Graumann page at Synmikro
 };

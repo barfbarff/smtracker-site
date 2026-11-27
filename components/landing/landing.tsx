@@ -253,16 +253,19 @@ export function Landing() {
             <div className="flex flex-wrap items-center gap-3">
               {/* the visitor's own system gets the primary button and goes first (macOS until we know) */}
               <DownloadButtons platform={platform} />
-              <Link href="/docs" className={`ml-1 ${linkWithIcon}`}>
-                <BookOpen aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
-                {/* only the words are underlined, not the icon */}
-                <span className={underline}>Read the manual</span>
-              </Link>
-              {/* every file of the newest release (both systems, the zips, the checksums), and the earlier releases */}
-              <a href={links.download} className={`ml-1 ${linkWithIcon}`}>
-                <Package aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
-                <span className={underline}>All downloads</span>
-              </a>
+              {/* the two text links wrap as one pair: beside the buttons where there is room, else on a line of their own */}
+              <div className="ml-1 flex flex-wrap items-center gap-x-5 gap-y-2">
+                <Link href="/docs" className={linkWithIcon}>
+                  <BookOpen aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
+                  {/* only the words are underlined, not the icon */}
+                  <span className={underline}>Read the manual</span>
+                </Link>
+                {/* every file of the newest release (both systems, the zips, the checksums), and the earlier releases */}
+                <a href={links.download} className={linkWithIcon}>
+                  <Package aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
+                  <span className={underline}>All downloads</span>
+                </a>
+              </div>
             </div>
           </Reveal>
         </div>

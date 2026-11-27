@@ -1,56 +1,149 @@
 ---
 title: "SQD: Populations"
-description: "The main analysis: fractions and apparent D's from the squared displacements."
+description: "Fit each condition's squared displacements as a mixture of populations, and compare their fractions and apparent D between conditions."
 ---
 
-This is the main analysis: the fractions and apparent D's of the diffusive states, from the distribution of squared displacements. **Compute** opens the settings.
+Compare how much of each condition sits in each diffusing population. SQD fits each condition's squared displacements as a mixture of populations, and draws each one as a bubble: its apparent D up, its fraction as the bubble's size. It's the main analysis, so check your conditions in [QC](/docs/analysis/qc) first.
 
-| Setting | Default | What it does |
-|---|---|---|
-| **Force same D across** | **Replicates** | What one D is forced across (choices below). |
-| **Weighting** | **Step** | **Step** counts every displacement once. **Track** counts every track once, giving the share of molecules; the slow fraction is about 2.5 points lower, because long tracks are slow. |
-| **Uncertainty** | **Replicates** | What the error bars are over (choices below). |
-| **ECDF** | **Fast** | Evaluates the fit at 2000 points; fractions differ by under 0.001 points from **Full**. **Custom** sets the number of points. |
-| **Optimiser** | **Fast** | **Fast** uses exact derivatives and is about twofold quicker at 3 populations; **Standard** estimates them numerically and gives the same numbers. |
-| **Time lag** | 1 | Frames between the displacements (1 to 4). At lag 2 to 4, a diffusing state keeps its D while a population of localization error alone reads 2 to 4 times lower, which tests whether a slow population is a state or the floor. **1–4** fits all four lags at once. |
-| **Localisation error** | **Not modelled** | **Per spot** gives every jump its own error (below). |
-| **Models** | **Best (BIC)** | The number of populations, chosen per condition on the **Fits** page (below). |
-| **Overlay** | **Off** | **Both** draws two fits side by side: **Same D across replicates** and **Same D across the whole data set**. It needs every row on one count. |
+SQD has two pages on its strip: **Populations**, this page, and [Jump distances](/docs/analysis/sqd-jump-distances), which shows how well each number of populations fits.
 
-**Force same D across.**
+## Run it
+
+Choose how SQD fits, and which conditions, before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure SQD** ([Run a section](/docs/analysis/workspace#run-a-section)). It has two tabs: **General**, for how the fit is made, and **Fits**, for which conditions are fitted with which models. Each setting has an info button (ⓘ) that explains every choice.
+
+The dialog keeps its settings from one Run to the next; closing it with **Cancel** keeps what you changed. The first time, **Weighting**, **Uncertainty**, **ECDF**, **Optimiser** and the four-population box start from [Analysis options](/docs/analysis/options). A condition with fewer than 20 tracks isn't fitted, and its column says so.
+
+### General
+
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Force same D across** | Which data share one D: each condition's replicates, the conditions of a factor, the whole data set, or none ([below](#force-same-d-across)). | *Replicates* |
+| **Uncertainty** | What each bubble and its spread show ([below](#uncertainty)). | *Replicates* |
+| **Weighting** | *Step*: every displacement counts once, so the fraction is the share of observed time, as in SMTracker 2. *Track*: every track counts once, so it's the share of molecules. It applies to D as well. | *Step* |
+| **ECDF** | How many points along the ECDF the fit is evaluated at; every displacement is always used. *Fast*: 2000 points, and the fractions change by under 0.001 percentage points. *Full*: every point. | *Fast* |
+| **Overlay** | *Both* draws the fit with **Same D across replicates** beside **Same D across the whole data set**, to show what a shared D costs. The overlay is always a mean over replicates. | *Off* |
+| **Time lag** | How many frames apart the displacements are: *1* to *4*. A longer lag tests whether a slow population is a state or the floor. *1–4* fits all four lags at once, as SMTracker 2's "1-4 together". | *1* |
+| **Optimiser** | *Fast* uses the model's exact derivatives and is about twofold faster at 3 populations. *Standard* estimates them numerically; it gives the same fits, for checking a result against an older one. | *Fast* |
+| **Localisation error** | *Not modelled*: every population has one typical step length. *Per spot*: each step gets its own localization error ([below](#per-spot-localization-error)). | *Not modelled* |
+
+Long tracks are mostly slow, so the slow fraction reads lower with *Track* weighting. Under **ECDF**, *Custom* takes 100 to 200,000 points; below about 1000, it's no faster and less accurate.
+
+At a longer **Time lag**, a diffusing state keeps its D, while a population of localization error alone reads 2 to 4 times lower. At *1–4*, the number of populations is chosen at lag 1, and localization error isn't modelled.
+
+**Overlay** needs every row on one model and one number of populations, without a row's own **Force same D across**, and isn't offered under *Conditions*. **Fraction × D** isn't available while it's on.
+
+### Fits
+
+**Fits** has one row per condition. Clear a row's checkbox to leave that condition out of the Run.
+
+- **Models**: click a pill to choose which fits to make. **Best (BIC)** picks the number of populations with the lowest BIC, from 1 to 3; **1** to **4** force that number; **saSPT** uses the number of modes saSPT resolves. BIC recommends a number; it doesn't settle the biology.
+- **Force same D across**: a row can have its own, *Replicates* or *Don't force anywhere*. Until you pick one, it follows the General tab.
+- **Every condition**, at the top, sets every row at once.
+- **Best (BIC) also tries 4 populations (about fourfold slower)**, under the rows, lets Best choose 4. Its standard is in [Analysis options](/docs/analysis/options).
+
+Click one model for a single fit. Click two or more, on any row, to compare fits: each condition is drawn as a group of columns, such as "1-pop" and "2-pop", in shades of its color. Where Best chose a number you also clicked, it's drawn once, as Best. A significance bracket compares one model across conditions, never two fits of one condition.
+
+saSPT assumes one D per track, so molecules that switch states blur its spectrum, and it can undercount. Check the saSPT spectrum before trusting its count.
+
+## Force same D across
+
+SQD fits the D on all the data it's forced across together, then fits each fraction with that D held.
 
 | Choice | What it does |
-|---|---|
-| **Replicates** | One D per condition, fitted on all its replicates together, with fractions per replicate. A population under 5 % is not kept (fit one fewer): its D is poorly determined and tests on it become too confident. |
-| **Conditions** | Offered only with a folder design. One D and one count per value of the design's factor. Force D across the factor that is the molecule, never across different proteins. Named under the chart where a condition's own D and its group's differ by 1.5 times or more. |
-| **Whole data set** | One D for every condition. |
-| **Don't force anywhere** | Every replicate of every condition fitted on its own, D included. |
+| --- | --- |
+| *Replicates* | One D per condition, fitted on all its replicates together; each replicate's fractions are then fitted at that D. |
+| *Conditions* | With a [folder design](/docs/analysis/opening-a-project#what-do-the-folders-mean) only; with several factors, one choice per factor. Conditions that share a value of the factor are fitted together, with one D and one number of populations. Use it when the factor is the molecule (one protein in several media), never across different proteins. |
+| *Whole data set* | One D for every condition. The fractions then measure the same thing everywhere, but no condition has this D on its own. |
+| *Don't force anywhere* | Every replicate fitted on its own, D included; each bubble is the mean over its replicates. A replicate with few tracks can give a noisy D. |
 
-On the **Fits** page each condition row has its own **Force same D across** (**Replicates** or **Don't force anywhere**), and the **Every condition** line sets every row. Under **Conditions** and **Whole data set** the conditions share one fit, so the models are chosen on the **Every condition** line only. A significance bracket between two conditions fitted differently is refused, and a **Check the fit** line under the chart names any population under 5 % or two populations within a factor of 2 in D.
+Under *Conditions* and *Whole data set*, the conditions share one fit, so the rows on **Fits** are grayed out: choose the models on the **Every condition** line. Best then chooses one number on the pooled data of the group, or of every condition.
 
-**Uncertainty.**
+Under *Replicates* or *Chunks* uncertainty, a significance bracket between two conditions fitted differently is refused, because the difference would include the method, and the line under each column says how its D was fitted.
 
-| Choice | What it does |
-|---|---|
-| **None** | Pools every replicate into one fit, with no spread. |
-| **Replicates** | Fits each replicate; each bubble is the mean ± SD over replicates. |
-| **Movies**, **Cells** | For a single session only. The pooled fit with a 95 % interval from resampling its movies or cells (bootstrap). The movie interval is the wider, safer one. |
-| **Chunks** | For data imaged without replicates. Each condition's movies are dealt at random into chunks (5, or 2 to 20 in **Chunks per condition**) fitted as pseudo-replicates, so Welch or the equivalence test can compare conditions. They measure precision "within one culture", not where another culture would come out. |
+## Uncertainty
 
-**Movies**, **Cells** and **Chunks** are withheld from a condition imaged in two or more replicates, which is drawn as its pooled fit with no spread and a caption saying why.
+**Uncertainty** sets what each bubble and its spread show; the choices are explained on [The workspace](/docs/analysis/workspace#uncertainty). On SQD:
 
-**Models.** One pill per model on each condition's row of the **Fits** page: **Best (BIC)** (the number of states by BIC, 1 to 3, or 1 to 4 with **Best (BIC) also tries 4 populations** in Options), a count from 1 to 4, or **saSPT** (the modes saSPT resolves). BIC recommends; the number of states is a biological decision. Light one pill for a single fit. Light two or more on any row to fit every condition at each lit model and draw them side by side in shades of the condition's color, which is how a state count is judged. Brackets compare one model across conditions, never two models of one condition.
+- *Movies* and *Cells* draw the pooled fit with a 95 % interval from 200 resamples. They're slow, and aren't computed under *Conditions* or *Whole data set*.
+- *Chunks* deals each condition's movies into up to **Chunks per condition** chunks (5 by default), each of at least 3 movies, or 3 cells when there are too few movies. They let Welch or the equivalence test compare conditions imaged without replicates.
+- A condition with two or more replicates is drawn as its pooled fit under *Movies*, *Cells* or *Chunks*, with no spread, and the caption says why.
+- With one replicate, *Replicates* draws no ±: choose *Movies* or *Cells* for an interval over that session.
 
-**Per spot.** Normally a bound molecule's jumps are read through one exponential, so a less precisely placed molecule looks faster and part of the bound population can appear as a middle one. **Per spot** gives each jump its own localization error from the precision the tracker reported (u-track always; TrackMate when **Fit each spot's precision** was on), through a calibration measured on immobile spots, and fits by maximum likelihood. It is not available for the 1–4 lags. The calibration is chosen in the project menu under **Per-spot calibration…**: **Built-in**, **This project's file** (`precision_calibration.json` in the conditions' folders or the folder above) or one from your **library**. To make one, choose **Make one from a stationary measurement…**, point it at movies of fixed cells or of protein stuck to glass (a separate measurement, tracked at your data's settings), press **Measure**, then **Add to library**. A condition without per-spot precision (a simulation's true positions, or another tool's track table) is fitted without the error model in the same Run, and the caption says so.
+{/* TODO(Huy): the Chunks help in the dialog, the field tooltip and Analysis options still say "fewer than two movies per chunk"; the code needs at least 3 movies a chunk. */}
 
-**Simulated true positions.** A simulation's bound steps have length exactly 0. They form their own population (D = 0, its fraction the share of zero jumps) and the other populations are fitted to the moving jumps. The count you choose is the total, so 3 reads bound, intermediate and free; one population is refused. The bubble sits at a tick labeled **0**, and a line under the chart gives the number of zero jumps. Forcing one D across such a condition and a measured one gives a warning, because the measured condition's slowest population is then empty by construction.
+## Per spot localization error
 
-**Reading the bubbles.** Height is the apparent D (log scale) and area is the fraction. Click a bubble for its replicates; where you paired replicates, the table has a **Pair** column that is a label only. The ± is the spread between replicates, not a confidence interval. The slow D sits at or below the localization floor and the fast D near the detection ceiling, so read both as bounds and base conclusions on the fractions. The line under each column gives its sample ("3 replicates · 1,271 tracks"); under **Movies**, **Cells** or **Chunks** it names those, and where no spread is drawn it reads "3 replicates pooled". In the Export dialog, clear **n** (under Show) to leave it out.
+Under *Not modelled*, a bound molecule's jumps are read through one exponential. A molecule placed less precisely then looks faster, and part of a large bound population can read as a slow-moving one. *Per spot* gives each step its own localization error, from the precision the tracker reported for its two spots, and fits by maximum likelihood. D is then corrected for localization error, but not for motion blur, and a bound population's D isn't resolved.
 
-**Fraction × D** (the switch beside the card's title) draws each population of each condition as a point, its fraction across and D up (log scale), colored by condition with a marker per population. A bar shows only where the Run has a spread; under **Replicates** D is shared, so it has no vertical bar. The **eye** beside a condition's name hides it, from the export too.
+- u-track always reports a precision; TrackMate does when **Fit each spot's precision** was on. A condition without one, such as a track table or a simulation's true positions, is fitted without the error model in the same Run, and the caption says so.
+- A Run with *Per spot* and Time lag *1–4* is refused, because each jump would be counted up to four times.
+- Forcing one D across conditions with and without per-spot precision is refused.
 
-**Axes** (the ruler button) sets where an axis starts and ends; an empty field is automatic and **Auto** clears the range. A range that cannot be drawn (a log axis from 0, or "from" not below "to") is refused with the reason.
+The reported precision becomes the true error through a calibration measured on immobile spots. Choose it in the project menu under **Per-spot calibration…**:
 
-**Copying a table.** The copy button on the SQD card copies the data table at full precision, and a right-click on any table offers **Copy table**. Paste into Excel with Ctrl+V; a spread becomes its own column. The SQD table ends with one column per replicate, the values each bubble is the mean of.
+- **Built-in**: the tracker's own curve, measured on a stationary synthetic set.
+- **This project's file**: `precision_calibration.json` in the conditions' folders or the folder above.
+- One from your library.
 
-**Metadata.** After a Run, **Metadata** shows the SQD settings and one line per replicate with its fractions (slowest first). **Copy** takes it as text.
+Until you choose, a project uses its own file where there is one, and otherwise the built-in curve. The choice holds for every *Per spot* Run of the project: SQD, HMM, Apparent Diffusion, the maps and Kinetics.
+
+To make a calibration, click <Ui variant="outline">Make one from a stationary measurement…</Ui> in **Per-spot calibration…**:
+
+<Steps>
+<Step>
+### Track a stationary measurement
+
+Image fixed cells expressing the fusion, or the fluorescent protein stuck to glass, and track it with u-track at your data's settings. This is a separate measurement, not your data. No outlines are needed.
+</Step>
+<Step>
+### Measure it
+
+Click <Ui variant="outline">Choose folder…</Ui>, choose the tracked movies, then click <Ui>Measure</Ui>. The result shows the curve, the number of steps and tracks, the share of mislinks modelled, and a table by decile. It also checks that the spots don't move: steps two frames apart must be at most 1.10 times the one-frame steps.
+</Step>
+<Step>
+### Keep it
+
+Name it and click <Ui>Add to library</Ui>. With **Use it for this project** selected, the project uses it at once. **Also save into a project folder…** writes `precision_calibration.json` where another project can find it.
+</Step>
+</Steps>
+
+## Reading the bubbles
+
+Read both ends of the D axis as bounds: the slowest D sits at or below the localization floor, and the fastest near what the tracker can link. Base conclusions on the fractions.
+
+Height is the apparent D, on a log scale; the bubble grows with the fraction, which is written on it, for example "73±3%" or "67% [63–71]". The line under each column gives its sample, such as "3 replicates · 1,271 tracks", or "3 replicates pooled" where no spread is drawn.
+
+- Hover over a bubble for its D and fraction. A D that sits on one of the fit's bounds reads "not resolved": read it as below 0.0001 or above 10 µm²/s, not as a value.
+- Click a bubble to open that condition's replicates: one column per replicate, with a table of each replicate's cells, tracks and fractions. Where you [paired replicates](/docs/analysis/opening-a-project#pair-replicates), a **Pair** column gives the tag the paired test reads. The breadcrumb's last crumb switches to another condition.
+
+**Fraction × D**, the switch beside **Bubbles** on the card's header, draws every population of every condition as one point. Its fraction runs across and its D up, colored by condition, with a marker per population. Bars show only where the Run has a spread; with a D shared across replicates there's no vertical bar. Click the eye beside a condition to hide it, from the export too.
+
+### Check the fit
+
+A line under the chart, in orange, names what to look at before you trust a population:
+
+- a population under 5 % (its D is poorly determined, and a test on it is too confident), or two populations less than twofold apart in D: fit one population fewer;
+- under *Conditions*, a condition whose own D is 1.5-fold or more from its group's: sharing may move a change in D into the fractions;
+- a number of populations you set where Best chooses fewer, with the ΔBIC;
+- a D on one of the fit's bounds, or one read low because steps past the tracker's linking radius break the track;
+- a significance bracket that stands on a flagged population.
+
+Best stops at 3 populations unless you allow 4; when it reaches that limit, the caption says so.
+
+{/* TODO(Huy): the Replicates help in the dialog says "A population under 5 % is not kept (fit one fewer)", but the code keeps it and only flags it on Check the fit. Which is intended? Also out of date: Whole data set "always step-weighted" (it follows Weighting) and Per spot "Unavailable with a D forced across conditions". */}
+
+### Exact-zero jumps
+
+A simulation's true positions put a bound molecule's steps at exactly 0. These steps form their own population, with D 0 and a fraction equal to their share. The other populations are fitted to the moving jumps. (Where the positions sit on whole pixels, or fewer than 20 jumps move, the zeros stay ordinary jumps, and the note says why.) The number of populations you choose is the total, so 3 reads bound, intermediate and free, and 1 is refused. The bubble sits at a tick labeled **0**, and **Check the fit** gives the number of zero jumps. Forcing one D across such a condition and a measured one is flagged, because the measured condition's slowest population is then empty by construction.
+
+## The card's tools
+
+The header of **SQD populations** has five buttons: **Axes**, export the figure, export the table (or add it to the Composer), copy the table, and show the data table.
+
+- **Axes** sets where the D axis (and on Fraction × D, the fraction axis) starts and ends. An empty field is automatic, and **Auto** clears a typed range. A range that can't be drawn, such as a log axis from 0, is refused with the reason.
+- **Copy** puts the table on the clipboard at full precision, to paste into Excel; a spread gets its own column. Under *Replicates* uncertainty, it ends with one column per replicate: the values each bubble is the mean of. A right-click on any table offers **Copy table** too.
+- The data table lists every drawn population with its D, fraction and **n**, the independent units the fraction was averaged over. Its filters change the table and what **Copy** takes, not the chart.
+
+**Map this fit**, at the right of the strip, adds a [Spatial Map](/docs/analysis/spatial-map) page that maps this fit, and opens its settings. If you close them without a Run, the new page is removed.
+
+After a Run with replicates, **Metadata** on the right rail lists the fit's settings and each replicate's fractions, slowest first. Significance brackets and exports are described in [Figures](/docs/analysis/figures); clear **n** in the export dialog to leave out the sample line.

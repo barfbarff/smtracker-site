@@ -1,30 +1,92 @@
 ---
 title: "HMM"
-description: "States with memory: dwell times and switching rates."
+description: "Fit a hidden Markov model of diffusive states: how often molecules switch between slow and fast, how much time they spend in each, and how they turn."
 ---
 
-A hidden Markov model over every track gives the states, how long molecules stay in each and how often they switch. Unlike SQD it has memory: a molecule's state at one frame depends on its state at the frame before. **Run** has SQD's settings:
+Use the HMM when the fractions alone can't tell two conditions apart. The same bound fraction can come from short, frequent binding or from long, rare binding; the switching rates show which. Unlike SQD, the model has memory: a molecule's state at one step depends on its state at the step before.
+
+The HMM fits a number of diffusive states, each with its apparent D, and the rates at which molecules switch between them: per second, measured from step to step. Each track is split wherever it skips a frame, and pieces of fewer than 2 steps are left out.
+
+HMM has four pages on its strip: **State diagrams**, **Slow state**, **Jump angles** and **Table**. **Map this fit**, at the right of the strip, adds a [Spatial Map](/docs/analysis/spatial-map) page that maps this fit, and opens its settings; if you close them without a Run, the new page is removed.
+
+## Run it
+
+Choose the number of states and how D is shared before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure HMM** ([Run a section](/docs/analysis/workspace#run-a-section)). The HMM takes none of the SQD fit's [Analysis options](/docs/analysis/options).
+
+### General
 
 | Setting | What it does | Default |
-|---|---|---|
-| **Force same D across** | **Replicates**: the condition's pooled fit gives the states' D, and each replicate's rates and occupancy are fitted at those D. **Don't force anywhere**: each replicate gets its own D. **Conditions** (with a folder design) or **Whole data set**: one set of D from the pooled tracks, so rates compare the same states across conditions. | Replicates |
-| **States** (on the **Fits** page) | **2**, **3**, **4** or **Best (BIC)** per condition; conditions share one count under Conditions or Whole data set. | 2 |
-| **Best (BIC) up to** | The most states Best considers: 3 or 4. | 3 |
-| **Uncertainty** | **Replicates**, **Movies** or **Cells** (a 95 % interval from resampling; one session only), **Chunks** (random pseudo-replicates, withheld from a condition with two or more replicates) or **None**. | Replicates |
-| **σ correction** | **Off (apparent D)**: comparable with SQD. **Tracker's sigma**: a sensitivity check using the tracker's localization sigma. **Per spot**: each step has its own localization error, so a bound molecule's faint, blurred spots no longer read as short visits to a faster state. | Off |
+| --- | --- | --- |
+| **Force same D across** | Which data share one set of D, as on [SQD: Populations](/docs/analysis/sqd#force-same-d-across). Under *Replicates*, each replicate's rates and occupancy are fitted at the condition's pooled D. Shared across conditions, the rates compare the same states. | *Replicates* |
+| **Uncertainty** | *Replicates*, *Movies*, *Cells*, *Chunks* or *None* ([Uncertainty](/docs/analysis/workspace#uncertainty)). *Movies* and *Cells* give percentile intervals from 100 refitted resamples, for a single replicate only. Under *Chunks*, a field sets how many (2 to 20, 5 by default). | *Replicates* |
+| **σ correction** | *Off (apparent D)*: D compares with SQD. *Tracker's sigma*: subtracts the tracker's localization σ, as a check; if the slow state disappears with it, it was localization noise. *Per spot*: each step gets its own localization error, so a bound molecule's faint, blurred spots no longer read as short visits to a faster state. | *Off (apparent D)* |
+| **Best (BIC) up to** | The most states Best may choose: *3 states* or *4 states*. | *3 states* |
 
-The same Force same D across setting also stands on top of the **Fits** page. A row can set Replicates or Don't force anywhere for itself, and its box leaves that condition out. Under Conditions or Whole data set the shared states are fitted first, and the status line shows progress ("shared states: 7 of 12 fits"). A condition without per-spot precision is fitted without it, and its D reads as apparent. Where the tracker recorded no sigma, the dialog names the theoretical one it would use. A corrected D is labeled σ-corrected, never apparent.
+Forcing one set of D across conditions is the stronger assumption: if every D of one condition is lower, the shared D moves that shift into the occupancy and rates.
 
-**The page**
+*Per spot* uses the tracker's per-spot precision and the calibration of [SQD: Populations](/docs/analysis/sqd#per-spot-localization-error). A condition whose tracks carry none is fitted without it, and its D stays apparent. If no condition carries it, the Run is refused, and the status line says why. A corrected D is labeled σ-corrected or per-spot, never apparent.
 
-- **Comparison across conditions** (on top): the conditions compared on the slow state as occupancy, rate in, rate out and apparent D. Replicates are open circles and the bar is ±1 SD, a spread and not a confidence interval. A **Dwell time** box adds a panel with the slow state's model dwell. The eye beside a condition in the key hides it.
+Under *Tracker's sigma*, when the project records no σ, a note under the setting names the theoretical value it would use, or says there's none.
+
+### Fits
+
+**Fits** has one row per condition, with its number of states: **2 states** (the default), **3 states**, **4 states** or **Best (BIC)**. Two states is the standard model. Three lets BIC test whether a third state is supported; its slowest D often sits at the localization floor. Best fits from one state up to its limit and picks by BIC; a difference under 2 is inconclusive.
+
+Clear a row's checkbox to leave that condition out. A row can set its own **Force same D across**, *Replicates* or *Don't force anywhere*. **Every condition** sets every row. Under *Conditions* or *Whole data set*, the conditions share one fit and its number of states, so each row's number of states and Force same D across are grayed out; set the number on **Every condition**. The shared states are fitted first, and the status line counts the fits.
+
+{/* TODO(Huy): a 4-state fit (4 states, or Best up to 4 choosing 4) breaks the card: it reads "failed: list index out of range", because the state names, the diagram and the tables only know up to three states. Should 4 states be removed, or supported? */}
+
+Each condition's card fills in as it's fitted.
+
+## State diagrams
+
+Each condition's card shows its states and how molecules move between them. Its caption gives the number of states, tracks, steps, the frame interval τ, the σ correction, and how D was forced.
+
+- **The diagram**: one circle per state, its area the occupancy, labeled with its name, D and occupancy. Arrows run both ways between every pair of states. With two states, each arrow carries its rate. With three, the arrows are wider for a faster rate, and the rates table carries the numbers. Dashed arrows mean the rates aren't identifiable: a state was never left, or some resamples held no switch.
+- **Switching rates (per second)**: each switch, such as "slow → fast", with its rate. Under *Movies* or *Cells*, the 95 % interval follows; under *Replicates*, the replicates' mean ± SD.
+- **The states table**: each state's D, its **Occupancy**, its share at a track's start (**Track start π**), its long-run share the rates imply (**Stationary**), and its **Dwell (model)**.
+
+Occupancy is the time average over the observed steps. Short tracks don't mix, so it lies between the share at the start of a track and the long-run share. The dwell is the inverse of the rate out. It's usually longer than the tracks themselves, so treat it as a model figure, not a measured time. A state that's never left has no dwell.
+
+Under the tables, lines flag what to check:
+
+- a state holding under 5 % of the steps, or two states less than twofold apart in D: fit one state fewer;
+- a number of states you set where Best chooses fewer, with the ΔBIC;
+- no transition out of a state, so its rates and dwell aren't measured: quote the occupancy instead;
+- under *Movies* or *Cells*, rates not identifiable, when resamples held no switch;
+- a replicate that couldn't be fitted, and, under Best, a number of states that's inconclusive;
+- states left within two frames: molecules caught mid-switch, which may not be a population.
+
+Each card has an export button. **Export all diagrams…** exports several conditions in one figure, with one key: select the conditions beside their names, and set **Grid** to rows × columns. In the export dialog, **± on rates** and **± on occupancy** add the spread where one was computed; the intervals themselves are always in the source data.
+
+## Slow state
+
+**Across conditions · the slow state** compares every condition's slow state in panels: **Slow-state occupancy**, **Rate into the slow state**, **Rate out of the slow state** and **Slow-state D (apparent)**, which says σ-corrected or per-spot when every condition was corrected. Hover over **How to read these numbers**, at the top, for how to read each panel.
+
+Each replicate is an open circle, their mean is filled, and the bar is ±1 SD between replicates: a spread, not a confidence interval. Under *Movies* or *Cells*, the bar is the 95 % interval instead. Unless **Force same D across** is *Don't force anywhere*, every replicate has the same D, so the D panel shows no spread.
+
+With three states, the rate out is the sum of the slow state's exits, and the rate in is the rate at which a molecule outside it enters it.
+
+- **Dwell time** adds a panel with the slow state's model dwell, in ms.
+- Click a condition's eye in the key to hide it from the panels and the export.
+- **Join paired replicates** draws a thin line through each pair's circles, where you [paired replicates](/docs/analysis/opening-a-project#pair-replicates) and two drawn conditions share a tag. A line is for reading, not testing; the export dialog's **Pair lines** box prints them.
 - **Axes** has a row per panel, since each has its own unit. A typed range stays through a new Run until **Auto**.
-- With paired replicates set on the Groups board, **Join paired replicates** (off) draws a thin gray line through each pair's circles, matched by the tag. The Export dialog's **Pair lines** box prints them. A line is for reading, not testing.
-- Brackets between conditions are set under **Significance** on the right rail, from the replicates' own fits, so run with Uncertainty set to Replicates. They are refused, with the reason, for a pooled fit, for random chunks, for conditions with different state counts, and on the D panel where D was held the same across replicates.
-- **Per condition**: a state diagram beside the rates, and a table of the states. Circle area is occupancy, arrows join neighboring states with their rates beside them, and a wider arrow is a faster rate. Select **± on rates** or **± on occupancy** to add half the 95 % interval or the SD over replicates; the intervals are always in the source data.
-- Dwell times are derived from the model. "NOT IDENTIFIABLE" means the data hold too few switches to estimate a rate. A warning appears when a state holds under 5 % of the steps or two states lie within twofold in D; fit one state fewer.
-- A card's **Export** saves its diagram. **Export all diagrams…** puts several conditions in one figure with one key. In the Export dialog a box beside each name picks the conditions, and **Grid** sets rows × columns (**Auto** fits the width).
 
-Use the HMM when fractions alone cannot tell two conditions apart: the same bound fraction can come from short, frequent binding or long, rare binding, and only the rates show which.
+**Significance**, on the right rail, puts brackets on any panel, or on all of them, from the replicates' own fits ([Figures](/docs/analysis/figures)). Run with *Replicates* uncertainty for that. The test is **Welch on replicates**, or **Paired t (declared pairs)**. A bracket is refused, with the reason, for a pooled fit, for random chunks, between conditions with different numbers of states, and on the D panel where D was held the same across replicates.
 
-The **Test** button on the right-hand rail shows a second page layout with two pages, listed under **HMM** in the sidebar: **Across conditions** and **Conditions**. Press **W** / **S** (or the arrow keys) with the pointer on the page to move between them, or point at the capsule at the top to see the list and click a page. The **list** button on the rail keeps the list open (**Esc** closes it), and **Space** shows it briefly.
+## Jump angles
+
+**Jump angles** asks whether a molecule in each state turns back more often than it goes forward. It reads the HMM's fits, so run the HMM first. The angles are computed when you open the page.
+
+Each pair of consecutive steps gives an angle, 0° straight on and 180° turned back, and counts for a state by the chance that both steps were in it. Pairs across a switch are left out, and the caption gives their share. Only tracks in a cell with a centerline are used.
+
+**Turning back** is the weight within 30° of 180° divided by the weight within 30° of 0°: 1 means no preference.
+
+- Each condition's card draws each state's angles as a half circle, forward on the left and back on the right, with a line giving its turning back over the replicates.
+- **Across conditions · turning back** draws each state's value for every condition on one strip, with a table per state comparing the conditions: Welch on replicates, Holm-corrected. A replicate needs about 20 pairs' worth of weight for its own value.
+
+A free molecule also turns back near the wall, and where its steps are as small as the localization error. Select **Against chance** to compare with free molecules simulated at the same places: the same cells, the state's step size, each spot's localization error and the camera's blur. The strip then shows turning back beyond chance; an excess under ±0.05 isn't read as a difference. It takes longer to compute.
+
+## Table
+
+**Table** compares one state of every condition side by side. Choose *Slow*, *Middle* or *Fast* under **State**. The table gives its D, its dwell, its share at the start, on average and in the long run, and its rates in and out. A condition fitted without that state shows "–".

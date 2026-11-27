@@ -1,52 +1,91 @@
 ---
 title: "SQD: Jump distances"
-description: "The distribution of jump distances, with held-out validation."
+description: "See each condition's jump distances against the 1-, 2- and 3-population fits, and check how many populations the data support."
 ---
 
-This page shows each condition's jump-distance histogram against the 1-, 2- and 3-population fits (4 on request), with residuals and a fit-quality table. The table gives D, the fractions, ΔBIC, the largest ECDF gap and a held-out test: each fit is made without one replicate (or one group of cells) and scored on what it left out. The number of populations that wins the held-out test is the one the data support.
+See how well 1, 2 or 3 populations describe each condition's jumps, before you trust the fractions on [SQD: Populations](/docs/analysis/sqd). Each condition gets its jump-distance histogram with the fits drawn over it, and two residual plots. A table scores every fit on the data, and on replicates or cells held out of the fit.
 
-**Run** on this page asks for:
+Open it from the strip at the top of **SQD**. It doesn't need a Populations Run first.
+
+## Run it
+
+Choose which conditions to fit and how strictly to test them. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure jump distances** ([Run a section](/docs/analysis/workspace#run-a-section)):
 
 | Setting | What it does | Default |
-|---|---|---|
-| **Conditions** | Which conditions to fit. | All |
-| **Fit up to** | **3 populations**, or **4 populations** (about four times slower). | 3 |
-| **Held out** | What the held-out test leaves out: **Replicates** or **Cells**. | Replicates |
+| --- | --- | --- |
+| **Conditions** | The conditions to fit; clear one to leave it out of this Run. | *All* |
+| **Fit up to** | *3 populations* fits 1, 2 and 3 populations, as **Best (BIC)** does on Populations by default. *4 populations* adds a fourth, and takes about four times as long. | *3 populations* |
+| **Held out** | What the held-out test leaves out. *Replicates*: each replicate in turn, the stricter test. *Cells*: up to five groups of the condition's cells, for single-session data; it's the gentler test, because the cells share their replicates with the cells fitted. | *Replicates* |
 
-The fits use the Time lag chosen in the Compute dialog.
+Click <Ui>Run</Ui>.
 
-**The card for one condition**
+The fits take three settings from **Configure SQD** on Populations: its **Time lag**, its **Optimiser** and its **Localisation error**. Its **Weighting** doesn't apply: the curves here are always step-weighted. Under *Per spot*, every fit on this page uses each jump's own localization error, except for a condition whose tracks carry no per-spot precision. When the Time lag is *1–4*, the histogram is drawn at lag 1.
 
-- **Show** has one pill per fit. Click a pill to draw or remove that fit; at least one stays on. A card starts with the count that BIC prefers. One fit is drawn alone in black; several are drawn in their own colors.
-- **Components** (selected to start) shows each fit's populations.
-- The Pearson and ECDF residual plots beside the histogram show the same fits. Bins beyond ±2 are red.
-- **Y axis** sets the unit: **Probability** (default; the bars sum to 1, as in SMTracker 2 and Spot-On), **Counts** (jumps per bin) or **Density** (per nm). Bins are 10 nm wide and only affect how jumps are drawn; the fits use the jumps themselves.
-- **Axes** accepts a range for x (nm) and y. An empty field means automatic. A typed range stays until you press **Auto**, and changing the y unit clears the y range.
-- **Same y scale** (over the cards and in All conditions) puts every plot of one unit on the largest range among them; the button then reads **Own y scales**. Use Probability or Density for this, since counts from different numbers of jumps do not compare.
-- Drag a histogram's key to move it; a double-click returns it to its corner. A card's **Export** keeps its position.
+A Run comes in two passes. The histograms, curves and residuals appear first; the ΔBIC and held-out columns read "computing…" until the second pass fills them in.
 
-**All conditions**
+## A condition's card
 
-The switch at the top right shows every condition's histogram on one screen, on one jump-distance axis.
+Each condition has a card, one per row. Its caption gives the number of jumps and tracks, the time lag τ, and which fit the curves are.
 
-- **Show for every condition** sets every card's pills at once, and its **Components** box sets every card's.
-- **Residuals**: select **Pearson** or **ECDF** (both off to start) to draw that residual plot under every histogram.
-- **Plots**: **One plot per condition**, or **One plot per fit**, which gives each fit of each condition its own plot, alone with its components. With one plot per fit, **Conditions down** puts each condition in a row and **Conditions across** swaps rows and columns.
-- **Columns** (one plot per condition) sets how many plots stand across; **Auto** fits as many as the page holds.
-- **Size** (S, M, L) makes the plots larger. Double-click a plot to spread it across the page.
-- **Y axis**, **Same y scale** and **Axes…** apply to every plot; a plot's own Axes wins.
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Show** | One pill per fit. Click a pill to draw or remove that fit; the last one on stays on. | 2 at first, then the number BIC prefers |
+| **Components** | Draws each fit's populations (a 1-population fit has none): in shades of the condition's color for one fit, as thin dashed lines in each fit's color for several. | selected |
+| **Y axis** | *Probability*: the bars sum to 1, as in SMTracker 2 and Spot-On. *Counts*: jumps per bin. *Density*: per nm, total area 1. The curves follow; only the scale changes. | *Probability* |
 
-**Export**
+One fit is drawn alone in the text color. Several fits are each drawn in their own color and line style: 1 population dotted, 2 solid and 3 dashed, as in SMTracker 2, and 4 dash-dot. A pill set by hand is kept when the second pass arrives.
 
-A card's **Export** and **Export all…** (the whole page as one figure) open the Export dialog. Its boxes:
+The bars are 10 nm wide, up to the 99.5th percentile of the jumps. The bins only draw the jumps; every fit uses the jumps themselves.
 
-| Box | What it does |
-|---|---|
-| **Fit** | The fits drawn; starts on the card's. On Export all, **Cards** keeps each card's own. |
-| **Show** | **Components**, **Pearson residuals**, **ECDF residuals**. On a card's figure both residual boxes start selected; on Export all they follow the Residuals boxes. Unticking one removes that plot and its numbers from the figure and source data. |
-| **Y unit** | Starts on the card's unit. |
-| **Axes** | The figure starts on the card's typed ranges. |
-| **Same y scale** | Gives every panel of Export all one y range. |
-| **Grid** | Export all only: rows and columns, starting on the page's Columns choice. |
+Beside the histogram, two residual plots show the same fits:
 
-**Add to composer** keeps these choices in the panel.
+- **Pearson residual**: (observed − expected) / √expected per bin, in counts whatever the y axis. Counting noise alone mostly stays within ±2. With one fit, bars beyond ±2 are orange.
+- **ECDF residual** (the **Model − ECDF** plot): the fit's cumulative distribution minus the jumps' own, unbinned.
+
+Drag the histogram's key to move it, and double-click it to put it back; a card's export keeps it where you put it. **Axes** on the card sets the x and y ranges; an empty field is automatic, and a new y unit sets y back to automatic.
+
+**Same y scale**, above the cards, puts every histogram of one unit on the largest range among them. Click **Own y scales** to go back. Use *Probability* or *Density* for this, because counts of different numbers of jumps don't compare.
+
+### The table
+
+Under each card, a table scores every fit two ways: on all the jumps, and on the jumps it was fitted without.
+
+| Column | What it shows |
+| --- | --- |
+| **Populations** | The number of populations fitted. |
+| **D (µm²/s)** | Each population's D. |
+| **Fractions** | Each population's share of the jumps. |
+| **ΔBIC** | The fit's BIC minus the lowest, from maximum-likelihood fits. 0 is the fit BIC prefers. |
+| **Largest ECDF gap** | The largest distance between the fit and the jumps' distribution, in percentage points. A description, with no p-value. |
+| **Held-out ΔlogL (replicates)** or **(cells)** | How well the fits made without each replicate (or group of cells) predict the jumps left out, summed over the folds, minus the best. 0 is the best. |
+| **Folds won** | In how many folds that fit predicted best. |
+
+The line under the table sums it up: which number BIC prefers, "inconclusive" when the runner-up is less than 2 behind, and which number the held-out test prefers. BIC and the held-out test can disagree; read them side by side.
+
+The held-out test needs at least 2 replicates, or 4 cells. With one replicate, the line says "held out: 1 replicate": choose *Cells* to test a single session. When some jumps are exactly zero and form an immobile population, the 1-population fit isn't made, and the table starts at 2.
+
+{/* TODO(Huy): the app's "How to read" text says one fit is "drawn in black" and bins beyond ±2 are "red", but the code draws the text color and orange (#c05621). Which should the app say? */}
+
+## All conditions
+
+The **Each condition** / **All conditions** switch at the top right shows every condition's histogram on one screen, on one jump-distance axis.
+
+- **Show for every condition** and its **Components** set every card at once. A card without that fit keeps its own, and no pill is lit while the cards differ.
+- **Residuals**: select **Pearson** or **ECDF** (both cleared to start) to draw that plot under every histogram.
+- **Plots**: *One plot per condition*, or *One plot per fit*, which gives each fit its own plot, alone with its components. With one plot per fit, *Conditions down* puts each condition in a row, and *Conditions across* swaps rows and columns.
+- **Columns**, with one plot per condition, sets how many plots stand across. *Auto* places up to 3.
+- **Size** (*S*, *M*, *L*) sets the size of each plot. Double-click a plot to span the page, and again to restore it.
+- **Y axis** sets the unit of every plot and every card. **Same y scale** also puts each kind of residual plot on one range. **Axes…** sets the ranges of every plot here; a plot's own **Axes** wins. A card's typed ranges don't carry over.
+
+## Export
+
+The export button on a card exports its figure; **Export all…** exports every condition as one figure, laid out as shown. Both open the export dialog ([Figures](/docs/analysis/figures)) with these rows of their own:
+
+| Row | What it does |
+| --- | --- |
+| **Fit** | The fits drawn, starting as the card shows them. On Export all, *Cards* draws each condition as its card. |
+| **Show** | Adds **Components**, **Pearson residuals** and **ECDF residuals** to the usual boxes. A card's figure starts with both residuals; Export all starts on the page's **Residuals**. A plot left out also leaves the source data. |
+| **Y unit** | Starts on the card's unit; Export all on the cards' unit where they agree, otherwise *Probability*. |
+| **Grid** | Export all, one plot per condition and two or more conditions only: rows × columns, starting on the page's **Columns**. |
+
+The figure follows the page's **Same y scale**. A card's figure starts on its typed ranges; Export all offers only an x range, starting on **Axes…**. A card's source data holds every bin and a *Fit quality* sheet with every fit made; Export all's holds a *Fits* sheet of each condition's fits. A figure exported before the second pass ends says its BIC and held-out columns are empty. **Add to composer** keeps these choices in the panel.

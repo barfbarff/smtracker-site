@@ -1,34 +1,103 @@
 ---
 title: "Apparent Diffusion"
-description: "One apparent D per track, and the populations they form."
+description: "Give each track one apparent D from all its steps, fit the populations they form, and see how they spread over cells, switching and track length."
 ---
 
-Each track gives one apparent D: the mean of its squared jumps divided by 4τ. The populations are a gamma mixture fitted with each track's own number of steps, so a long track counts once, like a short one. **Run** has SQD's settings:
+Fit the populations from whole tracks, as a second view beside the single jumps of [SQD: Populations](/docs/analysis/sqd). Each track gives one apparent D: the mean of its single-frame squared jumps divided by 4τ. Steps across a frame gap aren't used. The populations are a gamma mixture fitted with each track's own number of steps, so every step is used, and each molecule counts once, however long its track.
+
+Apparent Diffusion has four pages on its strip: **Populations**, **Distributions**, **Per cell** and **Checks**. A Run fits every loaded condition.
+
+## Run it
+
+Choose how the populations are fitted, and which models, before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure Apparent Diffusion** ([Run a section](/docs/analysis/workspace#run-a-section)). Apparent Diffusion takes nothing from [Analysis options](/docs/analysis/options).
+
+### General
 
 | Setting | What it does | Default |
-|---|---|---|
-| **Force same D across** | **Replicates**: one D over a condition's replicates, fractions per replicate. **Don't force anywhere**: each replicate fitted alone, so D gets a spread. **Conditions** (with a folder design): one D for conditions sharing a value of a factor. **Whole data set**: one D for every condition. | Replicates |
-| **Uncertainty** | **Replicates**: mean ± SD. **Movies** or **Cells**: the pooled fit with a 95 % interval from resampling them, for a single session only (withheld with two or more replicates, and the caption says why). **Chunks**: movies dealt at random into pseudo-replicates, for data without replicates ("within one culture"). **None**. | Replicates |
-| **Shortest track** | 5, 10 or 20 points. | 5 points |
-| **Best (BIC) up to** | The most populations Best considers: 3 or 4. | 3 |
-| **Localisation error** | **Not modelled**: every population has one typical apparent D. **Per spot**: each track has its own localization error from the tracker's per-spot precision, through the calibration SQD's Per spot uses; a bound population's D then reads near 0. A condition without per-spot precision is fitted without it, and the caption says so. | Not modeled |
+| --- | --- | --- |
+| **Force same D across** | Which data share one D, as on [SQD: Populations](/docs/analysis/sqd#force-same-d-across). Under *Don't force anywhere*, D has a spread too. | *Replicates* |
+| **Uncertainty** | *Replicates*, *Movies*, *Cells*, *Chunks* or *None* ([Uncertainty](/docs/analysis/workspace#uncertainty)). Under *Chunks*, a field sets how many. | *Replicates* |
+| **Shortest track** | *5 points*, *10 points* or *20 points*: 4, 9 or 19 single-frame steps. A longer minimum makes each value more precise, but keeps fewer tracks, and those lean toward slow molecules (**Checks** shows how much). 5 points is u-track's minimum. | *5 points* |
+| **Best (BIC) up to** | The most populations Best may choose: *3 populations*, as in SQD's Best, or *4 populations*. A 4 chosen on **Fits** is always fitted. | *3 populations* |
+| **Localisation error** | *Not modelled*: a bound molecule placed less precisely reads faster, so part of the bound population can be fitted as a middle one, or as two of similar D. *Per spot*: each track gets its own localization error, and a bound population's D reads near 0. | *Not modelled* |
 
-Sharing D across conditions is the stronger assumption: when every D of one condition sits lower, a shared D moves that shift into the fractions. The same setting also stands on top of the **Fits** page. Under *Not modeled*, one bound population can read as two slow ones near the localization floor; a line under the chart then says so, and the remedy is *Per spot* or one population fewer. Tracks with an apparent D of exactly 0 are counted as their own population.
+*Per spot* uses the tracker's per-spot precision and the [calibration](/docs/analysis/sqd#per-spot-localization-error) SQD uses. Forcing one D across conditions is the stronger assumption: it can enlarge the difference between conditions, even though the fit gets worse. Under *Conditions*, a condition alone in its group keeps its own D.
 
-**Fits** (the dialog's second page, as in SQD) has one line per condition with that condition's models: **Best (BIC)**, 1, 2, 3 and 4, several at once. With two or more, each condition is drawn as a group of columns, one per fit. **Every condition** sets all rows, and a row may set its own Force same D across (Replicates or Don't force anywhere). Under Conditions or Whole data set the rows are grayed because the conditions share one fit.
+Under *Per spot*, a condition whose tracks carry no per-spot precision, such as a track table, is fitted without it, and the caption says so. If no condition carries it, the Run is refused, and the status line says why. Forcing one D across conditions with and without it is refused too.
 
-The strip at the top has four pages.
+Tracks with an apparent D of exactly 0, as in a simulation's true positions, form their own immobile population at D 0, so one population is refused.
 
-- **Populations**: the bubbles, with the table, copy, significance brackets and export as in SQD. Click a bubble to see that column's replicates (or chunks); **Cross-checks** there opens the SQD, HMM and saSPT checks of that condition. The other pages read one fit per condition: Best's when Best is selected, otherwise the smallest count among two or more.
-- **Distributions**: per condition, the histogram on a log D axis with the fits, as on the Jump distances page.
-  - **Show** turns each fit on or off. One fit is drawn with its populations, the **cut** where they cross, where an **immobile** molecule reads (localization error alone) and the tracker's **ceiling**.
-  - **Components** draws each fit's populations. **Residuals** adds the **Pearson residual** per bin and the **ECDF residual** (the model's cumulative distribution minus the data's).
-  - The curves are the pooled fit of every track. With Uncertainty set to Replicates the Populations bubbles show the D shared across replicates, which differs slightly; the card names both.
-  - A **fit-quality table** gives every count's D and fractions, **ΔBIC**, the **largest ECDF gap** and its score on **held-out data**: each replicate left out in turn and scored on its tracks (a single session folds its cells instead, a weaker test).
-  - **All conditions** (the switch at the top) puts every histogram on one page, and **Export all conditions…** writes them as one figure.
-  - Drag across the histogram (or click a bar) to list the tracks in that range, longest first; **Show** opens one in Images & tracks.
-- **Per cell**: every cell's slow share as a dot, each replicate's mean as an open circle, and the condition's mean ± SD. It shows whether the slow population is present in every cell. A condition fitted with one population has no slow share.
-  - **Slow share against cell length** plots each cell against its length. **Slow share from** chooses the apparent-D or SQD fit; the eye beside a condition hides it. The table gives each condition's slow share as measured and length-matched (as if every condition had the same cell lengths), with the slope in points per µm. If the difference between conditions shrinks when matched, cell length carries it.
-- **Checks**: the **Switching** check shows what SQD's populations predict if no molecule switched state within its track; tracks in the shaded band between the states are what switching, or a real intermediate state, adds. The **Track length** check shows the slow share by the number of steps in a track; long tracks are mostly slow.
+### Fits
 
-Every card has an **Export** button at its top right, and the source data hold every bin and fit. **Axes**, as in SQD, is in the populations card's header (D, log scale) and on each Distributions card; a range stays through a new Run until **Auto**, and the export draws it.
+**Fits** has one row per condition, with the models to fit: **Best (BIC)**, **1**, **2**, **3** and **4**, several at once. With two or more, each condition is drawn as a group of columns, one per fit. **Every condition** sets every row. A row can also set its own **Force same D across**, *Replicates* or *Don't force anywhere*. Under *Conditions* or *Whole data set*, the rows are grayed out, because the conditions share one fit and its models.
+
+The other pages read one fit per condition: Best's when **Best (BIC)** is chosen, otherwise the smallest number of populations of 2 or more that's chosen (1 only when it's the only one).
+
+Each condition's **Distributions** and **Checks** cards fill in as it's fitted. The **Populations** bubbles and **Per cell** appear once every condition is done.
+
+## Populations
+
+The **Apparent-D populations** chart works as on [SQD: Populations](/docs/analysis/sqd), with its table, copy and export buttons, significance brackets and **Axes**. A warning line above the caption appears when a bracket stands on a population the fit checks flag.
+
+Under *Not modelled*, when a condition's two slowest populations have similar D (under twofold apart), the caption says they may be one bound population read as two. Run with *Per spot*, or fit one population fewer. When you choose more populations than Best would, the caption says by how much.
+
+Click a bubble to see that condition's replicates (or chunks): a bubble per replicate, each with its own fractions, and a table ending in their mean ± SD. Click **← All conditions** to go back.
+
+**Map this fit**, at the right of the strip, adds a [Spatial Map](/docs/analysis/spatial-map) page that maps this fit, and opens its settings. If you close them without a Run, the new page is removed.
+
+### Cross-checks
+
+On a condition's replicate page, **Cross-checks (SQD, HMM, saSPT)…** opens two tabs for that condition. Each computes only when you click its <Ui>Run analysis</Ui>, and takes a while:
+
+- **SuperPlots**: an SQD fit with its cell bootstrap, and an HMM fit.
+- **Dynamics**: an HMM fit with bootstrap, a saSPT spectrum and a clustering null.
+
+Use the breadcrumb to go back.
+
+## Distributions
+
+Each condition's card shows the histogram of its tracks' apparent D on a log axis, with the fits drawn over it. Its caption gives the tracks and the number of populations, and a line above the chart gives the fit's D and fractions.
+
+| Control | What it does | Default |
+| --- | --- | --- |
+| **Show** | One pill per fit. Click a pill to draw or remove that fit; the last one on stays on. | The fit the other pages read |
+| **Components** | Draws each fit's populations: in shades of the condition's color for one fit, as thin dashed lines in each fit's color for several. | selected |
+| **Residuals** | Adds the Pearson residual per bin and the ECDF residual (the fit's cumulative distribution minus the tracks', in percentage points) under the histogram. | selected |
+
+Three dashed lines mark the axis:
+
+- **cut**: where the populations cross, for a track of median length. Drawn only while **Show** holds just the fit the other pages read.
+- **immobile**: what localization error alone adds to an apparent D.
+- **ceiling**: the fastest apparent D the tracker's search radius lets through, where the condition recorded one.
+
+The curves are the pooled fit of every track. Where the bubbles on **Populations** come from replicates or chunks, their D differs slightly, and the card names both.
+
+{/* TODO(Huy): the card's note says the bubbles show "D shared across this condition's replicates" even under Don't force anywhere, where each replicate has its own D and the bubble shows their mean. Should the note change there? */}
+
+The fit-quality table reads as on [SQD: Jump distances](/docs/analysis/sqd-jump-distances#the-table): each fit's D and fractions, **ΔBIC**, **ECDF gap**, **Held-out ΔlogL** and **Folds won**. The held-out test leaves out each replicate in turn. With one replicate, it splits the cells into up to five folds instead (at least 4 cells are needed), which is the weaker test. Hover over the table for its notes. A line under it counts the tracks too short for **Shortest track**.
+
+**Pick tracks**: drag across the histogram, or click a bar, to list up to 12 tracks in that range, longest first, with their D, steps, movie, cell, replicate and slow share. Click **Show** on one to open it in [Images & tracks](/docs/analysis/images-and-tracks), playing from just before it starts.
+
+**All conditions**, at the top, puts every condition's histogram on one page, drawn as its card shows it. **Export all conditions…** exports them as one figure.
+
+## Per cell
+
+**Per cell · each cell's slow share** shows whether the slow population is present in every cell. Each dot is one cell's slow share: the mean chance, over its tracks, that a track is in the slowest population. Dots are sized by their tracks and shaded by their replicate. An open circle is each replicate's mean over its cells, and the line is the mean ± SD of the replicates. Cells with fewer than 3 tracks are left out, and a condition fitted with one population has no slow share. Hover a dot to name its cell.
+
+**Slow share against cell length** plots each cell's slow share against its length along the centerline, with each condition's mean per length class. It needs outlines with a centerline.
+
+- **Slow share from**: *Apparent D*, or *SQD*: each jump's chance of being slow under the condition's pooled, step-weighted SQD fit with the same number of populations, so the share of time spent slow.
+- The eye beside a condition hides it from the chart, the table and the export.
+
+The table gives each condition's cells, median length, slow share, length-matched slow share and slope in points per µm. Length-matched weights each condition's class means by every condition's cells together, as if all had the same lengths. The classes are the quartiles of all cells, and only classes where every condition has at least 2 cells count. The line under it compares the spread between conditions as measured and as matched. It's descriptive, with no test, because cells of one replicate aren't independent.
+
+## Checks
+
+Two checks show whether the fractions can be read at face value. Each condition gets one card with both:
+
+- **Switching**: the observed apparent D beside what SQD's populations predict if no molecule switched state within its track. Switching puts tracks in the shaded band between the states; the line under it gives the observed share there and the predicted one.
+- **Track length**: the slow share by how many steps a track has (4–5, 6–9, 10–19, 20–49 and 50+). A class with fewer than 10 tracks is drawn faded and not quoted. When long tracks are clearly slower, the line says so: a track-length cut then moves the fractions.
+
+## Export
+
+Every card has an export button, and the source data hold every bin and fit. The Populations card and each Distributions card have **Axes**; a typed range stays through a new Run until **Auto**, and the export draws it. See [Figures](/docs/analysis/figures).

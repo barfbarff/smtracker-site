@@ -1,23 +1,75 @@
 ---
 title: "MSD"
-description: "Mean squared displacement against lag: a cross-check."
+description: "Plot each condition's mean squared displacement against lag time, fit the early lags, and see why the slope moves with the fit window and track length."
 ---
 
-The MSD page plots the mean squared displacement against lag and fits the early lags only. It is a cross-check, not a population's D. **Run** asks for:
+Use MSD as a cross-check on [SQD](/docs/analysis/sqd): it plots each condition's mean squared displacement against lag time and fits a line through the early lags. The slope gives one D through every population at once, dominated by the fastest, so it's never a population's D. The populations and their fractions come from SQD.
 
-| Setting | Choices | Default |
-|---|---|---|
-| **Lags fitted** | 3 to 6 | 4 |
-| **Curve drawn** | Out to lag 10 or 20 | 10 |
-| **Weighting** | **By pairs**, or **Each track once** | By pairs |
-| **Direction** | **Camera plane**, **Along the cell**, **Across the cell** | Camera plane |
-| **Uncertainty** | **Replicates**, **Movies**, **Cells** (single session) or **None** | Replicates |
+MSD has two pages on its strip: **Curves** and **Checks**. A Run fits every loaded condition.
 
-Four pages are on the strip at the top, each with one **How to read** line.
+## Run it
 
-- **Curves**: every condition's curve on shared axes (filled points fitted, hollow ones drawn) and a table of tracks, D, spread and intercept. The error bars follow Uncertainty (SD over replicates, a 95 % interval from resampling movies or cells, or, with None, an indicative SEM over tracks). The **eye** hides a condition; click a condition's name to see its replicates. **Save MSD per cell (CSV)…** writes every cell's MSD, one row per cell and lag.
-- **Per condition**: each condition's curve over a sample of its tracks.
-- **Checks**: D against the number of lags fitted, and against track length. A D that falls as the window grows reflects long slow tracks and the cell wall.
-- **v2**: what SMTracker 2 printed for the same data, beside this page's D.
+Choose the fit window, the weighting and the direction before each Run. Click <Ui>Run analysis</Ui> (before the first result) or the **Compute** mark on the right rail to open **Configure MSD**:
 
-Every card has **Export**. **Axes** sets lag time (x, s) and MSD (y, µm²); a typed range stays through a new Run until **Auto**. The intercept is not σ: motion blur lowers it and the cell wall raises it.
+| Setting | What it does | Default |
+| --- | --- | --- |
+| **Lags fitted** | How many early lags the line is fitted to: *3* to *6*. Later lags rest on fewer, slower tracks and the cell wall bends the curve, so a longer window gives a lower D. | *4* |
+| **Curve drawn** | How far the curve is drawn, *to lag 10* or *to lag 20*, so you can see it bend at the cell wall. It doesn't change D. | *to lag 10* |
+| **Weighting** | *By pairs*: each track counts by its number of pairs at that lag, as in SMTracker 2, so the mix shifts toward long, slow tracks. *Each track once*: every track counts the same. | *By pairs* |
+| **Direction** | *Camera plane*: x and y of the image, D = slope / 4. *Along the cell*, *Across the cell*: each step projected onto its cell's centerline, D = slope / 2. Across a rod about a micron wide, the curve flattens within a few lags. | *Camera plane* |
+| **Uncertainty** | *Replicates*, *Movies*, *Cells* or *None* ([Uncertainty](/docs/analysis/workspace#uncertainty)). *Movies* and *Cells* give a 95 % interval from 200 resamples. | *Replicates* |
+
+Click <Ui>Run</Ui>. MSD's settings don't come from [Analysis options](/docs/analysis/options), though the cell filter and frame interval set there apply here too.
+
+*Along the cell* and *Across the cell* need outlines with a centerline. Tracks in a cell without one are left out of those directions, so **Tracks** counts fewer. (SMTracker 2 divided the one-axis slope by 4, which halved D.)
+
+## Curves
+
+**Ensemble MSD, every condition** draws every condition's curve on one chart. Filled points were fitted, hollow ones only drawn, and the fit line runs on, dashed, past the fitted lags. Its caption repeats the direction, lags and weighting.
+
+- Click a condition's eye in the key to hide it, from the chart and its export.
+- Click a condition's name, or near its curve, to see its replicates: each replicate's curve and fit, beside the pooled one. Click in the chart again to go back.
+- Hover a lag to read each condition's MSD there.
+
+The bars show the spread you chose: the SD of the replicates' MSD at each lag, or the 95 % interval of the resampled curves. With *None*, one replicate, or a withheld interval, this chart draws no bars. A later lag that too few replicates or resamples reach has no bar either.
+
+{/* TODO(Huy): with None, the shared Curves chart draws no bars, but its exported figure draws the SEM over tracks. Which is intended? */}
+
+### The numbers
+
+The table gives each condition's **Tracks**, **D (µm²/s)**, **Spread** and **Intercept (µm²)**. D is always the pooled fit; **Uncertainty** changes only the spread written beside it:
+
+| Spread | Meaning |
+| --- | --- |
+| ± SD (n replicates) | The SD of the replicates' own D, each fitted alone. |
+| [low – high] (n movies or cells) | The 95 % interval from resampling. |
+| *withheld* | No movie or cell interval: the condition holds two or more replicates, or too few movies or cells to resample. |
+| *one replicate*, *too few replicates* | Not enough replicates to give a spread. |
+| – | *None*. |
+
+The intercept isn't σ. For a free molecule imaged continuously, it's 2 · d · (σ² − D · τ / 3), where d is the number of dimensions: 2 in the camera plane, 1 along or across the cell. So motion blur lowers it, and the cell wall raises it.
+
+Click <Ui variant="outline">Save MSD per cell (CSV)…</Ui> to save every cell's MSD, one row per cell and lag up to **Curve drawn**, in the Run's weighting and direction. It's SMTracker 2's "Save MSD in csv" for all cells at once. Tracks outside every outline are left out. The columns are `condition`, `replicate`, `movie`, `cell`, `delay_s`, `mean_msd_um2`, `std_msd_um2` (the spread of the cell's tracks), `n_tracks` and `n_pairs`.
+
+### Single tracks
+
+To see the spread behind each curve, select **Single tracks**: one card per condition, with up to 120 of its tracks (of at least 3 lags) behind the ensemble curve. Where the shared chart has no bars, these cards draw the SEM over tracks instead, which is only indicative, because tracks of one replicate aren't independent. Hover a point for how many tracks reach that lag: later lags rest on fewer, longer tracks. With two or more replicates, click the chart to swap the tracks for the replicates' curves.
+
+## Checks
+
+**Checks** shows why D moves with the fit window and the track length, one card per condition. It's computed to lag 8, in the Run's direction.
+
+- **Fit window**: D from the first 2, 3, 4, 5, 6 and 8 lags, by pairs (solid) and with each track once (dashed); a gray line marks the Run's **Lags fitted**. A D that falls as the window grows is expected: pair weighting shifts the mix toward long, slow tracks, and the wall bends every curve.
+- **Track length**: D from each track-length class on its own (4–5, 6–9, 10–19, 20–49 and 50+ steps), in the Run's weighting. A class with fewer than 10 tracks is drawn faded and not quoted.
+
+The sentence under each chart sums it up: the change in D across the windows, and the D of the shortest and longest tracks.
+
+### Beside SMTracker 2
+
+**What v2 printed, and why it differs** compares this page's D with what SMTracker 2's MSD tab gave for the same data. SMTracker 2 fitted only tracks of at least 9 localizations, each cut to lags 1 to 8, all 8 lags fitted unweighted. Its localization-error panel fitted a line per track over lags 1 to 7 and averaged √|b/4|, where b is the line's intercept. That folds negative intercepts onto positive values.
+
+Each condition's card has a table with this page's D, SMTracker 2's ensemble fit, its per-track σ, the share of negative intercepts and, where it has one, the project's σ. A histogram shows the per-track σ with the sign of the intercept kept, so you can see what the fold hid.
+
+## Export
+
+Every card has an export button, and the shared chart and the Single tracks cards have **Axes**: lag time (x, s) and MSD (y, µm²). A typed range stays through a new Run until you click **Auto**. See [Figures](/docs/analysis/figures).

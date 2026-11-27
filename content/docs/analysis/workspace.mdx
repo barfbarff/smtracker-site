@@ -11,7 +11,7 @@ The window has three columns: the sidebar, the page, and the right rail.
 
 - **The sidebar**, on the left. Its header gives the project's name and its number of tracks, with the track cap when one is set. Click the name to open the [project menu](#the-project-menu). Below it come three groups:
   - **Data**: **QC** and **Images & tracks**, for looking at the data before any fit.
-  - **Analyses**: **SQD**, **MSD**, **Apparent Diffusion**, **HMM**, **Spatial Map**, **Kinetics** and **Clustering**.
+  - **Analyses**: **SQD**, **MSD**, **Apparent Diffusion**, **HMM**, **Spatial Map**, **Kinetics** and **Clustering**, then **SMTracker 2.0 view**, which opens [SMTracker 2.0's tabs](/docs/analysis/smtracker-2-view) in a window of their own.
   - **Figures**: the **Composer** button ([Figures](/docs/analysis/figures)), at the foot, under **Running**.
 - **The page**, in the middle, under a breadcrumb such as "SQD > Jump distances". Click an earlier crumb to go back to it. On a condition's own page, the last crumb opens a list of the other conditions to switch to.
 - **The right rail**, with the tools for the page on screen ([The tools on the right](#the-tools-on-the-right)).
@@ -48,7 +48,7 @@ Choose the settings, then click <Ui>Run</Ui>. Click <Ui variant="outline">Cancel
 </Step>
 </Steps>
 
-Each setting has a line of help under it. The dialog starts from the last Run's settings, or from the standards in [Analysis options](/docs/analysis/options) the first time. SQD, Apparent Diffusion and HMM have two tabs: **General**, and **Fits**, with one row per condition. A Run computes every loaded condition, except on SQD and HMM, where the **Fits** tab chooses which conditions are fitted.
+Each setting has a line of help under it. The dialog starts from the last Run's settings, or the first time from the standards in [Analysis options](/docs/analysis/options), where the section has any. SQD, Apparent Diffusion and HMM have two tabs: **General**, and **Fits**, with one row per condition. A Run computes every loaded condition, except on SQD and HMM, where the **Fits** tab chooses which conditions are fitted.
 
 While a first Run computes, the page says **Computing…** with its progress, and the **Compute** mark spins. A later Run dims the chart in place until the new result is ready. To stop a Run, point at the mark and click its stop square.
 
@@ -62,7 +62,7 @@ The work runs on every core but one, below normal priority, so the computer stay
 
 ### Uncertainty
 
-SQD, Apparent Diffusion, HMM and MSD ask how each condition's spread is measured, under **Uncertainty**. The choice changes the point itself as well as its bar.
+SQD, Apparent Diffusion, HMM and MSD ask how each condition's spread is measured, under **Uncertainty**. On SQD, Apparent Diffusion and HMM, the choice changes the point itself as well as its bar. [MSD](/docs/analysis/msd) always shows the pooled D, with the spread beside it.
 
 | Choice | What each point and bar shows | Use it for |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ SQD, Apparent Diffusion, HMM and MSD ask how each condition's spread is measured
 
 With two or more replicates, the *Movies* and *Cells* intervals are withheld, because movies and cells of one replicate aren't independent. MSD offers no *Chunks*.
 
-The number of chunks is 5 by default, from 2 to 20 (**Chunks per condition** on SQD). A condition with fewer than two movies per chunk is dealt by cells instead. Chunks show how precisely these cells were measured, and say nothing about another culture.
+The number of chunks is at most 5 by default, from 2 to 20: **Chunks per condition** on SQD, the *chunks* field beside **Uncertainty** on Apparent Diffusion and HMM. Each chunk holds at least 3 movies. A condition whose movies can't fill two chunks is dealt by cells instead. Chunks show how precisely these cells were measured, and say nothing about another culture.
 
 ## When results are kept
 

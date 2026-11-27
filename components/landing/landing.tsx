@@ -213,7 +213,7 @@ export function Landing() {
           </div>
           {/* the page's one action, the only dark thing in the bar: the visitor's own system */}
           <a
-            href={links.download}
+            href={platform === 'windows' ? links.download : links.downloadMac}
             aria-label={platform === 'windows' ? 'Download for Windows' : 'Download for macOS'}
             className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg bg-fd-primary px-3.5 text-sm font-medium text-fd-primary-foreground transition-[opacity,transform] duration-150 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-primary active:scale-[0.97]"
           >

@@ -11,7 +11,7 @@ const FOOTER_COLUMNS: { title: string; links: { text: string; href: string; exte
   {
     title: 'Get it',
     links: [
-      { text: 'Download for macOS', href: links.download, external: true },
+      { text: 'Download for macOS', href: links.downloadMac },
       { text: 'Download for Windows', href: links.download, external: true },
       { text: 'Changelog', href: '/docs/changelog' },
     ],
@@ -26,7 +26,7 @@ const FOOTER_COLUMNS: { title: string; links: { text: string; href: string; exte
   {
     title: 'Project',
     links: [
-      { text: 'Source on GitLab', href: links.source, external: true },
+      { text: 'Source on GitHub', href: links.source, external: true },
       { text: 'Cite SMTracker', href: links.cite, external: true },
       { text: 'AG Graumann lab', href: links.lab, external: true },
     ],

@@ -7,8 +7,11 @@ export const docsContentRoute = '/llms.mdx/docs';
 
 /** Mock links until the real ones exist. */
 export const links = {
-  source: '#', // [SOURCE URL] e.g. the GitLab repository
-  download: '#', // [DOWNLOAD URL]
+  source: 'https://github.com/longestgiraffe/smtracker',
+  /** the newest release: the Windows installer and zip */
+  download: 'https://github.com/longestgiraffe/smtracker/releases/latest',
+  /** no macOS package is published yet: the install page says how to run it on a Mac until there is one */
+  downloadMac: '/docs/install#run-from-source',
   cite: '#',
   lab: 'https://www.uni-marburg.de/en/fb15/researchgroups/ag-graumann', // the AG Graumann page at Synmikro
 };

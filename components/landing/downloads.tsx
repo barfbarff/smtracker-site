@@ -43,7 +43,7 @@ export function DownloadButtons({ platform, stack = false }: { platform: Platfor
   return order.map((os, i) => (
     <a
       key={os}
-      href={links.download}
+      href={os === 'macos' ? links.downloadMac : links.download}
       className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-primary active:scale-[0.97] ${
         stack ? 'max-sm:w-full sm:min-w-60' : 'sm:min-w-60'
       } ${

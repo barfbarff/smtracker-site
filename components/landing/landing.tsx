@@ -12,7 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { BookOpen, ChartColumn, FileJson, Route } from 'lucide-react';
+import { BookOpen, ChartColumn, FileJson, Package, Route } from 'lucide-react';
 import { motionTokens } from '@/lib/motion-tokens';
 import { links } from '@/lib/shared';
 import { Logo } from '@/components/logo';
@@ -258,6 +258,11 @@ export function Landing() {
                 {/* only the words are underlined, not the icon */}
                 <span className={underline}>Read the manual</span>
               </Link>
+              {/* every file of the newest release (both systems, the zips, the checksums), and the earlier releases */}
+              <a href={links.download} className={`ml-1 ${linkWithIcon}`}>
+                <Package aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
+                <span className={underline}>All downloads</span>
+              </a>
             </div>
           </Reveal>
         </div>

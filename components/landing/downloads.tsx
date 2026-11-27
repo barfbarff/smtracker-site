@@ -20,6 +20,37 @@ export function usePlatform(): Platform {
   return platform;
 }
 
+/** the newest release's installers, asked of GitHub once per page in the visitor's browser */
+const MATCH: Record<Platform, RegExp> = { windows: /-setup\.exe$/i, macos: /-macos-arm64\.pkg$/i };
+let asked: Promise<Partial<Record<Platform, string>>> | null = null;
+
+function askGitHub(): Promise<Partial<Record<Platform, string>>> {
+  asked ??= fetch(links.releasesApi, { headers: { Accept: 'application/vnd.github+json' } })
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`GitHub answered ${r.status}`))))
+    .then((release: { assets?: { name: string; browser_download_url: string }[] }) => {
+      const find = (re: RegExp) => release.assets?.find((a) => re.test(a.name))?.browser_download_url;
+      return { windows: find(MATCH.windows), macos: find(MATCH.macos) };
+    })
+    .catch(() => ({}));
+  return asked;
+}
+
+/** each system's installer, linked straight to its file; until GitHub answers, or if it cannot, the release page,
+ *  which lists every file. The file names carry the version and build, so they are looked up, never typed here. */
+export function useInstallerLinks(): Record<Platform, string> {
+  const [hrefs, setHrefs] = useState<Record<Platform, string>>({ windows: links.download, macos: links.downloadMac });
+  useEffect(() => {
+    let alive = true;
+    askGitHub().then((found) => {
+      if (alive) setHrefs((h) => ({ windows: found.windows ?? h.windows, macos: found.macos ?? h.macos }));
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return hrefs;
+}
+
 // Platform marks for the download buttons (Simple Icons, CC0). Lucide has no brand logos.
 export function AppleMark() {
   return (
@@ -40,10 +71,11 @@ export function WindowsMark() {
 /** the pair of download buttons, the same size, told apart by style alone */
 export function DownloadButtons({ platform, stack = false }: { platform: Platform; stack?: boolean }) {
   const order: Platform[] = platform === 'windows' ? ['windows', 'macos'] : ['macos', 'windows'];
+  const hrefs = useInstallerLinks();
   return order.map((os, i) => (
     <a
       key={os}
-      href={os === 'macos' ? links.downloadMac : links.download}
+      href={hrefs[os]}
       className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-primary active:scale-[0.97] ${
         stack ? 'max-sm:w-full sm:min-w-60' : 'sm:min-w-60'
       } ${

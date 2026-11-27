@@ -10,6 +10,8 @@ export const links = {
   source: 'https://github.com/longestgiraffe/smtracker',
   /** the newest release: the Windows installer and zip */
   download: 'https://github.com/longestgiraffe/smtracker/releases/latest',
+  /** the newest release as GitHub's API gives it: the download buttons find each installer's file in it */
+  releasesApi: 'https://api.github.com/repos/longestgiraffe/smtracker/releases/latest',
   /** the same release holds the Mac installer (Apple silicon) */
   downloadMac: 'https://github.com/longestgiraffe/smtracker/releases/latest',
   cite: '#',

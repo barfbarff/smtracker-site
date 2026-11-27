@@ -11,8 +11,7 @@ const FOOTER_COLUMNS: { title: string; links: { text: string; href: string; exte
   {
     title: 'Get it',
     links: [
-      { text: 'Download for macOS', href: links.downloadMac, external: true },
-      { text: 'Download for Windows', href: links.download, external: true },
+      { text: 'All downloads', href: links.download, external: true },
       { text: 'Changelog', href: '/docs/changelog' },
     ],
   },

@@ -16,7 +16,7 @@ import { BookOpen, ChartColumn, FileJson, Route } from 'lucide-react';
 import { motionTokens } from '@/lib/motion-tokens';
 import { links } from '@/lib/shared';
 import { Logo } from '@/components/logo';
-import { AppleMark, DownloadButtons, usePlatform, WindowsMark } from '@/components/landing/downloads';
+import { AppleMark, DownloadButtons, useInstallerLinks, usePlatform, WindowsMark } from '@/components/landing/downloads';
 import { HeroCells } from '@/components/landing/hero-cells';
 import { CARD_H, CARD_LAYOUT, CARD_W, SOURCES, TracksPlay } from '@/components/landing/source-cards';
 import { StampFace } from '@/components/landing/stamp';
@@ -146,6 +146,7 @@ const underline = 'underline decoration-emission-500 decoration-2 underline-offs
 export function Landing() {
   const reduce = !!useReducedMotion();
   const platform = usePlatform();
+  const installers = useInstallerLinks();
 
   // the scroll prompt shows only at the very top of the page: once the visitor scrolls, it has done its job
   const [atTop, setAtTop] = useState(true);
@@ -213,7 +214,7 @@ export function Landing() {
           </div>
           {/* the page's one action, the only dark thing in the bar: the visitor's own system */}
           <a
-            href={platform === 'windows' ? links.download : links.downloadMac}
+            href={installers[platform]}
             aria-label={platform === 'windows' ? 'Download for Windows' : 'Download for macOS'}
             className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg bg-fd-primary px-3.5 text-sm font-medium text-fd-primary-foreground transition-[opacity,transform] duration-150 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-primary active:scale-[0.97]"
           >
